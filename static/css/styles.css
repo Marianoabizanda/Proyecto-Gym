@@ -1,41 +1,629 @@
-/* ======================================================
-   GymManager - Estilos Personalizados Complementarios
-   ====================================================== */
+/* ==========================================================================
+   GYM MANAGER — Identidad Visual Refinada (Dark Premium + Acento Violeta Sutil)
+   Estética: Moderna, Deportiva, Minimalista, Profundidad Elegante
+   ========================================================================== */
 
+/* --------------------------------------------------------------------------
+   Variables de Tema y Paleta de Colores
+   -------------------------------------------------------------------------- */
 :root {
-    --gym-primary: #f59e0b;
-    --gym-dark: #1e293b;
-    --gym-darker: #0f172a;
+    /* Fondos Oscuros con Matiz Carbón Frío */
+    --gym-bg-base: #09080d;
+    --gym-bg-surface: #0f0e15;
+    --gym-bg-card: #14131b;
+    --gym-card-border: #23212c;
+    --gym-card-border-hover: rgba(139, 92, 246, 0.32);
+
+    /* Acento Violeta Sutil (Uso Moderado en Bordes, Hover y Sombras) */
+    --gym-accent: #8b5cf6;
+    --gym-accent-light: #c4b5fd;
+    --gym-accent-glow: rgba(139, 92, 246, 0.08);
+    --gym-accent-border: rgba(139, 92, 246, 0.2);
+
+    /* Textos */
+    --gym-text-primary: #f8fafc;
+    --gym-text-secondary: #94a3b8;
+    --gym-text-muted: #64748b;
+    --gym-white: #ffffff;
+
+    /* Tipografías */
+    --gym-font-heading: 'Montserrat', system-ui, -apple-system, sans-serif;
+    --gym-font-body: 'Inter', system-ui, -apple-system, sans-serif;
+
+    /* Radios Suavizados (Para romper la rigidez cuadrada) */
+    --gym-radius-sm: 8px;
+    --gym-radius-md: 12px;
+    --gym-radius-lg: 16px;
 }
 
+/* --------------------------------------------------------------------------
+   Estilos Base y Tipografía
+   -------------------------------------------------------------------------- */
 body {
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    color: #334155;
+    font-family: var(--gym-font-body);
+    background-color: var(--gym-bg-base);
+    color: var(--gym-text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-/* Navbar */
-.navbar-brand span {
-    letter-spacing: 0.5px;
+.fw-black {
+    font-weight: 900 !important;
 }
 
-/* Transiciones suaves en tarjetas y botones */
-.card {
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+.fw-extrabold {
+    font-weight: 800 !important;
 }
 
-.btn {
+.tracking-wider {
+    letter-spacing: 1px;
+}
+
+.tracking-widest {
+    letter-spacing: 2px;
+}
+
+.max-w-600 {
+    max-width: 600px;
+}
+
+.text-accent-subtle {
+    color: var(--gym-accent-light) !important;
+}
+
+/* Fondos utilitarios */
+.bg-gym-black {
+    background-color: var(--gym-bg-base) !important;
+}
+
+.bg-gym-dark {
+    background-color: var(--gym-bg-surface) !important;
+}
+
+.bg-gym-darker {
+    background-color: #0b0a10 !important;
+}
+
+/* --------------------------------------------------------------------------
+   Navbar Minimalista
+   -------------------------------------------------------------------------- */
+.gym-navbar {
+    background-color: rgba(9, 8, 13, 0.92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(139, 92, 246, 0.12);
+    padding-top: 0.85rem;
+    padding-bottom: 0.85rem;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.gym-brand-logo {
+    font-family: var(--gym-font-heading);
+    color: var(--gym-text-primary) !important;
+    font-size: 1.15rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: color 0.2s ease;
+}
+
+.gym-brand-logo:hover {
+    color: var(--gym-accent-light) !important;
+}
+
+.gym-nav-link {
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--gym-text-secondary) !important;
+    padding: 0.5rem 0.9rem !important;
+    transition: color 0.2s ease;
+}
+
+.gym-nav-link:hover,
+.gym-nav-link:focus {
+    color: var(--gym-text-primary) !important;
+}
+
+.gym-toggler {
+    background-color: transparent;
+    padding: 0.4rem 0.6rem;
+    border-radius: var(--gym-radius-sm);
+}
+
+/* --------------------------------------------------------------------------
+   Botones Suavizados con Acento y Profundidad
+   -------------------------------------------------------------------------- */
+.gym-btn-primary {
+    background-color: var(--gym-white);
+    color: #09080d !important;
+    border: 1px solid var(--gym-white);
+    font-size: 0.82rem;
+    letter-spacing: 1.5px;
+    border-radius: var(--gym-radius-sm);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+    transition: all 0.25s ease;
+}
+
+.gym-btn-primary:hover {
+    background-color: #ffffff;
+    border-color: #ffffff;
+    color: #000000 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(139, 92, 246, 0.25);
+}
+
+.gym-btn-outline {
+    background-color: transparent;
+    color: var(--gym-text-primary) !important;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    font-size: 0.82rem;
+    letter-spacing: 1.5px;
+    border-radius: var(--gym-radius-sm);
+    transition: all 0.25s ease;
+}
+
+.gym-btn-outline:hover {
+    background-color: rgba(139, 92, 246, 0.08);
+    border-color: rgba(139, 92, 246, 0.5);
+    color: var(--gym-white) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(139, 92, 246, 0.12);
+}
+
+.gym-btn-card {
+    background-color: #1a1924;
+    color: var(--gym-text-primary) !important;
+    border: 1px solid #2d2a3a;
+    font-size: 0.8rem;
+    letter-spacing: 1.2px;
+    border-radius: var(--gym-radius-sm);
+    transition: all 0.25s ease;
+}
+
+.gym-btn-card:hover {
+    background-color: var(--gym-accent);
+    color: var(--gym-white) !important;
+    border-color: var(--gym-accent);
+    box-shadow: 0 4px 16px rgba(139, 92, 246, 0.3);
+}
+
+.gym-btn-dark {
+    background-color: #14131c;
+    border-radius: var(--gym-radius-sm);
     transition: all 0.2s ease;
 }
 
-/* Form inputs */
-.form-control:focus, .form-select:focus {
-    border-color: #f59e0b;
-    box-shadow: 0 0 0 0.25rem rgba(245, 158, 11, 0.25);
+.gym-btn-dark:hover {
+    background-color: #1c1b26;
+    color: var(--gym-white) !important;
+    border-color: rgba(139, 92, 246, 0.3) !important;
 }
 
-/* Badges con bordes redondeados */
-.badge {
+/* --------------------------------------------------------------------------
+   Hero Principal (Atmósfera e Integración)
+   -------------------------------------------------------------------------- */
+.hero-section {
+    min-height: 85vh;
+    padding-top: 4.5rem;
+    padding-bottom: 4.5rem;
+    background-color: var(--gym-bg-base);
+    overflow: hidden;
+}
+
+.hero-bg {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center right;
+    z-index: 1;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    /* Degradado horizontal suave con sutil matiz frío */
+    background: linear-gradient(
+        90deg,
+        rgba(9, 8, 13, 0.98) 0%,
+        rgba(9, 8, 13, 0.92) 36%,
+        rgba(9, 8, 13, 0.65) 65%,
+        rgba(9, 8, 13, 0.35) 100%
+    );
+    z-index: 2;
+}
+
+.hero-glow {
+    position: absolute;
+    top: 35%;
+    left: 10%;
+    width: 480px;
+    height: 480px;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 65%);
+    pointer-events: none;
+    z-index: 2;
+}
+
+.hero-badge {
+    font-size: 0.72rem;
+    color: #a78bfa !important;
+    background: rgba(139, 92, 246, 0.07);
+    border: 1px solid rgba(139, 92, 246, 0.22);
+    padding: 0.35rem 0.85rem;
+    border-radius: 20px;
+}
+
+.badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--gym-accent);
+}
+
+.hero-title {
+    font-family: var(--gym-font-heading);
+    font-size: clamp(2.4rem, 5.5vw, 4.3rem);
+    line-height: 1.05;
+    letter-spacing: -0.5px;
+    color: var(--gym-white);
+}
+
+.hero-subtitle {
+    font-size: clamp(1rem, 1.8vw, 1.2rem);
+    color: var(--gym-text-secondary);
+    max-width: 530px;
+    line-height: 1.65;
+}
+
+/* --------------------------------------------------------------------------
+   Secciones y Títulos
+   -------------------------------------------------------------------------- */
+.gym-section {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+}
+
+.section-title {
+    font-family: var(--gym-font-heading);
+    letter-spacing: 2px;
+    font-size: clamp(1.6rem, 3.2vw, 2.3rem);
+}
+
+.section-divider {
+    width: 42px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gym-accent), transparent);
+    opacity: 0.7;
+}
+
+/* --------------------------------------------------------------------------
+   Tarjetas de Planes (Suavizadas y con Sombra Sutil)
+   -------------------------------------------------------------------------- */
+.gym-plan-card {
+    background-color: var(--gym-bg-card);
+    border: 1px solid var(--gym-card-border);
+    border-radius: var(--gym-radius-lg);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gym-plan-card:hover {
+    border-color: var(--gym-card-border-hover);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7), 0 0 25px rgba(139, 92, 246, 0.08);
+}
+
+.plan-card-name {
+    font-family: var(--gym-font-heading);
+    font-size: 1.15rem;
+    letter-spacing: 0.8px;
+}
+
+.gym-plan-badge {
+    background-color: rgba(139, 92, 246, 0.1);
+    color: var(--gym-accent-light);
+    border: 1px solid rgba(139, 92, 246, 0.25);
+    font-size: 0.68rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 0.35rem 0.75rem;
+    font-weight: 600;
+    border-radius: 20px;
+}
+
+.plan-currency {
+    font-size: 1.4rem;
+    vertical-align: top;
+    margin-right: 2px;
     font-weight: 500;
-    letter-spacing: 0.3px;
 }
 
+.plan-amount {
+    font-family: var(--gym-font-heading);
+    font-size: 3rem;
+    line-height: 1;
+}
+
+.plan-period {
+    color: var(--gym-text-muted);
+}
+
+.plan-card-description {
+    line-height: 1.6;
+    min-height: 48px;
+}
+
+/* --------------------------------------------------------------------------
+   Tarjetas de Beneficios
+   -------------------------------------------------------------------------- */
+.gym-benefit-card {
+    background-color: var(--gym-bg-card);
+    border: 1px solid var(--gym-card-border);
+    border-radius: var(--gym-radius-lg);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.gym-benefit-card:hover {
+    border-color: rgba(139, 92, 246, 0.3);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+}
+
+.gym-benefit-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    background-color: rgba(139, 92, 246, 0.08);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-radius: var(--gym-radius-md);
+    color: var(--gym-accent-light);
+}
+
+/* --------------------------------------------------------------------------
+   Pantalla de Login con Imagen de Fondo Integrada
+   -------------------------------------------------------------------------- */
+.login-page-body {
+    overflow-x: hidden;
+}
+
+.login-wrapper {
+    min-height: calc(100vh - 75px);
+    overflow: hidden;
+    position: relative;
+}
+
+.login-bg-media {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.18;
+    filter: blur(2px) grayscale(20%);
+    z-index: 1;
+}
+
+.login-bg-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+        circle at center,
+        rgba(15, 14, 21, 0.82) 0%,
+        rgba(9, 8, 13, 0.96) 80%,
+        #09080d 100%
+    );
+    z-index: 1;
+}
+
+.login-ambient-light {
+    position: absolute;
+    top: 35%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 520px;
+    height: 520px;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.07) 0%, transparent 68%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Tarjeta de Login (Elegante Glassmorphism Discreto) */
+.gym-auth-card {
+    background: rgba(20, 19, 27, 0.88);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(139, 92, 246, 0.18);
+    border-radius: var(--gym-radius-lg);
+    box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 35px rgba(139, 92, 246, 0.06);
+}
+
+.gym-auth-card .form-control {
+    background-color: #191823;
+    border: 1px solid #2d2a3a;
+    color: var(--gym-white);
+    font-size: 0.95rem;
+    border-radius: 0 var(--gym-radius-sm) var(--gym-radius-sm) 0;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.gym-auth-card .form-control:focus {
+    background-color: #1e1d2a;
+    border-color: var(--gym-accent);
+    color: var(--gym-white);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.18);
+}
+
+.gym-input-group .input-group-text {
+    background-color: #191823;
+    border: 1px solid #2d2a3a;
+    border-right: none;
+    color: var(--gym-text-secondary);
+    border-radius: var(--gym-radius-sm) 0 0 var(--gym-radius-sm);
+}
+
+.gym-input-group .form-control {
+    border-left: none;
+}
+
+.gym-alert-danger {
+    background-color: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    color: #fca5a5;
+    border-radius: var(--gym-radius-sm);
+}
+
+.gym-link-accent {
+    color: var(--gym-accent-light);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.gym-link-accent:hover {
+    color: var(--gym-white);
+    text-decoration: underline;
+}
+
+/* --------------------------------------------------------------------------
+   Dashboard & Gestión (Preservación del Panel Existente)
+   -------------------------------------------------------------------------- */
+.gym-dash-header {
+    background-color: var(--gym-bg-card);
+    border: 1px solid var(--gym-card-border);
+    border-radius: var(--gym-radius-lg);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+
+.gym-dash-card {
+    background-color: var(--gym-bg-card);
+    border: 1px solid var(--gym-card-border);
+    border-radius: var(--gym-radius-lg);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+    transition: border-color 0.25s ease, transform 0.25s ease;
+}
+
+.gym-dash-card:hover {
+    border-color: rgba(139, 92, 246, 0.25);
+    transform: translateY(-2px);
+}
+
+.gym-dash-icon-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background-color: rgba(139, 92, 246, 0.08);
+    border: 1px solid rgba(139, 92, 246, 0.18);
+    border-radius: var(--gym-radius-md);
+    color: var(--gym-accent-light);
+}
+
+.gym-badge-role {
+    display: inline-block;
+    padding: 0.45rem 0.95rem;
+    font-family: var(--gym-font-heading);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    background-color: #1a1924;
+    border: 1px solid rgba(139, 92, 246, 0.25);
+    color: var(--gym-accent-light);
+    border-radius: 20px;
+}
+
+.gym-badge-role-nav {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    background-color: #1a1924;
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    color: var(--gym-accent-light);
+    border-radius: 12px;
+}
+
+.gym-btn-disabled {
+    background-color: #14131c !important;
+    border: 1px solid #23212c !important;
+    color: #64748b !important;
+    font-size: 0.8rem;
+    letter-spacing: 1.2px;
+    border-radius: var(--gym-radius-sm);
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+/* --------------------------------------------------------------------------
+   Footer Minimalista
+   -------------------------------------------------------------------------- */
+.gym-footer {
+    background-color: var(--gym-bg-base);
+    border-top: 1px solid rgba(139, 92, 246, 0.1) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Compatibilidad con Formularios y Páginas Internas (Preservación)
+   -------------------------------------------------------------------------- */
+.form-control:focus, .form-select:focus {
+    border-color: var(--gym-accent);
+    box-shadow: 0 0 0 0.2rem rgba(139, 92, 246, 0.15);
+}
+
+/* --------------------------------------------------------------------------
+   Adaptaciones Responsive para Móviles
+   -------------------------------------------------------------------------- */
+@media (max-width: 767.98px) {
+    .hero-section {
+        min-height: 75vh;
+        padding-top: 3.5rem;
+        padding-bottom: 3.5rem;
+    }
+
+    .hero-bg {
+        background-position: center;
+    }
+
+    .hero-overlay {
+        background: linear-gradient(
+            180deg,
+            rgba(9, 8, 13, 0.94) 0%,
+            rgba(9, 8, 13, 0.9) 100%
+        );
+    }
+
+    .hero-title {
+        font-size: 2.25rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+
+    .plan-card-description {
+        min-height: auto;
+    }
+
+    .login-wrapper {
+        min-height: auto;
+        padding-top: 2rem !important;
+        padding-bottom: 2rem !important;
+    }
+}

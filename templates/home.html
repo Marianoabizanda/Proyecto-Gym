@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}GYM MANAGER — Entrená. Superate.{% endblock %}
+
+{% block body_class %}bg-gym-dark text-white{% endblock %}
+
+{% block full_width_content %}
+<!-- Contenedor de mensajes flash si existen -->
+{% if messages %}
+    <div class="container pt-3">
+        {% include 'includes/messages.html' %}
+    </div>
+{% endif %}
+
+<!-- ============================================================
+     HERO PRINCIPAL
+     ============================================================ -->
+<section class="hero-section position-relative d-flex align-items-center">
+    <!-- Imagen de fondo optimizada y overlay de atmósfera e integración -->
+    <div class="hero-bg" style="background-image: url('{% static 'images/Mancuerna de acero en sombras.png' %}');"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-glow"></div>
+
+    <div class="container position-relative z-2">
+        <div class="row">
+            <div class="col-12 col-md-9 col-lg-7 col-xl-6 text-start">
+                <span class="hero-badge text-uppercase tracking-widest d-inline-flex align-items-center mb-3">
+                    <span class="badge-dot me-2"></span>
+                    Centro de Entrenamiento
+                </span>
+                <h1 class="hero-title text-uppercase fw-black mb-3">
+                    ENTRENÁ.<br>
+                    SUPERATE.
+                </h1>
+                <p class="hero-subtitle text-secondary mb-4 pb-2">
+                    Tu espacio para entrenar, progresar y alcanzar tus objetivos con equipamiento de nivel y seguimiento constante.
+                </p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="#planes" class="btn gym-btn-primary px-4 py-3 text-uppercase fw-bold">
+                        VER PLANES
+                    </a>
+                    <a href="{% url 'accounts:login' %}" class="btn gym-btn-outline px-4 py-3 text-uppercase fw-bold">
+                        INGRESAR
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     SECCIÓN NUESTROS PLANES
+     ============================================================ -->
+<section id="planes" class="gym-section bg-gym-black border-top border-dark-subtle">
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <span class="text-uppercase tracking-widest text-accent-subtle small fw-semibold d-block mb-2">Membresías</span>
+            <h2 class="section-title text-uppercase fw-extrabold text-white">NUESTROS PLANES</h2>
+            <div class="section-divider mx-auto my-3"></div>
+            <p class="text-secondary small max-w-600 mx-auto">
+                Elegí la opción que mejor se adapte a tu ritmo y objetivos de entrenamiento.
+            </p>
+        </div>
+
+        {% if plans %}
+            <div class="row g-4 justify-content-center">
+                {% for plan in plans %}
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="gym-plan-card h-100 d-flex flex-column justify-content-between p-4 p-lg-5">
+                            <div>
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h3 class="plan-card-name text-uppercase fw-bold text-white mb-0">
+                                        {{ plan.name }}
+                                    </h3>
+                                    <span class="badge gym-plan-badge">Activo</span>
+                                </div>
+
+                                <div class="plan-card-price my-4">
+                                    <span class="plan-currency text-secondary">$</span>
+                                    <span class="plan-amount text-white fw-black">{{ plan.price|floatformat:0 }}</span>
+                                    <span class="plan-period text-secondary small d-block mt-1">
+                                        / Cobertura por {{ plan.duration_days }} días
+                                    </span>
+                                </div>
+
+                                {% if plan.description %}
+                                    <p class="plan-card-description text-secondary small">
+                                        {{ plan.description }}
+                                    </p>
+                                {% else %}
+                                    <p class="plan-card-description text-secondary small">
+                                        Acceso completo a nuestras instalaciones y equipamiento en el período contratado.
+                                    </p>
+                                {% endif %}
+                            </div>
+
+                            <div class="mt-4 pt-3 border-top border-dark-subtle">
+                                <a href="{% url 'accounts:login' %}" class="btn gym-btn-card w-100 text-uppercase fw-semibold py-2">
+                                    Elegir Plan
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="row justify-content-center">
+                <div class="col-12 col-md-8 col-lg-6 text-center py-5">
+                    <div class="p-4 gym-plan-card">
+                        <i class="bi bi-calendar2-check display-6 text-secondary d-block mb-3"></i>
+                        <h4 class="text-white fw-bold mb-2">Próximamente</h4>
+                        <p class="text-secondary small mb-0">
+                            Estamos configurando los nuevos planes de entrenamiento. Consultá en recepción o iniciá sesión para más información.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- ============================================================
+     SECCIÓN BENEFICIOS: ENTRENÁ A TU MANERA
+     ============================================================ -->
+<section class="gym-section bg-gym-darker border-top border-dark-subtle py-5">
+    <div class="container py-4">
+        <div class="text-center mb-5">
+            <span class="text-uppercase tracking-widest text-accent-subtle small fw-semibold d-block mb-2">Beneficios</span>
+            <h2 class="section-title text-uppercase fw-extrabold text-white">ENTRENÁ A TU MANERA</h2>
+            <div class="section-divider mx-auto my-3"></div>
+            <p class="text-secondary small max-w-600 mx-auto">
+                Instalaciones diseñadas para potenciar tu rendimiento con seguimiento integral.
+            </p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            <!-- Beneficio 1: Musculación -->
+            <div class="col-12 col-md-4">
+                <div class="gym-benefit-card h-100 p-4 text-center text-md-start">
+                    <div class="gym-benefit-icon mb-3">
+                        <i class="bi bi-lightning-charge-fill fs-4"></i>
+                    </div>
+                    <h4 class="text-white fw-bold text-uppercase fs-5 mb-2">Musculación</h4>
+                    <p class="text-secondary small mb-0">
+                        Sector completo de peso libre, mancuernas, barras olímpicas y máquinas de sobrecarga para fuerza e hipertrofia.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Beneficio 2: Entrenamiento funcional -->
+            <div class="col-12 col-md-4">
+                <div class="gym-benefit-card h-100 p-4 text-center text-md-start">
+                    <div class="gym-benefit-icon mb-3">
+                        <i class="bi bi-heart-pulse-fill fs-4"></i>
+                    </div>
+                    <h4 class="text-white fw-bold text-uppercase fs-5 mb-2">Entrenamiento funcional</h4>
+                    <p class="text-secondary small mb-0">
+                        Circuitos dinámicos de alta intensidad orientados a mejorar tu agilidad, resistencia cardiovascular y movilidad.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Beneficio 3: Seguimiento de membresía -->
+            <div class="col-12 col-md-4">
+                <div class="gym-benefit-card h-100 p-4 text-center text-md-start">
+                    <div class="gym-benefit-icon mb-3">
+                        <i class="bi bi-shield-check fs-4"></i>
+                    </div>
+                    <h4 class="text-white fw-bold text-uppercase fs-5 mb-2">Seguimiento de membresía</h4>
+                    <p class="text-secondary small mb-0">
+                        Control digital y transparente de tu cuota, días restantes de cobertura y comprobantes desde tu panel de socio.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

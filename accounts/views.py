@@ -7,17 +7,23 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, TemplateView, UpdateView
 
+from memberships.models import Plan
 from .forms import CustomAuthenticationForm, MemberRegistrationForm, UserProfileForm
 from .models import CustomUser
 
 
-class HomeRedirectView(View):
-    """Redirige según el estado de la sesión."""
+class HomeView(TemplateView):
+    """Página pública de inicio de Proyecto Gym con exhibición de planes activos."""
 
-    def get(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            return redirect('accounts:dashboard')
-        return redirect('accounts:login')
+    template_name = 'home.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        try:
+            context['plans'] = Plan.objects.filter(is_active=True).order_by('price')
+        except Exception:
+            context['plans'] = []
+        return context
 
 
 class CustomLoginView(LoginView):
