@@ -13,18 +13,34 @@
         <div class="collapse navbar-collapse" id="navbarMain">
             <!-- Enlaces Principales de Navegación -->
             <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                <li class="nav-item">
-                    <a class="nav-link gym-nav-link" href="{% url 'accounts:home' %}">Inicio</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link gym-nav-link" href="{% url 'accounts:home' %}#planes">Planes</a>
-                </li>
                 {% if user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link gym-nav-link" href="{% url 'accounts:dashboard' %}">
                             <i class="bi bi-speedometer2 me-1"></i> Dashboard
                         </a>
                     </li>
+                    {% if user.is_admin_role %}
+                        <li class="nav-item">
+                            <a class="nav-link gym-nav-link" href="{% url 'memberships:plan_list' %}">Planes</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link gym-nav-link" href="{% url 'memberships:member_list' %}">Socios</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link gym-nav-link" href="{% url 'memberships:payment_list' %}">Pagos</a>
+                        </li>
+                    {% elif user.is_professor_role %}
+                        <li class="nav-item">
+                            <a class="nav-link gym-nav-link" href="{% url 'memberships:plan_list' %}">Planes</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link gym-nav-link" href="{% url 'memberships:member_list' %}">Socios</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link gym-nav-link" href="{% url 'memberships:my_membership' %}">Mi Membresía</a>
+                        </li>
+                    {% endif %}
                     {% if user.is_staff %}
                     <li class="nav-item">
                         <a class="nav-link gym-nav-link text-secondary" href="{% url 'admin:index' %}" target="_blank">
@@ -32,6 +48,13 @@
                         </a>
                     </li>
                     {% endif %}
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link gym-nav-link" href="{% url 'accounts:home' %}">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link gym-nav-link" href="{% url 'accounts:home' %}#planes">Planes</a>
+                    </li>
                 {% endif %}
             </ul>
 
@@ -43,9 +66,9 @@
                             <i class="bi bi-person-circle me-1 text-secondary"></i>
                             {{ user.get_full_name|default:user.username }}
                         </span>
-                        {% if user.role == 'ADMIN' %}
+                        {% if user.is_admin_role %}
                             <span class="gym-badge-role-nav">Admin</span>
-                        {% elif user.role == 'PROFESOR' %}
+                        {% elif user.is_professor_role %}
                             <span class="gym-badge-role-nav">Profesor</span>
                         {% else %}
                             <span class="gym-badge-role-nav">Socio</span>

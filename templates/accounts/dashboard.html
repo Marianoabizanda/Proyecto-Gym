@@ -77,17 +77,26 @@
                     </div>
                     <div>
                         <h5 class="fw-bold text-white mb-0 text-uppercase fs-6">Planes y Membresías</h5>
-                        <small class="text-secondary">Módulo de gestión comercial</small>
+                        <small class="text-secondary">Gestión comercial y cobranzas</small>
                     </div>
                 </div>
                 <p class="text-secondary small mb-0">
-                    En la siguiente fase se integrará el ABM de planes, registro de cuotas y estados de socios.
+                    Administración de planes de entrenamiento, padrón de socios con control de cobertura y auditoría de cobros.
                 </p>
             </div>
-            <div class="mt-4 pt-3 border-top border-dark-subtle">
-                <button class="btn gym-btn-disabled w-100 text-uppercase py-2" disabled>
-                    <i class="bi bi-lock me-1"></i> En planificación
-                </button>
+            <div class="mt-4 pt-3 border-top border-dark-subtle d-flex flex-column gap-2">
+                <a href="{% url 'memberships:plan_list' %}" class="btn gym-btn-card w-100 text-uppercase fw-semibold py-2 text-start px-3 d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-card-checklist me-2"></i> Planes de Entrenamiento</span>
+                    <i class="bi bi-chevron-right text-secondary small"></i>
+                </a>
+                <a href="{% url 'memberships:member_list' %}" class="btn gym-btn-card w-100 text-uppercase fw-semibold py-2 text-start px-3 d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-people me-2"></i> Padrón de Socios</span>
+                    <i class="bi bi-chevron-right text-secondary small"></i>
+                </a>
+                <a href="{% url 'memberships:payment_list' %}" class="btn gym-btn-card w-100 text-uppercase fw-semibold py-2 text-start px-3 d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-cash-stack me-2"></i> Auditoría de Pagos</span>
+                    <i class="bi bi-chevron-right text-secondary small"></i>
+                </a>
             </div>
         </div>
     </div>
@@ -173,20 +182,20 @@
             <div>
                 <div class="d-flex align-items-center mb-3">
                     <div class="gym-dash-icon-box me-3">
-                        <i class="bi bi-check2-circle fs-4"></i>
+                        <i class="bi bi-award fs-4"></i>
                     </div>
                     <div>
-                        <h5 class="fw-bold text-white mb-0 text-uppercase fs-6">Estado de Membresía</h5>
-                        <small class="text-secondary">Información de socio</small>
+                        <h5 class="fw-bold text-white mb-0 text-uppercase fs-6">Mi Membresía</h5>
+                        <small class="text-secondary">Consulta de cobertura y pagos</small>
                     </div>
                 </div>
                 <p class="text-secondary small mb-0">
-                    Tu cuenta está activa con rol de <strong>Socio</strong>. En la Fase 2 podrás ver el vencimiento de tu cuota y tus recibos de pago.
+                    Accedé al detalle de tu plan contratado, fecha de vencimiento, días restantes de cobertura e historial de recibos abonados.
                 </p>
             </div>
             <div class="mt-4 pt-3 border-top border-dark-subtle">
-                <a href="{% url 'accounts:profile' %}" class="btn gym-btn-outline w-100 text-uppercase fw-semibold py-2">
-                    <i class="bi bi-person-gear me-1"></i> Ver mi información de contacto
+                <a href="{% url 'memberships:my_membership' %}" class="btn gym-btn-primary w-100 text-uppercase fw-semibold py-2">
+                    <i class="bi bi-award me-1"></i> Ver Mi Membresía
                 </a>
             </div>
         </div>
