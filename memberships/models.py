@@ -100,17 +100,19 @@ class Subscription(models.Model):
 
     @property
     def effective_status(self):
-        """Devuelve el estado dinámico: CANCELADA, ACTIVA o VENCIDA según la fecha actual."""
+        """Devuelve el estado dinámico: CANCELADA, FUTURA, ACTIVA o VENCIDA según la fecha actual."""
         if self.status == self.Status.CANCELADA:
             return 'CANCELADA'
         today = timezone.localdate()
+        if self.start_date and self.start_date > today:
+            return 'FUTURA'
         if self.end_date and self.end_date < today:
             return 'VENCIDA'
         return 'ACTIVA'
 
     @property
     def is_current(self):
-        """Verifica si la suscripción está vigente (activa administrativamente y no vencida)."""
+        """Verifica si la suscripción está vigente hoy (start_date <= today <= end_date y no cancelada)."""
         return self.effective_status == 'ACTIVA'
 
     @property

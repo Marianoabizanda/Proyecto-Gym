@@ -144,6 +144,14 @@ class MemberListView(StaffOrProfessorRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['search_query'] = self.request.GET.get('q', '')
+
+        # Asigna la suscripción vigente a cada socio de la página en memoria usando el prefetch
+        for member in context['members']:
+            member.current_subscription = next(
+                (s for s in member.subscriptions.all() if s.is_current),
+                None
+            )
+
         return context
 
 

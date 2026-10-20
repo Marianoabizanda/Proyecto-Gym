@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}Planes de Entrenamiento — GYM MANAGER{% endblock %}
+
+{% block body_class %}bg-gym-dark text-white{% endblock %}
+
+{% block content %}
+<div class="row g-4 my-2">
+    <!-- Encabezado de la Sección -->
+    <div class="col-12">
+        <div class="gym-dash-header p-4 p-lg-5">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                <div>
+                    <span class="text-uppercase tracking-widest text-secondary small fw-semibold d-block mb-1">
+                        Catálogo Comercial
+                    </span>
+                    <h2 class="text-uppercase fw-extrabold text-white mb-1 fs-3">
+                        Planes de Entrenamiento
+                    </h2>
+                    <p class="text-secondary small mb-0">
+                        Configuración de membresías, tarifas y duraciones de los servicios.
+                    </p>
+                </div>
+                {% if request.user.is_admin_role %}
+                <div>
+                    <a href="{% url 'memberships:plan_create' %}" class="btn gym-btn-primary fw-semibold py-2 px-3">
+                        <i class="bi bi-plus-lg me-1"></i> Nuevo Plan
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Catálogo de Planes -->
+    {% if plans %}
+        {% for plan in plans %}
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="gym-plan-card p-4 h-100 d-flex flex-column justify-content-between">
+                <div>
+                    <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
+                        <h4 class="plan-card-name text-white fw-bold mb-0">
+                            {{ plan.name }}
+                        </h4>
+                        <div class="d-flex align-items-center gap-1 flex-shrink-0">
+                            <span class="gym-plan-badge">
+                                {{ plan.duration_days }} días
+                            </span>
+                            {% if not plan.is_active %}
+                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle small">
+                                Inactivo
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="my-3">
+                        <span class="plan-currency text-secondary">$</span>
+                        <span class="plan-amount text-white fw-extrabold">{{ plan.price }}</span>
+                        <span class="plan-period text-secondary small"> / {{ plan.duration_days }} días</span>
+                    </div>
+
+                    <p class="plan-card-description text-secondary small mb-0">
+                        {{ plan.description|default:"Sin descripción detallada disponible para este plan." }}
+                    </p>
+                </div>
+
+                {% if request.user.is_admin_role %}
+                <div class="mt-4 pt-3 border-top border-dark-subtle">
+                    <a href="{% url 'memberships:plan_update' plan.pk %}" class="btn gym-btn-card w-100 py-2">
+                        <i class="bi bi-pencil-square me-1"></i> Editar Plan
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-12">
+            <div class="gym-dash-card p-5 text-center">
+                <div class="gym-dash-icon-box mx-auto mb-3">
+                    <i class="bi bi-card-list fs-4"></i>
+                </div>
+                <h5 class="text-white fw-bold mb-2">No hay planes registrados</h5>
+                <p class="text-secondary small mb-3">
+                    Aún no se han configurado planes de membresía disponibles.
+                </p>
+                {% if request.user.is_admin_role %}
+                <a href="{% url 'memberships:plan_create' %}" class="btn gym-btn-primary fw-semibold py-2 px-3">
+                    <i class="bi bi-plus-lg me-1"></i> Crear Primer Plan
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+

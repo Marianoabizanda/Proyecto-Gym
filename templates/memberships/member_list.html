@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+
+{% block title %}Padrón de Socios — GYM MANAGER{% endblock %}
+
+{% block body_class %}bg-gym-dark text-white{% endblock %}
+
+{% block content %}
+<div class="row g-4 my-2">
+    <!-- Encabezado de la Sección -->
+    <div class="col-12">
+        <div class="gym-dash-header p-4 p-lg-5">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                <div>
+                    <span class="text-uppercase tracking-widest text-secondary small fw-semibold d-block mb-1">
+                        Gestión de Alumnos
+                    </span>
+                    <h2 class="text-uppercase fw-extrabold text-white mb-1 fs-3">
+                        Padrón de Socios
+                    </h2>
+                    <p class="text-secondary small mb-0">
+                        Consulta de socios registrados, estado de sus coberturas y fichas individuales.
+                    </p>
+                </div>
+                {% if request.user.is_admin_role %}
+                <div>
+                    <a href="{% url 'memberships:subscription_create' %}" class="btn gym-btn-primary fw-semibold py-2 px-3">
+                        <i class="bi bi-plus-lg me-1"></i> Nueva Suscripción
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Buscador de Socios -->
+    <div class="col-12">
+        <form method="get" class="row g-2 align-items-center">
+            <div class="col-12 col-md-6 col-lg-5">
+                <div class="input-group" data-bs-theme="dark">
+                    <span class="input-group-text bg-dark border-secondary-subtle text-secondary">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input type="text"
+                           name="q"
+                           class="form-control border-secondary-subtle"
+                           placeholder="Buscar por nombre, apellido, usuario o DNI..."
+                           value="{{ search_query }}">
+                    {% if search_query %}
+                    <a href="{% url 'memberships:member_list' %}" class="btn btn-outline-secondary" title="Limpiar búsqueda">
+                        <i class="bi bi-x-lg"></i>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn gym-btn-outline py-2 px-3">
+                    Buscar
+                </button>
+            </div>
+            {% if search_query %}
+            <div class="col-12">
+                <small class="text-secondary">
+                    Mostrando resultados para: <strong class="text-white">"{{ search_query }}"</strong>
+                </small>
+            </div>
+            {% endif %}
+        </form>
+    </div>
+
+    <!-- Tabla de Socios -->
+    <div class="col-12">
+        <div class="gym-dash-card overflow-hidden" data-bs-theme="dark">
+            {% if members %}
+            <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle gym-table mb-0">
+                    <thead>
+                        <tr class="border-bottom border-dark-subtle">
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3 ps-4">Socio</th>
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3">DNI / Contacto</th>
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3">Plan Actual</th>
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3">Estado Membresía</th>
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3 text-end pe-4">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for member in members %}
+                        <tr class="border-bottom border-dark-subtle">
+                            <!-- Datos del Socio -->
+                            <td class="ps-4 py-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="gym-dash-icon-box me-3 flex-shrink-0" style="width: 40px; height: 40px;">
+                                        <i class="bi bi-person fs-5"></i>
+                                    </div>
+                                    <div>
+                                        <a href="{% url 'memberships:member_detail' member.pk %}" class="text-white fw-bold text-decoration-none">
+                                            {{ member.get_full_name|default:member.username }}
+                                        </a>
+                                        <span class="text-secondary small d-block">@{{ member.username }}</span>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- DNI / Teléfono -->
+                            <td class="py-3">
+                                <div class="text-white small">
+                                    <i class="bi bi-card-text text-secondary me-1"></i>
+                                    {{ member.dni|default:"S/D" }}
+                                </div>
+                                <div class="text-secondary small">
+                                    <i class="bi bi-telephone text-secondary me-1"></i>
+                                    {{ member.phone|default:"Sin teléfono" }}
+                                </div>
+                            </td>
+
+                            <!-- Plan Actual -->
+                            <td class="py-3">
+                                {% if member.current_subscription %}
+                                    <span class="text-white fw-semibold small d-block">{{ member.current_subscription.plan.name }}</span>
+                                    <span class="text-secondary small">Vence: {{ member.current_subscription.end_date|date:"d/m/Y" }}</span>
+                                {% else %}
+                                    <span class="text-secondary small">Sin plan activo</span>
+                                {% endif %}
+                            </td>
+
+                            <!-- Estado de la Membresía -->
+                            <td class="py-3">
+                                {% if member.current_subscription %}
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                        <i class="bi bi-check-circle me-1"></i> Activa
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">
+                                        Sin membresía activa
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <!-- Acciones -->
+                            <td class="pe-4 py-3 text-end">
+                                <a href="{% url 'memberships:member_detail' member.pk %}" class="btn gym-btn-card btn-sm py-1 px-3">
+                                    <i class="bi bi-eye me-1"></i> Ficha
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Paginación -->
+            {% if is_paginated %}
+            <div class="p-3 border-top border-dark-subtle d-flex justify-content-between align-items-center">
+                <span class="text-secondary small">
+                    Página {{ page_obj.number }} de {{ paginator.num_pages }} ({{ paginator.count }} socios)
+                </span>
+                <nav aria-label="Navegación de páginas">
+                    <ul class="pagination pagination-sm mb-0">
+                        {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link bg-dark text-white border-secondary-subtle" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}">
+                                Anterior
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link bg-dark text-secondary border-secondary-subtle">Anterior</span>
+                        </li>
+                        {% endif %}
+
+                        <li class="page-item active">
+                            <span class="page-link bg-light text-dark border-secondary-subtle fw-bold">{{ page_obj.number }}</span>
+                        </li>
+
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link bg-dark text-white border-secondary-subtle" href="?page={{ page_obj.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}">
+                                Siguiente
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link bg-dark text-secondary border-secondary-subtle">Siguiente</span>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+            {% endif %}
+
+            {% else %}
+            <!-- Estado Vacío -->
+            <div class="p-5 text-center">
+                <div class="gym-dash-icon-box mx-auto mb-3">
+                    <i class="bi bi-people fs-4"></i>
+                </div>
+                <h5 class="text-white fw-bold mb-2">No se encontraron socios</h5>
+                <p class="text-secondary small mb-0">
+                    {% if search_query %}
+                        No hay socios que coincidan con el término de búsqueda ingresado.
+                    {% else %}
+                        Actualmente no hay usuarios registrados con el rol de Socio.
+                    {% endif %}
+                </p>
+                {% if search_query %}
+                <div class="mt-3">
+                    <a href="{% url 'memberships:member_list' %}" class="btn gym-btn-outline btn-sm py-2 px-3">
+                        Ver todos los socios
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+

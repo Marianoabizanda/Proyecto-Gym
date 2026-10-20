@@ -1,0 +1,405 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ member.get_full_name|default:member.username }} — Ficha de Socio — GYM MANAGER
+{% endblock %}
+
+{% block body_class %}bg-gym-dark text-white{% endblock %}
+
+{% block content %}
+<div class="row g-4 my-2">
+    <!-- Retorno al Padrón -->
+    <div class="col-12">
+        <a href="{% url 'memberships:member_list' %}" class="gym-link-accent small text-decoration-none">
+            <i class="bi bi-arrow-left me-1"></i> Volver al padrón de socios
+        </a>
+    </div>
+
+    <!-- Encabezado del Socio -->
+    <div class="col-12">
+        <div class="gym-dash-header p-4 p-lg-5">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                <div class="d-flex align-items-center">
+                    <div class="gym-dash-icon-box me-3 flex-shrink-0" style="width: 54px; height: 54px;">
+                        <i class="bi bi-person fs-3"></i>
+                    </div>
+                    <div>
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <h2 class="text-uppercase fw-extrabold text-white mb-0 fs-3">
+                                {{ member.get_full_name|default:member.username }}
+                            </h2>
+                            <span class="gym-badge-role">Socio</span>
+                        </div>
+                        <p class="text-secondary small mb-0">
+                            Usuario: <strong class="text-white">@{{ member.username }}</strong>
+                            {% if member.dni %} &bull; DNI: <strong class="text-white">{{ member.dni }}</strong>{% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                {% if request.user.is_admin_role %}
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="{% url 'memberships:subscription_create' %}?member={{ member.pk }}" class="btn gym-btn-primary fw-semibold py-2 px-3">
+                        <i class="bi bi-plus-lg me-1"></i> Nueva Suscripción
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Fila 1: Datos Personales y Ficha Médica -->
+    <div class="col-12 col-lg-6">
+        <div class="gym-dash-card p-4 h-100">
+            <div class="d-flex align-items-center mb-3">
+                <div class="gym-dash-icon-box me-3" style="width: 40px; height: 40px;">
+                    <i class="bi bi-person-lines-fill fs-5"></i>
+                </div>
+                <h5 class="fw-bold text-white mb-0 fs-6 text-uppercase">
+                    Información Personal
+                </h5>
+            </div>
+            <div class="row g-3 small">
+                <div class="col-6">
+                    <span class="text-secondary d-block">Nombre completo:</span>
+                    <strong class="text-white">{{ member.first_name }} {{ member.last_name|default:"-" }}</strong>
+                </div>
+                <div class="col-6">
+                    <span class="text-secondary d-block">DNI:</span>
+                    <strong class="text-white">{{ member.dni|default:"No informado" }}</strong>
+                </div>
+                <div class="col-6">
+                    <span class="text-secondary d-block">Teléfono:</span>
+                    <span class="text-white">{{ member.phone|default:"No informado" }}</span>
+                </div>
+                <div class="col-6">
+                    <span class="text-secondary d-block">Correo electrónico:</span>
+                    <span class="text-white">{{ member.email|default:"No informado" }}</span>
+                </div>
+                <div class="col-12 pt-2 border-top border-dark-subtle">
+                    <span class="text-secondary d-block">Fecha de alta en el sistema:</span>
+                    <span class="text-white">{{ member.date_joined|date:"d/m/Y H:i" }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+        <div class="gym-dash-card p-4 h-100">
+            <div class="d-flex align-items-center mb-3">
+                <div class="gym-dash-icon-box me-3" style="width: 40px; height: 40px;">
+                    <i class="bi bi-heart-pulse fs-5"></i>
+                </div>
+                <h5 class="fw-bold text-white mb-0 fs-6 text-uppercase">
+                    Ficha Médica y Salud
+                </h5>
+            </div>
+            {% with profile=member.member_profile %}
+            <div class="row g-3 small">
+                <div class="col-6">
+                    <span class="text-secondary d-block">Apto físico:</span>
+                    {% if profile and profile.medical_certificate %}
+                        <span class="badge bg-success-subtle text-success border border-success-subtle">
+                            <i class="bi bi-check-circle me-1"></i> Presentado
+                        </span>
+                        {% if profile.medical_certificate_date %}
+                            <small class="text-secondary d-block mt-1">{{ profile.medical_certificate_date|date:"d/m/Y" }}</small>
+                        {% endif %}
+                    {% else %}
+                        <span class="badge bg-warning-subtle text-warning border border-warning-subtle">
+                            <i class="bi bi-exclamation-triangle me-1"></i> Pendiente
+                        </span>
+                    {% endif %}
+                </div>
+                <div class="col-6">
+                    <span class="text-secondary d-block">Fecha de nacimiento:</span>
+                    <span class="text-white">{{ profile.birth_date|date:"d/m/Y"|default:"No informada" }}</span>
+                </div>
+                <div class="col-12">
+                    <span class="text-secondary d-block">Contacto de emergencia:</span>
+                    <span class="text-white">
+                        {{ profile.emergency_contact_name|default:"No informado" }}
+                        {% if profile.emergency_contact_phone %}
+                            &bull; {{ profile.emergency_contact_phone }}
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="col-12 pt-2 border-top border-dark-subtle">
+                    <span class="text-secondary d-block">Observaciones médicas:</span>
+                    <span class="text-white">{{ profile.notes|default:"Sin observaciones registradas." }}</span>
+                </div>
+            </div>
+            {% endwith %}
+        </div>
+    </div>
+
+    <!-- Fila 2: Suscripción Vigente -->
+    <div class="col-12">
+        <div class="gym-dash-card p-4 p-md-5">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+                <div class="d-flex align-items-center">
+                    <div class="gym-dash-icon-box me-3">
+                        <i class="bi bi-award fs-4"></i>
+                    </div>
+                    <div>
+                        <span class="text-uppercase tracking-widest text-secondary small fw-semibold d-block">
+                            Estado Actual
+                        </span>
+                        <h4 class="text-uppercase fw-extrabold text-white mb-0 fs-5">
+                            Suscripción Vigente
+                        </h4>
+                    </div>
+                </div>
+
+                {% if current_subscription %}
+                    <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 fs-6">
+                        <i class="bi bi-check-circle me-1"></i> ACTIVA
+                    </span>
+                {% else %}
+                    <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-3 py-2 fs-6">
+                        Sin membresía activa
+                    </span>
+                {% endif %}
+            </div>
+
+            {% if current_subscription %}
+                <div class="row g-4 align-items-center">
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <span class="text-secondary small d-block mb-1">Plan contratado</span>
+                        <h3 class="text-white fw-extrabold mb-1 fs-4">
+                            {{ current_subscription.plan.name }}
+                        </h3>
+                        <span class="text-accent-subtle fw-semibold small">
+                            ${{ current_subscription.plan.price }} / {{ current_subscription.plan.duration_days }} días
+                        </span>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="row g-2 small">
+                            <div class="col-6">
+                                <span class="text-secondary d-block">Fecha de inicio:</span>
+                                <strong class="text-white">{{ current_subscription.start_date|date:"d/m/Y" }}</strong>
+                            </div>
+                            <div class="col-6">
+                                <span class="text-secondary d-block">Vencimiento:</span>
+                                <strong class="text-white">{{ current_subscription.end_date|date:"d/m/Y" }}</strong>
+                            </div>
+                            <div class="col-12 mt-2">
+                                <span class="text-secondary d-block">Días restantes de cobertura:</span>
+                                <strong class="text-accent-subtle fs-6">
+                                    {{ current_subscription.days_left }} días
+                                </strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if request.user.is_admin_role %}
+                    <div class="col-12 col-lg-4">
+                        <div class="d-flex flex-column gap-2">
+                            <a href="{% url 'memberships:payment_create' %}?subscription={{ current_subscription.pk }}" class="btn gym-btn-primary fw-semibold py-2">
+                                <i class="bi bi-cash-stack me-1"></i> Registrar Cobro
+                            </a>
+                            <button type="button" class="btn gym-btn-outline py-2 text-danger border-danger-subtle" data-bs-toggle="modal" data-bs-target="#cancelSubscriptionModal">
+                                <i class="bi bi-x-circle me-1"></i> Cancelar Suscripción
+                            </button>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Modal de Confirmación para Cancelar (POST-only) -->
+                {% if request.user.is_admin_role %}
+                <div class="modal fade" id="cancelSubscriptionModal" tabindex="-1" aria-labelledby="cancelSubscriptionModalLabel" aria-hidden="true" data-bs-theme="dark">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content gym-dash-card border-secondary-subtle">
+                            <div class="modal-header border-dark-subtle">
+                                <h5 class="modal-title text-white fw-bold" id="cancelSubscriptionModalLabel">
+                                    <i class="bi bi-exclamation-triangle text-warning me-2"></i> Confirmar Cancelación
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p class="text-secondary mb-2">
+                                    ¿Estás seguro de que deseas cancelar administrativamente la suscripción de <strong class="text-white">{{ member.get_full_name|default:member.username }}</strong>?
+                                </p>
+                                <div class="p-3 bg-dark rounded border border-dark-subtle small text-white mb-2">
+                                    Plan: <strong>{{ current_subscription.plan.name }}</strong><br>
+                                    Vigencia: {{ current_subscription.start_date|date:"d/m/Y" }} al {{ current_subscription.end_date|date:"d/m/Y" }}
+                                </div>
+                                <small class="text-danger">
+                                    Esta acción marcará la suscripción como CANCELADA de inmediato.
+                                </small>
+                            </div>
+                            <div class="modal-footer border-dark-subtle">
+                                <button type="button" class="btn gym-btn-outline py-2 px-3" data-bs-dismiss="modal">
+                                    Volver
+                                </button>
+                                <form method="post" action="{% url 'memberships:subscription_cancel' current_subscription.pk %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger py-2 px-3 fw-semibold">
+                                        Sí, Cancelar Suscripción
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+            {% else %}
+                <div class="text-center py-3">
+                    <p class="text-secondary small mb-3">
+                        El socio no cuenta actualmente con ninguna suscripción activa o con cobertura vigente.
+                    </p>
+                    {% if request.user.is_admin_role %}
+                    <a href="{% url 'memberships:subscription_create' %}?member={{ member.pk }}" class="btn gym-btn-primary fw-semibold py-2 px-3">
+                        <i class="bi bi-plus-lg me-1"></i> Asignar Nueva Suscripción
+                    </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Fila 3: Historial de Suscripciones -->
+    <div class="col-12">
+        <div class="gym-dash-card overflow-hidden" data-bs-theme="dark">
+            <div class="p-4 border-bottom border-dark-subtle">
+                <div class="d-flex align-items-center">
+                    <div class="gym-dash-icon-box me-3" style="width: 38px; height: 38px;">
+                        <i class="bi bi-clock-history fs-5"></i>
+                    </div>
+                    <h5 class="fw-bold text-white mb-0 fs-6 text-uppercase">
+                        Historial de Suscripciones
+                    </h5>
+                </div>
+            </div>
+
+            {% if subscriptions %}
+            <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle gym-table mb-0">
+                    <thead>
+                        <tr class="border-bottom border-dark-subtle">
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3 ps-4">Plan</th>
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3">Período de Cobertura</th>
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3">Estado</th>
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3 text-end pe-4">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sub in subscriptions %}
+                        <tr class="border-bottom border-dark-subtle">
+                            <td class="ps-4 py-3">
+                                <strong class="text-white">{{ sub.plan.name }}</strong>
+                                <small class="text-secondary d-block">${{ sub.plan.price }}</small>
+                            </td>
+                            <td class="py-3">
+                                <span class="text-white small">
+                                    {{ sub.start_date|date:"d/m/Y" }} al {{ sub.end_date|date:"d/m/Y" }}
+                                </span>
+                            </td>
+                            <td class="py-3">
+                                {% if sub.effective_status == 'ACTIVA' %}
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                        <i class="bi bi-check-circle me-1"></i> Activa
+                                    </span>
+                                {% elif sub.effective_status == 'FUTURA' %}
+                                    <span class="badge bg-info-subtle text-info border border-info-subtle">
+                                        <i class="bi bi-clock me-1"></i> Futura
+                                    </span>
+                                {% elif sub.effective_status == 'VENCIDA' %}
+                                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle">
+                                        <i class="bi bi-clock-history me-1"></i> Vencida
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">
+                                        <i class="bi bi-x-circle me-1"></i> Cancelada
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td class="pe-4 py-3 text-end">
+                                {% if request.user.is_admin_role and sub.status != 'CANCELADA' %}
+                                <a href="{% url 'memberships:payment_create' %}?subscription={{ sub.pk }}" class="btn gym-btn-card btn-sm py-1 px-2" title="Registrar Cobro">
+                                    <i class="bi bi-cash-stack me-1"></i> Cobrar
+                                </a>
+                                {% else %}
+                                <span class="text-secondary small">-</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="p-4 text-center">
+                <p class="text-secondary small mb-0">No registra suscripciones en el historial.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Fila 4: Historial de Pagos -->
+    <div class="col-12">
+        <div class="gym-dash-card overflow-hidden" data-bs-theme="dark">
+            <div class="p-4 border-bottom border-dark-subtle">
+                <div class="d-flex align-items-center">
+                    <div class="gym-dash-icon-box me-3" style="width: 38px; height: 38px;">
+                        <i class="bi bi-receipt fs-5"></i>
+                    </div>
+                    <h5 class="fw-bold text-white mb-0 fs-6 text-uppercase">
+                        Historial de Pagos Realizados
+                    </h5>
+                </div>
+            </div>
+
+            {% if payments %}
+            <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle gym-table mb-0">
+                    <thead>
+                        <tr class="border-bottom border-dark-subtle">
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3 ps-4">Fecha</th>
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3">Plan / Suscripción</th>
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3">Monto Abonado</th>
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3">Método</th>
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3">Comprobante</th>
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3 pe-4">Cobrado por</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pay in payments %}
+                        <tr class="border-bottom border-dark-subtle">
+                            <td class="ps-4 py-3 text-white small">
+                                {{ pay.payment_date|date:"d/m/Y" }}
+                            </td>
+                            <td class="py-3">
+                                <span class="text-white small fw-semibold">{{ pay.subscription.plan.name }}</span>
+                                <small class="text-secondary d-block">Vence sub: {{ pay.subscription.end_date|date:"d/m/Y" }}</small>
+                            </td>
+                            <td class="py-3">
+                                <strong class="text-accent-subtle">${{ pay.amount }}</strong>
+                            </td>
+                            <td class="py-3 text-secondary small">
+                                {{ pay.get_payment_method_display }}
+                            </td>
+                            <td class="py-3 text-secondary small">
+                                {{ pay.receipt_number|default:"-" }}
+                            </td>
+                            <td class="pe-4 py-3 text-secondary small">
+                                {{ pay.registered_by.get_full_name|default:pay.registered_by.username|default:"-" }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="p-4 text-center">
+                <p class="text-secondary small mb-0">No se registran pagos efectuados para este socio.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
