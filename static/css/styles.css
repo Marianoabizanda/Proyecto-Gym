@@ -114,9 +114,10 @@ body {
     font-size: 0.82rem;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
+    letter-spacing: 1.2px;
     color: var(--gym-text-secondary) !important;
-    padding: 0.5rem 0.9rem !important;
+    padding: 0.45rem 0.65rem !important;
+    white-space: nowrap;
     transition: color 0.2s ease;
 }
 
@@ -558,6 +559,7 @@ body {
     border: 1px solid rgba(139, 92, 246, 0.2);
     color: var(--gym-accent-light);
     border-radius: 12px;
+    white-space: nowrap;
 }
 
 .gym-btn-disabled {
