@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+
+{% block title %}Horarios de Clases — GYM MANAGER{% endblock %}
+
+{% block body_class %}bg-gym-dark text-white{% endblock %}
+
+{% block content %}
+<div class="row g-4 my-2">
+    <!-- Encabezado de la Sección -->
+    <div class="col-12">
+        <div class="gym-dash-header p-4 p-lg-5">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                <div>
+                    <span class="text-uppercase tracking-widest text-secondary small fw-semibold d-block mb-1">
+                        Programación de Actividades
+                    </span>
+                    <h2 class="text-uppercase fw-extrabold text-white mb-1 fs-3">
+                        Horarios de Clases
+                    </h2>
+                    <p class="text-secondary small mb-0">
+                        Gestión general de horarios semanales, docentes asignados y control de cupos.
+                    </p>
+                </div>
+                <div>
+                    <a href="{% url 'classes:schedule_create' %}" class="btn gym-btn-primary fw-semibold py-2 px-3">
+                        <i class="bi bi-plus-lg me-1"></i> Nuevo Horario
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de Horarios -->
+    <div class="col-12">
+        <div class="gym-dash-card overflow-hidden" data-bs-theme="dark">
+            {% if schedules %}
+            <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle gym-table mb-0">
+                    <thead>
+                        <tr class="border-bottom border-dark-subtle">
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3 ps-4">Actividad</th>
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3">Día y Horario</th>
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3">Profesor</th>
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3">Cupo / Inscriptos</th>
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3">Estado</th>
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3 text-end pe-4">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for schedule in schedules %}
+                        <tr class="border-bottom border-dark-subtle">
+                            <!-- Actividad -->
+                            <td class="ps-4 py-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="gym-dash-icon-box me-3 flex-shrink-0" style="width: 40px; height: 40px;">
+                                        <i class="bi bi-calendar-event fs-5"></i>
+                                    </div>
+                                    <div>
+                                        <strong class="text-white d-block">{{ schedule.activity.name }}</strong>
+                                        {% if not schedule.activity.is_active %}
+                                            <span class="badge bg-warning-subtle text-warning border border-warning-subtle" style="font-size: 0.65rem;">
+                                                Disciplina pausada
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- Día y Horario -->
+                            <td class="py-3">
+                                <span class="text-white fw-semibold d-block">{{ schedule.get_day_of_week_display }}</span>
+                                <span class="text-secondary small">
+                                    <i class="bi bi-clock me-1"></i>
+                                    {{ schedule.start_time|time:"H:i" }} a {{ schedule.end_time|time:"H:i" }}
+                                </span>
+                            </td>
+
+                            <!-- Profesor -->
+                            <td class="py-3">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-person-workspace text-secondary me-2"></i>
+                                    <span class="text-white">{{ schedule.professor.get_full_name|default:schedule.professor.username }}</span>
+                                </div>
+                            </td>
+
+                            <!-- Cupo / Inscriptos -->
+                            <td class="py-3">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="text-white fw-bold">{{ schedule.enrolled_count }} / {{ schedule.capacity }}</span>
+                                    {% if schedule.is_full %}
+                                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle small">
+                                            Completo
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle small">
+                                            {{ schedule.available_capacity }} disponibles
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </td>
+
+                            <!-- Estado del Horario -->
+                            <td class="py-3">
+                                {% if schedule.is_active %}
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle small">
+                                        Activo
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle small">
+                                        Inactivo
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <!-- Acciones -->
+                            <td class="py-3 text-end pe-4">
+                                <div class="d-inline-flex gap-1">
+                                    <a href="{% url 'classes:schedule_detail' schedule.pk %}"
+                                       class="btn btn-sm gym-btn-outline"
+                                       title="Ver inscriptos y detalle">
+                                        <i class="bi bi-people me-1"></i> Inscriptos
+                                    </a>
+                                    <a href="{% url 'classes:schedule_update' schedule.pk %}"
+                                       class="btn btn-sm gym-btn-dark border border-dark-subtle text-secondary"
+                                       title="Editar horario">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="p-5 text-center">
+                <div class="gym-dash-icon-box mx-auto mb-3">
+                    <i class="bi bi-calendar-week fs-4"></i>
+                </div>
+                <h5 class="text-white fw-bold mb-2">No hay horarios de clases registrados</h5>
+                <p class="text-secondary small mb-3">
+                    Aún no se han configurado horarios semanales para las actividades.
+                </p>
+                <a href="{% url 'classes:schedule_create' %}" class="btn gym-btn-primary fw-semibold py-2 px-3">
+                    <i class="bi bi-plus-lg me-1"></i> Programar Primer Horario
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+

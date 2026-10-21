@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ schedule.activity.name }} — Detalle de Clase — GYM MANAGER
+{% endblock %}
+
+{% block body_class %}bg-gym-dark text-white{% endblock %}
+
+{% block content %}
+<div class="row g-4 my-2">
+    <!-- Navegación de retorno según Rol -->
+    <div class="col-12">
+        {% if request.user.is_admin_role %}
+            <a href="{% url 'classes:schedule_list' %}" class="gym-link-accent small text-decoration-none">
+                <i class="bi bi-arrow-left me-1"></i> Volver a Horarios
+            </a>
+        {% else %}
+            <a href="{% url 'classes:professor_schedules' %}" class="gym-link-accent small text-decoration-none">
+                <i class="bi bi-arrow-left me-1"></i> Volver a Mis Clases
+            </a>
+        {% endif %}
+    </div>
+
+    <!-- Encabezado de la Clase -->
+    <div class="col-12">
+        <div class="gym-dash-header p-4 p-lg-5">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                <div class="d-flex align-items-center">
+                    <div class="gym-dash-icon-box me-3 flex-shrink-0" style="width: 54px; height: 54px;">
+                        <i class="bi bi-calendar-check fs-3"></i>
+                    </div>
+                    <div>
+                        <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
+                            <h2 class="text-uppercase fw-extrabold text-white mb-0 fs-3">
+                                {{ schedule.activity.name }}
+                            </h2>
+                            {% if schedule.is_active %}
+                                <span class="badge bg-success-subtle text-success border border-success-subtle small">
+                                    Activo
+                                </span>
+                            {% else %}
+                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle small">
+                                    Inactivo
+                                </span>
+                            {% endif %}
+                        </div>
+                        <p class="text-secondary small mb-0">
+                            <span><i class="bi bi-calendar-event me-1"></i><strong>{{ schedule.get_day_of_week_display }}</strong></span>
+                            <span class="mx-2">&bull;</span>
+                            <span><i class="bi bi-clock me-1"></i>{{ schedule.start_time|time:"H:i" }} a {{ schedule.end_time|time:"H:i" }}</span>
+                            <span class="mx-2">&bull;</span>
+                            <span><i class="bi bi-person-workspace me-1"></i>Prof. {{ schedule.professor.get_full_name|default:schedule.professor.username }}</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Acciones exclusivas ADMIN -->
+                {% if request.user.is_admin_role %}
+                <div>
+                    <a href="{% url 'classes:schedule_update' schedule.pk %}" class="btn gym-btn-primary fw-semibold py-2 px-3">
+                        <i class="bi bi-pencil-square me-1"></i> Editar Horario
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Métricas y Cupos -->
+    <div class="col-12 col-md-4">
+        <div class="gym-dash-card p-4 text-center">
+            <span class="text-secondary small text-uppercase tracking-wider fw-semibold d-block mb-1">
+                Cupo Máximo
+            </span>
+            <span class="text-white fs-3 fw-extrabold">{{ schedule.capacity }}</span>
+            <small class="text-secondary d-block mt-1">Lugares configurados</small>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+        <div class="gym-dash-card p-4 text-center">
+            <span class="text-secondary small text-uppercase tracking-wider fw-semibold d-block mb-1">
+                Inscriptos Actuales
+            </span>
+            <span class="text-white fs-3 fw-extrabold">{{ schedule.enrolled_count }}</span>
+            <small class="text-secondary d-block mt-1">Socios registrados</small>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+        <div class="gym-dash-card p-4 text-center">
+            <span class="text-secondary small text-uppercase tracking-wider fw-semibold d-block mb-1">
+                Disponibilidad
+            </span>
+            {% if schedule.is_full %}
+                <span class="text-danger fs-3 fw-extrabold">0</span>
+                <small class="text-danger d-block mt-1">Cupo completo</small>
+            {% else %}
+                <span class="text-success fs-3 fw-extrabold">{{ schedule.available_capacity }}</span>
+                <small class="text-success d-block mt-1">Lugares libres</small>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Nómina de Alumnos Inscriptos -->
+    <div class="col-12">
+        <div class="gym-dash-card overflow-hidden" data-bs-theme="dark">
+            <div class="p-4 border-bottom border-dark-subtle d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <div class="gym-dash-icon-box me-3" style="width: 40px; height: 40px;">
+                        <i class="bi bi-people fs-5"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold text-white mb-0 fs-6 text-uppercase">
+                            Nómina de Alumnos Inscriptos
+                        </h5>
+                        <small class="text-secondary">Lista de socios que reservaron lugar en este horario</small>
+                    </div>
+                </div>
+                <span class="gym-badge-role">
+                    {{ enrollments|length }} {{ enrollments|length|pluralize:"socio,socios" }}
+                </span>
+            </div>
+
+            {% if enrollments %}
+            <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle gym-table mb-0">
+                    <thead>
+                        <tr class="border-bottom border-dark-subtle">
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3 ps-4" style="width: 50px;">#</th>
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3">Socio</th>
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3">DNI / Contacto</th>
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3 text-end pe-4">Fecha de Inscripción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for enrollment in enrollments %}
+                        <tr class="border-bottom border-dark-subtle">
+                            <td class="ps-4 py-3 text-secondary small">{{ forloop.counter }}</td>
+                            <td class="py-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="gym-dash-icon-box me-3 flex-shrink-0" style="width: 38px; height: 38px;">
+                                        <i class="bi bi-person fs-5"></i>
+                                    </div>
+                                    <div>
+                                        <strong class="text-white d-block">
+                                            {{ enrollment.member.get_full_name|default:enrollment.member.username }}
+                                        </strong>
+                                        <span class="text-secondary small">@{{ enrollment.member.username }}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="py-3">
+                                {% if enrollment.member.dni %}
+                                    <span class="text-white small d-block">DNI: {{ enrollment.member.dni }}</span>
+                                {% else %}
+                                    <span class="text-secondary small d-block">DNI: No informado</span>
+                                {% endif %}
+                                {% if enrollment.member.phone %}
+                                    <span class="text-secondary small"><i class="bi bi-telephone me-1"></i>{{ enrollment.member.phone }}</span>
+                                {% endif %}
+                            </td>
+                            <td class="py-3 text-end pe-4">
+                                <span class="text-white small">
+                                    <i class="bi bi-clock-history me-1 text-secondary"></i>
+                                    {{ enrollment.enrolled_at|date:"d/m/Y H:i" }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="p-5 text-center">
+                <div class="gym-dash-icon-box mx-auto mb-3">
+                    <i class="bi bi-people fs-4"></i>
+                </div>
+                <h5 class="text-white fw-bold mb-1">Aún no hay socios inscriptos</h5>
+                <p class="text-secondary small mb-0">
+                    Cuando los socios reserven su lugar en este horario aparecerán listados aquí.
+                </p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+

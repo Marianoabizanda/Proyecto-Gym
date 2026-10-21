@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block title %}Actividades Deportivas — GYM MANAGER{% endblock %}
+
+{% block body_class %}bg-gym-dark text-white{% endblock %}
+
+{% block content %}
+<div class="row g-4 my-2">
+    <!-- Encabezado de la Sección -->
+    <div class="col-12">
+        <div class="gym-dash-header p-4 p-lg-5">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                <div>
+                    <span class="text-uppercase tracking-widest text-secondary small fw-semibold d-block mb-1">
+                        Catálogo de Disciplinas
+                    </span>
+                    <h2 class="text-uppercase fw-extrabold text-white mb-1 fs-3">
+                        Actividades Deportivas
+                    </h2>
+                    <p class="text-secondary small mb-0">
+                        Gestión de disciplinas y modalidades de entrenamiento disponibles en el gimnasio.
+                    </p>
+                </div>
+                <div>
+                    <a href="{% url 'classes:activity_create' %}" class="btn gym-btn-primary fw-semibold py-2 px-3">
+                        <i class="bi bi-plus-lg me-1"></i> Nueva Actividad
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Catálogo de Actividades -->
+    {% if activities %}
+        {% for activity in activities %}
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="gym-dash-card p-4 h-100 d-flex flex-column justify-content-between">
+                <div>
+                    <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
+                        <div class="d-flex align-items-center">
+                            <div class="gym-dash-icon-box me-3 flex-shrink-0" style="width: 44px; height: 44px;">
+                                <i class="bi bi-activity fs-5"></i>
+                            </div>
+                            <h4 class="text-white fw-bold mb-0 fs-5">
+                                {{ activity.name }}
+                            </h4>
+                        </div>
+                        <div class="flex-shrink-0">
+                            {% if activity.is_active %}
+                                <span class="badge bg-success-subtle text-success border border-success-subtle small">
+                                    Activa
+                                </span>
+                            {% else %}
+                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle small">
+                                    Inactiva
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <p class="text-secondary small mb-0">
+                        {{ activity.description|default:"Sin descripción detallada disponible para esta actividad." }}
+                    </p>
+                </div>
+
+                <div class="mt-4 pt-3 border-top border-dark-subtle">
+                    <a href="{% url 'classes:activity_update' activity.pk %}" class="btn gym-btn-card w-100 py-2">
+                        <i class="bi bi-pencil-square me-1"></i> Editar Actividad
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-12">
+            <div class="gym-dash-card p-5 text-center">
+                <div class="gym-dash-icon-box mx-auto mb-3">
+                    <i class="bi bi-activity fs-4"></i>
+                </div>
+                <h5 class="text-white fw-bold mb-2">No hay actividades registradas</h5>
+                <p class="text-secondary small mb-3">
+                    Aún no se han configurado actividades deportivas en el sistema.
+                </p>
+                <a href="{% url 'classes:activity_create' %}" class="btn gym-btn-primary fw-semibold py-2 px-3">
+                    <i class="bi bi-plus-lg me-1"></i> Crear Primera Actividad
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
