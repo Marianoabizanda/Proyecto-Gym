@@ -36,6 +36,9 @@
                     <!-- Formulario de autenticación -->
                     <form method="post" novalidate>
                         {% csrf_token %}
+                        {% if request.GET.next %}
+                            <input type="hidden" name="next" value="{{ request.GET.next }}">
+                        {% endif %}
 
                         {% if form.non_field_errors %}
                             <div class="gym-alert-danger p-3 mb-3 small rounded-2">

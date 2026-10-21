@@ -78,7 +78,7 @@
 
                                 <div class="plan-card-price my-4">
                                     <span class="plan-currency text-secondary">$</span>
-                                    <span class="plan-amount text-white fw-black">{{ plan.price|floatformat:0 }}</span>
+                                    <span class="plan-amount text-white fw-black">{{ plan.price|floatformat:"0g" }}</span>
                                     <span class="plan-period text-secondary small d-block mt-1">
                                         / Cobertura por {{ plan.duration_days }} días
                                     </span>

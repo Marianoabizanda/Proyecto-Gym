@@ -199,7 +199,7 @@
                                 <span class="text-white small fw-semibold">{{ pay.subscription.plan.name }}</span>
                             </td>
                             <td class="py-3">
-                                <strong class="text-accent-subtle fs-6">${{ pay.amount }}</strong>
+                                <strong class="text-accent-subtle fs-6">${{ pay.amount|floatformat:"0g" }}</strong>
                             </td>
                             <td class="py-3 text-secondary small">
                                 {{ pay.get_payment_method_display }}

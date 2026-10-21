@@ -170,7 +170,7 @@
                             {{ current_subscription.plan.name }}
                         </h3>
                         <span class="text-accent-subtle fw-semibold small">
-                            ${{ current_subscription.plan.price }} / {{ current_subscription.plan.duration_days }} días
+                            ${{ current_subscription.plan.price|floatformat:"0g" }} / {{ current_subscription.plan.duration_days }} días
                         </span>
                     </div>
 
@@ -291,7 +291,7 @@
                         <tr class="border-bottom border-dark-subtle">
                             <td class="ps-4 py-3">
                                 <strong class="text-white">{{ sub.plan.name }}</strong>
-                                <small class="text-secondary d-block">${{ sub.plan.price }}</small>
+                                <small class="text-secondary d-block">${{ sub.plan.price|floatformat:"0g" }}</small>
                             </td>
                             <td class="py-3">
                                 <span class="text-white small">
@@ -319,9 +319,56 @@
                             </td>
                             <td class="pe-4 py-3 text-end">
                                 {% if request.user.is_admin_role and sub.status != 'CANCELADA' %}
-                                <a href="{% url 'memberships:payment_create' %}?subscription={{ sub.pk }}" class="btn gym-btn-card btn-sm py-1 px-2" title="Registrar Cobro">
-                                    <i class="bi bi-cash-stack me-1"></i> Cobrar
-                                </a>
+                                <div class="d-inline-flex align-items-center gap-1">
+                                    <a href="{% url 'memberships:payment_create' %}?subscription={{ sub.pk }}" class="btn gym-btn-card btn-sm py-1 px-2" title="Registrar Cobro">
+                                        <i class="bi bi-cash-stack me-1"></i> Cobrar
+                                    </a>
+                                    {% if sub.effective_status == 'FUTURA' %}
+                                    <button type="button" class="btn gym-btn-outline btn-sm py-1 px-2 text-danger border-danger-subtle" title="Cancelar Suscripción Futura" data-bs-toggle="modal" data-bs-target="#cancelFutureModal{{ sub.pk }}">
+                                        <i class="bi bi-x-circle me-1"></i> Cancelar
+                                    </button>
+                                    {% endif %}
+                                </div>
+
+                                {% if sub.effective_status == 'FUTURA' %}
+                                <!-- Modal de Confirmación para Cancelar Suscripción Futura (POST-only) -->
+                                <div class="modal fade" id="cancelFutureModal{{ sub.pk }}" tabindex="-1" aria-labelledby="cancelFutureModalLabel{{ sub.pk }}" aria-hidden="true" data-bs-theme="dark">
+                                    <div class="modal-dialog modal-dialog-centered text-start">
+                                        <div class="modal-content gym-dash-card border-secondary-subtle">
+                                            <div class="modal-header border-dark-subtle">
+                                                <h5 class="modal-title text-white fw-bold" id="cancelFutureModalLabel{{ sub.pk }}">
+                                                    <i class="bi bi-exclamation-triangle text-warning me-2"></i> Confirmar Cancelación
+                                                </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p class="text-secondary mb-2">
+                                                    ¿Estás seguro de que deseas cancelar la suscripción programada para <strong class="text-white">{{ member.get_full_name|default:member.username }}</strong>?
+                                                </p>
+                                                <div class="p-3 bg-dark rounded border border-dark-subtle small text-white mb-2">
+                                                    Plan: <strong>{{ sub.plan.name }}</strong> (${{ sub.plan.price|floatformat:"0g" }})<br>
+                                                    Período programado: {{ sub.start_date|date:"d/m/Y" }} al {{ sub.end_date|date:"d/m/Y" }}
+                                                </div>
+                                                <small class="text-danger">
+                                                    Esta suscripción quedará marcada como CANCELADA y no entrará en vigencia.
+                                                </small>
+                                            </div>
+                                            <div class="modal-footer border-dark-subtle">
+                                                <button type="button" class="btn gym-btn-outline py-2 px-3" data-bs-dismiss="modal">
+                                                    Volver
+                                                </button>
+                                                <form method="post" action="{% url 'memberships:subscription_cancel' sub.pk %}" class="d-inline">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-danger py-2 px-3 fw-semibold">
+                                                        Sí, Cancelar Suscripción
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+
                                 {% else %}
                                 <span class="text-secondary small">-</span>
                                 {% endif %}
@@ -377,7 +424,7 @@
                                 <small class="text-secondary d-block">Vence sub: {{ pay.subscription.end_date|date:"d/m/Y" }}</small>
                             </td>
                             <td class="py-3">
-                                <strong class="text-accent-subtle">${{ pay.amount }}</strong>
+                                <strong class="text-accent-subtle">${{ pay.amount|floatformat:"0g" }}</strong>
                             </td>
                             <td class="py-3 text-secondary small">
                                 {{ pay.get_payment_method_display }}

@@ -56,7 +56,7 @@
 
                     <div class="my-3">
                         <span class="plan-currency text-secondary">$</span>
-                        <span class="plan-amount text-white fw-extrabold">{{ plan.price }}</span>
+                        <span class="plan-amount text-white fw-extrabold">{{ plan.price|floatformat:"0g" }}</span>
                         <span class="plan-period text-secondary small"> / {{ plan.duration_days }} días</span>
                     </div>
 
