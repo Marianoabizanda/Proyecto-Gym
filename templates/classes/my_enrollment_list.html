@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block title %}Mis Clases — GYM MANAGER{% endblock %}
+
+{% block body_class %}bg-gym-dark text-white{% endblock %}
+
+{% block content %}
+<div class="row g-4 my-2">
+    <!-- Encabezado de la Sección -->
+    <div class="col-12">
+        <div class="gym-dash-header p-4 p-lg-5">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                <div>
+                    <span class="text-uppercase tracking-widest text-secondary small fw-semibold d-block mb-1">
+                        Portal del Socio
+                    </span>
+                    <h2 class="text-uppercase fw-extrabold text-white mb-1 fs-3">
+                        Mis Clases
+                    </h2>
+                    <p class="text-secondary small mb-0">
+                        Horarios en los que tenés un cupo reservado actualmente.
+                    </p>
+                </div>
+                <div>
+                    <a href="{% url 'classes:available_schedules' %}" class="btn gym-btn-primary fw-semibold py-2 px-3 text-nowrap">
+                        <i class="bi bi-plus-lg me-1"></i> Explorar Más Clases
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de Inscripciones del Socio -->
+    <div class="col-12">
+        <div class="gym-dash-card overflow-hidden" data-bs-theme="dark">
+            {% if enrollments %}
+            <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle gym-table mb-0">
+                    <thead>
+                        <tr class="border-bottom border-dark-subtle">
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3 ps-4">Actividad</th>
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3">Día y Horario</th>
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3">Profesor</th>
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3">Fecha de Reserva</th>
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3 text-end pe-4">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for enrollment in enrollments %}
+                        <tr class="border-bottom border-dark-subtle">
+                            <!-- Actividad -->
+                            <td class="ps-4 py-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="gym-dash-icon-box me-3 flex-shrink-0" style="width: 40px; height: 40px;">
+                                        <i class="bi bi-activity fs-5"></i>
+                                    </div>
+                                    <div>
+                                        <strong class="text-white d-block">
+                                            {{ enrollment.schedule.activity.name }}
+                                        </strong>
+                                        {% if not enrollment.schedule.activity.is_active or not enrollment.schedule.is_active %}
+                                            <span class="badge bg-warning-subtle text-warning border border-warning-subtle" style="font-size: 0.65rem;">
+                                                Horario temporalmente pausado
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- Día y Horario -->
+                            <td class="py-3">
+                                <span class="text-white fw-semibold d-block">
+                                    {{ enrollment.schedule.get_day_of_week_display }}
+                                </span>
+                                <span class="text-secondary small">
+                                    <i class="bi bi-clock me-1"></i>
+                                    {{ enrollment.schedule.start_time|time:"H:i" }} a {{ enrollment.schedule.end_time|time:"H:i" }}
+                                </span>
+                            </td>
+
+                            <!-- Profesor -->
+                            <td class="py-3">
+                                <span class="text-white">
+                                    <i class="bi bi-person-workspace text-secondary me-1"></i>
+                                    Prof. {{ enrollment.schedule.professor.get_full_name|default:enrollment.schedule.professor.username }}
+                                </span>
+                            </td>
+
+                            <!-- Fecha de Inscripción -->
+                            <td class="py-3">
+                                <span class="text-white small">
+                                    <i class="bi bi-calendar2-check me-1 text-secondary"></i>
+                                    {{ enrollment.enrolled_at|date:"d/m/Y H:i" }}
+                                </span>
+                            </td>
+
+                            <!-- Cancelar Inscripción -->
+                            <td class="py-3 text-end pe-4">
+                                <form method="post" action="{% url 'classes:cancel_enrollment' enrollment.pk %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit"
+                                            class="btn btn-sm btn-outline-danger px-3 py-1 text-nowrap"
+                                            onclick="return confirm('¿Estás seguro de que deseas cancelar tu lugar en {{ enrollment.schedule.activity.name }} ({{ enrollment.schedule.get_day_of_week_display }})?');">
+                                        <i class="bi bi-x-circle me-1"></i> Cancelar Inscripción
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="p-5 text-center">
+                <div class="gym-dash-icon-box mx-auto mb-3">
+                    <i class="bi bi-calendar-plus fs-4"></i>
+                </div>
+                <h5 class="text-white fw-bold mb-2">No estás inscripto a ninguna clase</h5>
+                <p class="text-secondary small mb-3">
+                    Explorá las actividades y horarios disponibles para reservar tu lugar en el gimnasio.
+                </p>
+                <a href="{% url 'classes:available_schedules' %}" class="btn gym-btn-primary fw-semibold py-2 px-3">
+                    <i class="bi bi-search me-1"></i> Explorar Clases Disponibles
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+
+{% block title %}Clases Disponibles — GYM MANAGER{% endblock %}
+
+{% block body_class %}bg-gym-dark text-white{% endblock %}
+
+{% block content %}
+<div class="row g-4 my-2">
+    <!-- Encabezado de la Sección -->
+    <div class="col-12">
+        <div class="gym-dash-header p-4 p-lg-5">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                <div>
+                    <span class="text-uppercase tracking-widest text-secondary small fw-semibold d-block mb-1">
+                        Catálogo de Horarios
+                    </span>
+                    <h2 class="text-uppercase fw-extrabold text-white mb-1 fs-3">
+                        Clases y Horarios Disponibles
+                    </h2>
+                    <p class="text-secondary small mb-0">
+                        Explorá las actividades del gimnasio y reservá tu lugar.
+                    </p>
+                </div>
+                <div>
+                    <a href="{% url 'classes:my_enrollments' %}" class="btn gym-btn-outline fw-semibold py-2 px-3 text-nowrap">
+                        <i class="bi bi-calendar-check me-1"></i> Mis Clases
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Aviso si el socio no tiene membresía activa -->
+    {% if not has_active_membership %}
+    <div class="col-12">
+        <div class="gym-dash-card p-3 p-md-4 border-warning-subtle d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3" data-bs-theme="dark">
+            <div class="d-flex align-items-center">
+                <div class="gym-dash-icon-box me-3 text-warning border-warning-subtle flex-shrink-0" style="background-color: rgba(234, 179, 8, 0.1);">
+                    <i class="bi bi-exclamation-triangle fs-4"></i>
+                </div>
+                <div>
+                    <strong class="text-white d-block">Membresía inactiva o pendiente de renovación</strong>
+                    <span class="text-secondary small">Para poder inscribirte a clases necesitás contar con una membresía activa y vigente.</span>
+                </div>
+            </div>
+            <a href="{% url 'memberships:my_membership' %}" class="btn btn-sm gym-btn-primary text-nowrap">
+                Ver Mi Membresía
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Tabla de Clases Disponibles -->
+    <div class="col-12">
+        <div class="gym-dash-card overflow-hidden" data-bs-theme="dark">
+            {% if schedules %}
+            <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle gym-table mb-0">
+                    <thead>
+                        <tr class="border-bottom border-dark-subtle">
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3 ps-4">Actividad</th>
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3">Día y Horario</th>
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3">Profesor</th>
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3">Cupo / Disponibilidad</th>
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3 text-end pe-4">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for schedule in schedules %}
+                        <tr class="border-bottom border-dark-subtle">
+                            <!-- Actividad -->
+                            <td class="ps-4 py-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="gym-dash-icon-box me-3 flex-shrink-0" style="width: 40px; height: 40px;">
+                                        <i class="bi bi-activity fs-5"></i>
+                                    </div>
+                                    <div>
+                                        <strong class="text-white d-block">{{ schedule.activity.name }}</strong>
+                                        {% if schedule.activity.description %}
+                                            <small class="text-secondary d-block text-truncate" style="max-width: 260px;">
+                                                {{ schedule.activity.description }}
+                                            </small>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- Día y Horario -->
+                            <td class="py-3">
+                                <span class="text-white fw-semibold d-block">{{ schedule.get_day_of_week_display }}</span>
+                                <span class="text-secondary small">
+                                    <i class="bi bi-clock me-1"></i>
+                                    {{ schedule.start_time|time:"H:i" }} a {{ schedule.end_time|time:"H:i" }}
+                                </span>
+                            </td>
+
+                            <!-- Profesor -->
+                            <td class="py-3">
+                                <span class="text-white">
+                                    <i class="bi bi-person-workspace text-secondary me-1"></i>
+                                    {{ schedule.professor.get_full_name|default:schedule.professor.username }}
+                                </span>
+                            </td>
+
+                            <!-- Cupo y Disponibilidad -->
+                            <td class="py-3">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="text-white fw-bold">{{ schedule.enrolled_count }} / {{ schedule.capacity }}</span>
+                                    {% if schedule.is_full %}
+                                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle small">
+                                            Completo
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle small">
+                                            {{ schedule.available_capacity }} disponibles
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </td>
+
+                            <!-- Acción según condiciones -->
+                            <td class="py-3 text-end pe-4">
+                                {% if schedule.id in enrolled_schedule_ids %}
+                                    <span class="badge bg-info-subtle text-info border border-info-subtle py-2 px-3 small">
+                                        <i class="bi bi-check2-circle me-1"></i> Ya inscripto
+                                    </span>
+                                {% elif schedule.is_full %}
+                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle py-2 px-3 small">
+                                        <i class="bi bi-x-circle me-1"></i> Cupo lleno
+                                    </span>
+                                {% elif not has_active_membership %}
+                                    <button class="btn btn-sm gym-btn-disabled text-nowrap" disabled title="Requiere membresía activa">
+                                        <i class="bi bi-lock me-1"></i> Requiere membresía
+                                    </button>
+                                {% else %}
+                                    <form method="post" action="{% url 'classes:enroll' schedule.pk %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm gym-btn-primary fw-semibold px-3 py-1 text-nowrap">
+                                            <i class="bi bi-plus-circle me-1"></i> Inscribirme
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="p-5 text-center">
+                <div class="gym-dash-icon-box mx-auto mb-3">
+                    <i class="bi bi-calendar-x fs-4"></i>
+                </div>
+                <h5 class="text-white fw-bold mb-2">No hay clases disponibles en este momento</h5>
+                <p class="text-secondary small mb-0">
+                    Próximamente se publicarán nuevos horarios para las actividades deportivas.
+                </p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
