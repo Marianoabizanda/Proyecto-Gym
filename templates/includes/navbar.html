@@ -58,13 +58,6 @@
                             <a class="nav-link gym-nav-link" href="{% url 'classes:my_enrollments' %}">Mis Clases</a>
                         </li>
                     {% endif %}
-                    {% if user.is_staff %}
-                    <li class="nav-item">
-                        <a class="nav-link gym-nav-link text-secondary" href="{% url 'admin:index' %}" target="_blank">
-                            <i class="bi bi-shield-lock me-1"></i> Django Admin
-                        </a>
-                    </li>
-                    {% endif %}
                 {% else %}
                     <li class="nav-item">
                         <a class="nav-link gym-nav-link" href="{% url 'accounts:home' %}">Inicio</a>
