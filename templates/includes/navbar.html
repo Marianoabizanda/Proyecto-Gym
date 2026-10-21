@@ -31,7 +31,16 @@
                         <li class="nav-item">
                             <a class="nav-link gym-nav-link" href="{% url 'memberships:payment_list' %}">Pagos</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link gym-nav-link" href="{% url 'classes:schedule_list' %}">Horarios</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link gym-nav-link" href="{% url 'classes:activity_list' %}">Actividades</a>
+                        </li>
                     {% elif user.is_professor_role %}
+                        <li class="nav-item">
+                            <a class="nav-link gym-nav-link" href="{% url 'classes:professor_schedules' %}">Mis Clases</a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link gym-nav-link" href="{% url 'memberships:plan_list' %}">Planes</a>
                         </li>
@@ -41,6 +50,12 @@
                     {% else %}
                         <li class="nav-item">
                             <a class="nav-link gym-nav-link" href="{% url 'memberships:my_membership' %}">Mi Membresía</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link gym-nav-link" href="{% url 'classes:available_schedules' %}">Clases</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link gym-nav-link" href="{% url 'classes:my_enrollments' %}">Mis Clases</a>
                         </li>
                     {% endif %}
                     {% if user.is_staff %}
