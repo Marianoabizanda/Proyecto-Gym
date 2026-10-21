@@ -1,8 +1,10 @@
+{% load static %}
 <nav class="navbar navbar-expand-lg navbar-dark gym-navbar sticky-top">
     <div class="container-fluid px-3 px-lg-4">
-        <!-- Logo / Marca Textual -->
-        <a class="navbar-brand gym-brand-logo fw-extrabold" href="{% url 'accounts:home' %}">
-            GYM MANAGER
+        <!-- Logo / Marca con Isotipo -->
+        <a class="navbar-brand gym-brand-logo fw-extrabold d-flex align-items-center" href="{% url 'accounts:home' %}">
+            <img src="{% static 'images/gym_manager_icon.png' %}" alt="Icono GYM MANAGER" class="gym-navbar-icon me-2">
+            <span>GYM MANAGER</span>
         </a>
 
         <!-- Botón Toggler para Móviles -->
