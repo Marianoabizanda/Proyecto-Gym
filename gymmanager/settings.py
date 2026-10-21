@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     # Aplicaciones locales
     'accounts',
     'memberships',
+    'classes',
 ]
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
