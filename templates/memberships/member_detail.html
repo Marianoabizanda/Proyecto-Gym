@@ -207,45 +207,6 @@
                     {% endif %}
                 </div>
 
-                <!-- Modal de Confirmación para Cancelar (POST-only) -->
-                {% if request.user.is_admin_role %}
-                <div class="modal fade" id="cancelSubscriptionModal" tabindex="-1" aria-labelledby="cancelSubscriptionModalLabel" aria-hidden="true" data-bs-theme="dark">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content gym-dash-card border-secondary-subtle">
-                            <div class="modal-header border-dark-subtle">
-                                <h5 class="modal-title text-white fw-bold" id="cancelSubscriptionModalLabel">
-                                    <i class="bi bi-exclamation-triangle text-warning me-2"></i> Confirmar Cancelación
-                                </h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                            </div>
-                            <div class="modal-body">
-                                <p class="text-secondary mb-2">
-                                    ¿Estás seguro de que deseas cancelar administrativamente la suscripción de <strong class="text-white">{{ member.get_full_name|default:member.username }}</strong>?
-                                </p>
-                                <div class="p-3 bg-dark rounded border border-dark-subtle small text-white mb-2">
-                                    Plan: <strong>{{ current_subscription.plan.name }}</strong><br>
-                                    Vigencia: {{ current_subscription.start_date|date:"d/m/Y" }} al {{ current_subscription.end_date|date:"d/m/Y" }}
-                                </div>
-                                <small class="text-danger">
-                                    Esta acción marcará la suscripción como CANCELADA de inmediato.
-                                </small>
-                            </div>
-                            <div class="modal-footer border-dark-subtle">
-                                <button type="button" class="btn gym-btn-outline py-2 px-3" data-bs-dismiss="modal">
-                                    Volver
-                                </button>
-                                <form method="post" action="{% url 'memberships:subscription_cancel' current_subscription.pk %}" class="d-inline">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-danger py-2 px-3 fw-semibold">
-                                        Sí, Cancelar Suscripción
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% endif %}
-
             {% else %}
                 <div class="text-center py-3">
                     <p class="text-secondary small mb-3">
@@ -329,46 +290,6 @@
                                     </button>
                                     {% endif %}
                                 </div>
-
-                                {% if sub.effective_status == 'FUTURA' %}
-                                <!-- Modal de Confirmación para Cancelar Suscripción Futura (POST-only) -->
-                                <div class="modal fade" id="cancelFutureModal{{ sub.pk }}" tabindex="-1" aria-labelledby="cancelFutureModalLabel{{ sub.pk }}" aria-hidden="true" data-bs-theme="dark">
-                                    <div class="modal-dialog modal-dialog-centered text-start">
-                                        <div class="modal-content gym-dash-card border-secondary-subtle">
-                                            <div class="modal-header border-dark-subtle">
-                                                <h5 class="modal-title text-white fw-bold" id="cancelFutureModalLabel{{ sub.pk }}">
-                                                    <i class="bi bi-exclamation-triangle text-warning me-2"></i> Confirmar Cancelación
-                                                </h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <p class="text-secondary mb-2">
-                                                    ¿Estás seguro de que deseas cancelar la suscripción programada para <strong class="text-white">{{ member.get_full_name|default:member.username }}</strong>?
-                                                </p>
-                                                <div class="p-3 bg-dark rounded border border-dark-subtle small text-white mb-2">
-                                                    Plan: <strong>{{ sub.plan.name }}</strong> (${{ sub.plan.price|floatformat:"0g" }})<br>
-                                                    Período programado: {{ sub.start_date|date:"d/m/Y" }} al {{ sub.end_date|date:"d/m/Y" }}
-                                                </div>
-                                                <small class="text-danger">
-                                                    Esta suscripción quedará marcada como CANCELADA y no entrará en vigencia.
-                                                </small>
-                                            </div>
-                                            <div class="modal-footer border-dark-subtle">
-                                                <button type="button" class="btn gym-btn-outline py-2 px-3" data-bs-dismiss="modal">
-                                                    Volver
-                                                </button>
-                                                <form method="post" action="{% url 'memberships:subscription_cancel' sub.pk %}" class="d-inline">
-                                                    {% csrf_token %}
-                                                    <button type="submit" class="btn btn-danger py-2 px-3 fw-semibold">
-                                                        Sí, Cancelar Suscripción
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                {% endif %}
-
                                 {% else %}
                                 <span class="text-secondary small">-</span>
                                 {% endif %}
@@ -448,5 +369,91 @@
         </div>
     </div>
 </div>
+
+{% if request.user.is_admin_role %}
+<!-- =======================================================================
+     MODALES DE CANCELACIÓN (Nivel raíz del template para evitar overflow)
+     ======================================================================= -->
+
+<!-- Modal de Suscripción Vigente -->
+{% if current_subscription %}
+<div class="modal fade" id="cancelSubscriptionModal" tabindex="-1" aria-labelledby="cancelSubscriptionModalLabel" aria-hidden="true" data-bs-theme="dark">
+    <div class="modal-dialog modal-dialog-centered text-start">
+        <div class="modal-content gym-dash-card border-secondary-subtle">
+            <div class="modal-header border-dark-subtle">
+                <h5 class="modal-title text-white fw-bold" id="cancelSubscriptionModalLabel">
+                    <i class="bi bi-exclamation-triangle text-warning me-2"></i> Confirmar Cancelación
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-secondary mb-2">
+                    ¿Estás seguro de que deseas cancelar administrativamente la suscripción de <strong class="text-white">{{ member.get_full_name|default:member.username }}</strong>?
+                </p>
+                <div class="p-3 bg-dark rounded border border-dark-subtle small text-white mb-2">
+                    Plan: <strong>{{ current_subscription.plan.name }}</strong> (${{ current_subscription.plan.price|floatformat:"0g" }})<br>
+                    Vigencia: {{ current_subscription.start_date|date:"d/m/Y" }} al {{ current_subscription.end_date|date:"d/m/Y" }}
+                </div>
+                <small class="text-danger">
+                    Esta acción marcará la suscripción como CANCELADA de inmediato.
+                </small>
+            </div>
+            <div class="modal-footer border-dark-subtle">
+                <button type="button" class="btn gym-btn-outline py-2 px-3" data-bs-dismiss="modal">
+                    Volver
+                </button>
+                <form method="post" action="{% url 'memberships:subscription_cancel' current_subscription.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger py-2 px-3 fw-semibold">
+                        Sí, Cancelar Suscripción
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Modales para Suscripciones Futuras del Historial -->
+{% for sub in subscriptions %}
+    {% if sub.effective_status == 'FUTURA' %}
+    <div class="modal fade" id="cancelFutureModal{{ sub.pk }}" tabindex="-1" aria-labelledby="cancelFutureModalLabel{{ sub.pk }}" aria-hidden="true" data-bs-theme="dark">
+        <div class="modal-dialog modal-dialog-centered text-start">
+            <div class="modal-content gym-dash-card border-secondary-subtle">
+                <div class="modal-header border-dark-subtle">
+                    <h5 class="modal-title text-white fw-bold" id="cancelFutureModalLabel{{ sub.pk }}">
+                        <i class="bi bi-exclamation-triangle text-warning me-2"></i> Confirmar Cancelación
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-secondary mb-2">
+                        ¿Estás seguro de que deseas cancelar la suscripción programada para <strong class="text-white">{{ member.get_full_name|default:member.username }}</strong>?
+                    </p>
+                    <div class="p-3 bg-dark rounded border border-dark-subtle small text-white mb-2">
+                        Plan: <strong>{{ sub.plan.name }}</strong> (${{ sub.plan.price|floatformat:"0g" }})<br>
+                        Período programado: {{ sub.start_date|date:"d/m/Y" }} al {{ sub.end_date|date:"d/m/Y" }}
+                    </div>
+                    <small class="text-danger">
+                        Esta suscripción quedará marcada como CANCELADA y no entrará en vigencia.
+                    </small>
+                </div>
+                <div class="modal-footer border-dark-subtle">
+                    <button type="button" class="btn gym-btn-outline py-2 px-3" data-bs-dismiss="modal">
+                        Volver
+                    </button>
+                    <form method="post" action="{% url 'memberships:subscription_cancel' sub.pk %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger py-2 px-3 fw-semibold">
+                            Sí, Cancelar Suscripción
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{% endfor %}
+{% endif %}
 {% endblock %}
 
