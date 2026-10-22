@@ -233,6 +233,30 @@
             </div>
         </div>
     </div>
+
+    <!-- Tarjeta de Efemérides Deportivas (Consumo API Externa) -->
+    <div class="col-12">
+        <div class="gym-dash-card p-4">
+            <div class="d-flex align-items-center mb-3">
+                <div class="gym-dash-icon-box me-3 flex-shrink-0" style="width: 44px; height: 44px;">
+                    <i class="bi bi-trophy fs-4"></i>
+                </div>
+                <div>
+                    <h5 class="fw-bold text-white mb-0 text-uppercase fs-6">Un Día Como Hoy en el Deporte</h5>
+                    <small class="text-secondary">Efemérides históricas y momentos memorables</small>
+                </div>
+            </div>
+            <div class="ps-md-2">
+                <p id="sport-event-text" class="text-white mb-2 fs-6">
+                    <span class="spinner-border spinner-border-sm text-secondary me-2" role="status" aria-hidden="true"></span>
+                    Cargando efeméride deportiva...
+                </p>
+                <small id="sport-event-year" class="text-secondary fw-semibold d-block">
+                    &mdash;
+                </small>
+            </div>
+        </div>
+    </div>
     {% endif %}
 
     <!-- Tarjeta de Estado del Proyecto (Arquitectura Base) -->
@@ -250,4 +274,69 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+{% if is_member %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const textEl = document.getElementById('sport-event-text');
+    const yearEl = document.getElementById('sport-event-year');
+
+    if (!textEl || !yearEl) return;
+
+    function setFallback() {
+        textEl.textContent = 'Hoy es un gran día para entrenar, superarte y hacer tu propia historia deportiva.';
+        yearEl.textContent = '— Cultura Deportiva GYM MANAGER';
+    }
+
+    const now = new Date();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+    const url = 'https://es.wikipedia.org/api/rest_v1/feed/onthisday/events/' + mm + '/' + dd;
+
+    fetch(url)
+        .then(function (response) {
+            if (!response.ok) {
+                throw new Error('Error en respuesta HTTP: ' + response.status);
+            }
+            return response.json();
+        })
+        .then(function (data) {
+            // Palabras clave específicas del ámbito deportivo (sin términos genéricos ambiguos)
+            const sportsKeywords = [
+                'fútbol', 'futbol', 'deporte', 'deportiv', 'olímpic', 'olimpiad',
+                'atletismo', 'atleta', 'maratón', 'maraton', 'ciclismo', 'ciclista',
+                'baloncesto', 'básquet', 'basquet', 'tenis', 'tenista', 'boxeo', 'boxeador',
+                'natación', 'natacion', 'nadador', 'gimnasia', 'gimnasta',
+                'copa mundial', 'estadio', 'rugby', 'voleibol', 'vóley', 'voley',
+                'automovilismo', 'fórmula 1', 'formula 1'
+            ];
+
+            const events = data && Array.isArray(data.events) ? data.events : [];
+            const sportsEvents = events.filter(function (ev) {
+                const text = (ev.text || '').toLowerCase();
+                return sportsKeywords.some(function (kw) {
+                    return text.includes(kw);
+                });
+            });
+
+            if (sportsEvents.length > 0) {
+                // Selecciona el primer hito deportivo del día
+                const event = sportsEvents[0];
+                const rawText = (event.text || '').trim();
+                const formattedText = rawText.charAt(0).toUpperCase() + rawText.slice(1);
+                textEl.textContent = formattedText;
+                yearEl.textContent = event.year ? 'En el año ' + event.year : 'Efeméride histórica';
+            } else {
+                setFallback();
+            }
+        })
+        .catch(function (error) {
+            console.warn('API de efemérides no disponible, aplicando respaldo:', error);
+            setFallback();
+        });
+});
+</script>
+{% endif %}
 {% endblock %}
