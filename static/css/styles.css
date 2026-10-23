@@ -624,15 +624,16 @@ body {
     }
 
     .hero-bg {
-        background-size: 120% auto;
+        background-size: contain;
         background-position: center center;
     }
 
     .hero-overlay {
         background: linear-gradient(
             180deg,
-            rgba(9, 8, 13, 0.94) 0%,
-            rgba(9, 8, 13, 0.9) 100%
+            rgba(9, 8, 13, 0.86) 0%,
+            rgba(9, 8, 13, 0.58) 50%,
+            rgba(9, 8, 13, 0.88) 100%
         );
     }
 
