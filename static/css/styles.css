@@ -624,7 +624,8 @@ body {
     }
 
     .hero-bg {
-        background-position: 75% center;
+        background-size: 120% auto;
+        background-position: center center;
     }
 
     .hero-overlay {
