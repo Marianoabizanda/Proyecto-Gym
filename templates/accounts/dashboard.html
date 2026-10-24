@@ -185,23 +185,68 @@
     <div class="col-12 col-md-6">
         <div class="gym-dash-card h-100 p-4 d-flex flex-column justify-content-between">
             <div>
-                <div class="d-flex align-items-center mb-3">
-                    <div class="gym-dash-icon-box me-3">
-                        <i class="bi bi-award fs-4"></i>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex align-items-center">
+                        <div class="gym-dash-icon-box me-3">
+                            <i class="bi bi-award fs-4"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold text-white mb-0 text-uppercase fs-6">Mi Membresía</h5>
+                            <small class="text-secondary">Consulta de cobertura y pagos</small>
+                        </div>
                     </div>
-                    <div>
-                        <h5 class="fw-bold text-white mb-0 text-uppercase fs-6">Mi Membresía</h5>
-                        <small class="text-secondary">Consulta de cobertura y pagos</small>
+                    {% if current_subscription %}
+                    <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 small">
+                        <i class="bi bi-check-circle me-1"></i>{{ current_subscription.effective_status }}
+                    </span>
+                    {% endif %}
+                </div>
+
+                {% if current_subscription %}
+                <div class="mb-3">
+                    <span class="text-secondary small d-block mb-1">Plan contratado</span>
+                    <h5 class="text-white fw-bold mb-3">{{ current_subscription.plan.name }}</h5>
+                    <div class="row g-2 p-3 bg-dark rounded border border-dark-subtle small">
+                        <div class="col-6">
+                            <span class="text-secondary d-block">Inicio:</span>
+                            <span class="text-white fw-semibold">{{ current_subscription.start_date|date:"d/m/Y" }}</span>
+                        </div>
+                        <div class="col-6">
+                            <span class="text-secondary d-block">Vencimiento:</span>
+                            <span class="text-white fw-semibold">{{ current_subscription.end_date|date:"d/m/Y" }}</span>
+                        </div>
+                        <div class="col-12 pt-2 border-top border-dark-subtle mt-2 d-flex justify-content-between align-items-center">
+                            <span class="text-secondary">Días restantes:</span>
+                            <span class="text-accent-subtle fw-bold">{{ current_subscription.days_left }} días</span>
+                        </div>
                     </div>
                 </div>
-                <p class="text-secondary small mb-0">
-                    Accedé al detalle de tu plan contratado, fecha de vencimiento, días restantes de cobertura e historial de recibos abonados.
-                </p>
+                {% else %}
+                <div class="mb-3">
+                    <p class="text-warning small mb-2">
+                        <i class="bi bi-exclamation-circle me-1"></i> No tenés un plan activo
+                    </p>
+                    <p class="text-secondary small mb-0">
+                        Elegí un plan para acceder a las instalaciones, actividades y reservar tus clases semanales.
+                    </p>
+                </div>
+                {% endif %}
             </div>
-            <div class="mt-4 pt-3 border-top border-dark-subtle">
+
+            <div class="mt-4 pt-3 border-top border-dark-subtle d-flex flex-column gap-2">
+                {% if current_subscription %}
                 <a href="{% url 'memberships:my_membership' %}" class="btn gym-btn-primary w-100 text-uppercase fw-semibold py-2">
                     <i class="bi bi-award me-1"></i> Ver Mi Membresía
                 </a>
+                {% else %}
+                <a href="{% url 'memberships:plan_list' %}" class="btn gym-btn-primary w-100 text-uppercase fw-semibold py-2">
+                    <i class="bi bi-card-checklist me-1"></i> Ver Planes
+                </a>
+                <a href="{% url 'memberships:my_membership' %}" class="btn gym-btn-card w-100 text-uppercase fw-semibold py-2 text-start px-3 d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-clock-history me-2"></i> Historial de Membresía</span>
+                    <i class="bi bi-chevron-right text-secondary small"></i>
+                </a>
+                {% endif %}
             </div>
         </div>
     </div>

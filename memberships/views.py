@@ -1,6 +1,6 @@
 import datetime
 from django.contrib import messages
-from django.contrib.auth.mixins import AccessMixin
+from django.contrib.auth.mixins import AccessMixin, LoginRequiredMixin
 from django.contrib.auth.views import redirect_to_login
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
@@ -71,11 +71,11 @@ class MemberRequiredMixin(BaseRoleRequiredMixin):
 # VISTAS DE PLANES
 # ==============================================================================
 
-class PlanListView(StaffOrProfessorRequiredMixin, ListView):
+class PlanListView(LoginRequiredMixin, ListView):
     """Lista de planes del gimnasio.
 
     El Administrador visualiza planes activos e inactivos para gestión.
-    El Profesor visualiza únicamente los planes activos para consulta comercial.
+    El Profesor y el Socio visualizan únicamente los planes activos para consulta comercial y contratación.
     """
 
     model = Plan
@@ -112,6 +112,51 @@ class PlanUpdateView(AdminRequiredMixin, UpdateView):
     def form_valid(self, form):
         messages.success(self.request, f"El plan '{form.instance.name}' fue actualizado con éxito.")
         return super().form_valid(form)
+
+
+class MemberSelectPlanView(MemberRequiredMixin, View):
+    """Permite a un usuario con rol SOCIO seleccionar y contratar un plan activo."""
+
+    http_method_names = ['post']
+
+    def post(self, request, pk, *args, **kwargs):
+        plan = get_object_or_404(Plan, pk=pk, is_active=True)
+
+        new_start = timezone.localdate()
+        days_to_add = max(plan.duration_days - 1, 0)
+        new_end = new_start + datetime.timedelta(days=days_to_add)
+
+        # Validación de superposición: reutiliza la lógica exacta de SubscriptionCreateView
+        # para contemplar suscripciones activas vigentes y futuras que se solapen.
+        overlapping_sub = Subscription.objects.filter(
+            member=request.user,
+            status=Subscription.Status.ACTIVA,
+            start_date__lte=new_end,
+            end_date__gte=new_start,
+        ).select_related('plan').first()
+
+        if overlapping_sub:
+            messages.warning(
+                request,
+                f"No se pudo contratar el plan '{plan.name}'. El período ({new_start.strftime('%d/%m/%Y')} al {new_end.strftime('%d/%m/%Y')}) "
+                f"se superpone con otra suscripción activa existente "
+                f"({overlapping_sub.plan.name}: {overlapping_sub.start_date.strftime('%d/%m/%Y')} al {overlapping_sub.end_date.strftime('%d/%m/%Y')})."
+            )
+            return redirect('accounts:dashboard')
+
+        # Genera la suscripción mediante la lógica del modelo (save() calcula end_date)
+        Subscription.objects.create(
+            member=request.user,
+            plan=plan,
+            start_date=new_start,
+            status=Subscription.Status.ACTIVA,
+        )
+
+        messages.success(
+            request,
+            f"¡Felicitaciones! Te suscribiste correctamente al plan '{plan.name}'."
+        )
+        return redirect('accounts:dashboard')
 
 
 # ==============================================================================

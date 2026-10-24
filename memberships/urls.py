@@ -8,6 +8,7 @@ urlpatterns = [
     path('planes/', views.PlanListView.as_view(), name='plan_list'),
     path('planes/nuevo/', views.PlanCreateView.as_view(), name='plan_create'),
     path('planes/<int:pk>/editar/', views.PlanUpdateView.as_view(), name='plan_update'),
+    path('planes/<int:pk>/elegir/', views.MemberSelectPlanView.as_view(), name='select_plan'),
 
     # Socios y Suscripciones
     path('socios/', views.MemberListView.as_view(), name='member_list'),

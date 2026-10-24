@@ -93,6 +93,13 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         context['is_admin'] = user.is_admin_role()
         context['is_professor'] = user.is_professor_role()
         context['is_member'] = user.is_member_role()
+
+        if user.is_member_role():
+            context['current_subscription'] = next(
+                (s for s in user.subscriptions.select_related('plan').all() if s.is_current),
+                None
+            )
+
         return context
 
 
