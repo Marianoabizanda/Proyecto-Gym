@@ -344,6 +344,29 @@ class PaymentCreateView(AdminRequiredMixin, CreateView):
             initial['subscription'] = subscription_id
         return initial
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Metadatos de suscripciones para el panel dinámico y autocompletado en frontend
+        sub_field = context['form'].fields.get('subscription') if 'form' in context else None
+        if sub_field:
+            subs_qs = sub_field.queryset.select_related('member', 'plan')
+        else:
+            subs_qs = Subscription.objects.exclude(status=Subscription.Status.CANCELADA).select_related('member', 'plan')
+
+        subscriptions_data = {}
+        for sub in subs_qs:
+            subscriptions_data[str(sub.pk)] = {
+                'member_name': sub.member.get_full_name() or sub.member.username,
+                'member_dni': sub.member.dni or 'No informado',
+                'plan_name': sub.plan.name,
+                'price': str(sub.plan.price),
+                'price_formatted': f"{int(sub.plan.price):,}".replace(",", ".") if sub.plan.price == int(sub.plan.price) else f"{sub.plan.price:,.2f}".replace(".", ","),
+                'status': sub.status,
+                'status_display': sub.get_status_display(),
+            }
+        context['subscriptions_json'] = subscriptions_data
+        return context
+
     def form_valid(self, form):
         subscription = form.cleaned_data.get('subscription')
         amount = form.cleaned_data.get('amount')
@@ -354,20 +377,21 @@ class PaymentCreateView(AdminRequiredMixin, CreateView):
             form.add_error('subscription', 'No es posible registrar un pago sobre una suscripción cancelada.')
             return self.form_invalid(form)
 
-        # 2. Si la suscripción está PENDIENTE, aplicamos las validaciones previas a la activación
+        # 2. Validación backend obligatoria: el importe debe coincidir exactamente con el precio oficial del plan
+        if subscription and amount != subscription.plan.price:
+            plan = subscription.plan
+            price_display = f"{int(plan.price):,}".replace(",", ".") if plan.price == int(plan.price) else f"{plan.price:,.2f}".replace(".", ",")
+            form.add_error(
+                'amount',
+                f"El importe del plan '{plan.name}' es ${price_display}. Verificá el monto ingresado (no se permiten pagos parciales)."
+            )
+            return self.form_invalid(form)
+
+        # 3. Si la suscripción está PENDIENTE, aplicamos la validación de superposición previa a la activación
         if subscription and subscription.status == Subscription.Status.PENDIENTE:
             plan = subscription.plan
 
-            # 2.1 Validación: El monto debe coincidir exactamente con el precio del plan
-            if amount != plan.price:
-                price_display = f"{int(plan.price):,}".replace(",", ".") if plan.price == int(plan.price) else f"{plan.price:,.2f}".replace(".", ",")
-                form.add_error(
-                    'amount',
-                    f"El importe del plan '{plan.name}' es ${price_display}. Verificá el monto ingresado (no se permiten pagos parciales)."
-                )
-                return self.form_invalid(form)
-
-            # 2.2 Validación: Superposición con el nuevo período recalculado
+            # 3.1 Validación: Superposición con el nuevo período recalculado
             new_start = payment_date
             days_to_add = max(plan.duration_days - 1, 0)
             new_end = new_start + datetime.timedelta(days=days_to_add)
@@ -389,7 +413,7 @@ class PaymentCreateView(AdminRequiredMixin, CreateView):
                 )
                 return self.form_invalid(form)
 
-        # 3. Guardado del pago y activación de la suscripción dentro de una transacción atómica
+        # 4. Guardado del pago y activación de la suscripción dentro de una transacción atómica
         with transaction.atomic():
             form.instance.registered_by = self.request.user
             self.object = form.save()

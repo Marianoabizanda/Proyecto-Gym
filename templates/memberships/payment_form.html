@@ -56,6 +56,28 @@
                     {% endif %}
                 </div>
 
+                <!-- Panel dinámico de detalle de la suscripción seleccionada -->
+                <div id="subscription-info-card" class="p-3 bg-dark rounded border border-dark-subtle mb-3 d-none">
+                    <div class="d-flex align-items-center justify-content-between mb-2 pb-2 border-bottom border-secondary border-opacity-25">
+                        <span class="text-secondary small text-uppercase tracking-wider fw-semibold">
+                            <i class="bi bi-info-circle me-1 text-accent"></i> Detalle de la Suscripción
+                        </span>
+                        <span id="info-sub-status" class="badge"></span>
+                    </div>
+                    <div class="row g-2 small">
+                        <div class="col-12 col-sm-6">
+                            <span class="text-secondary d-block">Socio:</span>
+                            <strong id="info-member-name" class="text-white d-block"></strong>
+                            <span class="text-secondary">DNI: <span id="info-member-dni" class="text-light"></span></span>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <span class="text-secondary d-block">Plan:</span>
+                            <strong id="info-plan-name" class="text-white d-block"></strong>
+                            <span class="text-secondary">Precio Oficial: <strong id="info-plan-price" class="text-success"></strong></span>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Monto y Fecha -->
                 <div class="row g-3 mb-3">
                     <div class="col-12 col-sm-6">
@@ -63,6 +85,9 @@
                             Monto Abonado ($)
                         </label>
                         {{ form.amount }}
+                        <div class="form-text text-secondary small" style="font-size: 0.75rem;">
+                            <i class="bi bi-lock me-1"></i>Importe autocompletado según el precio oficial del plan.
+                        </div>
                         {% if form.amount.errors %}
                             <div class="text-danger small mt-1">{{ form.amount.errors.0 }}</div>
                         {% endif %}
@@ -131,5 +156,69 @@
         </div>
     </div>
 </div>
+
+{{ subscriptions_json|json_script:"subscriptions-data" }}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const dataElement = document.getElementById('subscriptions-data');
+    if (!dataElement) return;
+
+    let subscriptionsData = {};
+    try {
+        subscriptionsData = JSON.parse(dataElement.textContent || '{}');
+    } catch (e) {
+        console.error('Error al parsear datos de suscripciones:', e);
+    }
+
+    const subSelect = document.getElementById('id_subscription');
+    const amountInput = document.getElementById('id_amount');
+    const card = document.getElementById('subscription-info-card');
+    const nameEl = document.getElementById('info-member-name');
+    const dniEl = document.getElementById('info-member-dni');
+    const planEl = document.getElementById('info-plan-name');
+    const priceEl = document.getElementById('info-plan-price');
+    const statusEl = document.getElementById('info-sub-status');
+
+    function updateSubscriptionDetails() {
+        if (!subSelect) return;
+        const subId = subSelect.value;
+        const data = subscriptionsData[subId];
+
+        if (data && card) {
+            if (nameEl) nameEl.textContent = data.member_name;
+            if (dniEl) dniEl.textContent = data.member_dni;
+            if (planEl) planEl.textContent = data.plan_name;
+            if (priceEl) priceEl.textContent = '$' + data.price_formatted;
+            if (statusEl) {
+                statusEl.textContent = data.status_display;
+                if (data.status === 'PENDIENTE') {
+                    statusEl.className = 'badge bg-warning-subtle text-warning border border-warning-subtle';
+                } else {
+                    statusEl.className = 'badge bg-info-subtle text-info border border-info-subtle';
+                }
+            }
+            if (amountInput) {
+                amountInput.value = data.price;
+            }
+            card.classList.remove('d-none');
+        } else {
+            if (card) card.classList.add('d-none');
+            if (amountInput && !subId) {
+                amountInput.value = '';
+            }
+        }
+    }
+
+    if (subSelect) {
+        subSelect.addEventListener('change', updateSubscriptionDetails);
+        if (subSelect.value) {
+            updateSubscriptionDetails();
+        }
+    }
+});
+</script>
 {% endblock %}
 

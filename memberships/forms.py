@@ -121,6 +121,7 @@ class PaymentRegistrationForm(forms.ModelForm):
                 'step': '0.01',
                 'min': '0.01',
                 'placeholder': '0.00',
+                'readonly': 'readonly',
             }),
             'payment_date': forms.DateInput(attrs={
                 'type': 'date',
@@ -181,4 +182,18 @@ class PaymentRegistrationForm(forms.ModelForm):
         if amount is not None and amount <= 0:
             raise ValidationError('El monto a abonar debe ser un valor mayor a 0.')
         return amount
+
+    def clean(self):
+        cleaned_data = super().clean()
+        subscription = cleaned_data.get('subscription')
+        amount = cleaned_data.get('amount')
+
+        # Validación backend estricta: el importe debe coincidir exactamente con el precio oficial del plan
+        if subscription and amount is not None and amount != subscription.plan.price:
+            self.add_error(
+                'amount',
+                f"El monto a abonar (${amount}) no coincide con el valor oficial del plan '{subscription.plan.name}' (${subscription.plan.price})."
+            )
+
+        return cleaned_data
 
