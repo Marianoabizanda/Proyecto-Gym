@@ -151,10 +151,10 @@ class PaymentRegistrationForm(forms.ModelForm):
 
         self.fields['subscription'].queryset = sub_qs.order_by('-end_date')
 
-        # Formatear el texto de cada opción en el selector para identificar claramente al socio, su DNI y el plan
+        # Formatear el texto de cada opción en el selector para identificar claramente al socio, su DNI, plan y estado
         self.fields['subscription'].label_from_instance = lambda obj: (
             f"{obj.member.get_full_name() or obj.member.username} (DNI: {obj.member.dni or 'S/D'}) — "
-            f"{obj.plan.name} (${obj.plan.price}) [Vence: {obj.end_date}]"
+            f"{obj.plan.name} (${obj.plan.price}) [{'PENDIENTE DE PAGO' if obj.status == Subscription.Status.PENDIENTE else f'Vence: {obj.end_date}'}]"
         )
 
         # Sugerir monto del plan cuando el formulario recibe una suscripción inicial (vía initial)

@@ -53,6 +53,7 @@ class Plan(models.Model):
 
 class Subscription(models.Model):
     class Status(models.TextChoices):
+        PENDIENTE = 'PENDIENTE', 'Pendiente de Pago'
         ACTIVA = 'ACTIVA', 'Activa'
         CANCELADA = 'CANCELADA', 'Cancelada'
 
@@ -103,11 +104,21 @@ class Subscription(models.Model):
             self.end_date = self.start_date + datetime.timedelta(days=days_to_add)
         super().save(*args, **kwargs)
 
+    def activate_from_payment(self, payment_date):
+        """Activa la suscripción estableciendo el inicio en la fecha de pago y recalculando el vencimiento."""
+        self.status = self.Status.ACTIVA
+        self.start_date = payment_date
+        days_to_add = max(self.plan.duration_days - 1, 0)
+        self.end_date = payment_date + datetime.timedelta(days=days_to_add)
+        self.save(update_fields=['status', 'start_date', 'end_date'])
+
     @property
     def effective_status(self):
-        """Devuelve el estado dinámico: CANCELADA, FUTURA, ACTIVA o VENCIDA según la fecha actual."""
+        """Devuelve el estado dinámico: PENDIENTE, CANCELADA, FUTURA, ACTIVA o VENCIDA según la fecha actual."""
         if self.status == self.Status.CANCELADA:
             return 'CANCELADA'
+        if self.status == self.Status.PENDIENTE:
+            return 'PENDIENTE'
         today = timezone.localdate()
         if self.start_date and self.start_date > today:
             return 'FUTURA'

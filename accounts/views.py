@@ -95,10 +95,9 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         context['is_member'] = user.is_member_role()
 
         if user.is_member_role():
-            context['current_subscription'] = next(
-                (s for s in user.subscriptions.select_related('plan').all() if s.is_current),
-                None
-            )
+            member_subs = list(user.subscriptions.select_related('plan').all())
+            context['current_subscription'] = next((s for s in member_subs if s.is_current), None)
+            context['pending_subscription'] = next((s for s in member_subs if s.status == 'PENDIENTE'), None)
 
         return context
 
