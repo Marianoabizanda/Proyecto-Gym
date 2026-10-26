@@ -4,8 +4,8 @@ from .models import Payment, Plan, Subscription
 
 @admin.register(Plan)
 class PlanAdmin(admin.ModelAdmin):
-    list_display = ('name', 'price', 'duration_days', 'is_active', 'created_at')
-    list_filter = ('is_active',)
+    list_display = ('name', 'price', 'duration_days', 'includes_classes', 'is_active', 'created_at')
+    list_filter = ('is_active', 'includes_classes')
     search_fields = ('name', 'description')
     ordering = ['price']
 

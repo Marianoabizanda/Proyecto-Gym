@@ -10,7 +10,7 @@ class PlanForm(forms.ModelForm):
 
     class Meta:
         model = Plan
-        fields = ['name', 'description', 'price', 'duration_days', 'is_active']
+        fields = ['name', 'description', 'price', 'duration_days', 'is_active', 'includes_classes']
         widgets = {
             'name': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -33,6 +33,9 @@ class PlanForm(forms.ModelForm):
                 'placeholder': '30',
             }),
             'is_active': forms.CheckboxInput(attrs={
+                'class': 'form-check-input',
+            }),
+            'includes_classes': forms.CheckboxInput(attrs={
                 'class': 'form-check-input',
             }),
         }

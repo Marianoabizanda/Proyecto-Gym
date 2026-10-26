@@ -28,6 +28,11 @@ class Plan(models.Model):
         verbose_name='Plan Activo',
         help_text='Indica si el plan está disponible para nuevas suscripciones.',
     )
+    includes_classes = models.BooleanField(
+        default=False,
+        verbose_name='Incluye Clases Grupales',
+        help_text='Indica si la suscripción a este plan habilita la inscripción a clases.',
+    )
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name='Fecha de creación',

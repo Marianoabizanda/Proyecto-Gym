@@ -227,13 +227,19 @@ class AvailableScheduleListView(MemberRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         today = timezone.localdate()
 
-        # Verificación de membresía vigente
-        context['has_active_membership'] = Subscription.objects.filter(
+        # Verificación de membresía vigente y acceso a clases según el plan
+        active_subscription = Subscription.objects.filter(
             member=self.request.user,
             status=Subscription.Status.ACTIVA,
             start_date__lte=today,
             end_date__gte=today,
-        ).exists()
+        ).select_related('plan').first()
+
+        context['has_active_membership'] = active_subscription is not None
+        context['plan_includes_classes'] = (
+            active_subscription.plan.includes_classes if active_subscription else False
+        )
+        context['active_subscription'] = active_subscription
 
         # Conjunto de IDs de horarios en los que el socio ya se encuentra inscripto
         context['enrolled_schedule_ids'] = set(
@@ -277,31 +283,39 @@ class EnrollClassView(MemberRequiredMixin, View):
 
         # 2. Control de membresía vigente del socio
         today = timezone.localdate()
-        has_active_membership = Subscription.objects.filter(
+        active_subscription = Subscription.objects.filter(
             member=request.user,
             status=Subscription.Status.ACTIVA,
             start_date__lte=today,
             end_date__gte=today,
-        ).exists()
+        ).select_related('plan').first()
 
-        if not has_active_membership:
+        if not active_subscription:
             messages.error(
                 request,
                 "Necesitás contar con una membresía activa y vigente para poder inscribirte a clases."
             )
             return redirect('classes:available_schedules')
 
-        # 3. Control de inscripción duplicada
+        # 3. Control de inclusión de clases grupales en el plan contratado
+        if not active_subscription.plan.includes_classes:
+            messages.warning(
+                request,
+                f"Tu plan actual ('{active_subscription.plan.name}') no incluye clases grupales."
+            )
+            return redirect('classes:available_schedules')
+
+        # 4. Control de inscripción duplicada
         if ClassEnrollment.objects.filter(schedule=schedule, member=request.user).exists():
             messages.warning(request, "Ya te encontrás inscripto en este horario.")
             return redirect('classes:available_schedules')
 
-        # 4. Control de cupo disponible
+        # 5. Control de cupo disponible
         if schedule.is_full:
             messages.error(request, "No hay cupos disponibles para esta clase.")
             return redirect('classes:available_schedules')
 
-        # 5. Registro exitoso de la inscripción
+        # 6. Registro exitoso de la inscripción
         ClassEnrollment.objects.create(schedule=schedule, member=request.user)
         messages.success(
             request,

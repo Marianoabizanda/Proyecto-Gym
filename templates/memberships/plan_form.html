@@ -97,13 +97,24 @@
                 </div>
 
                 <!-- Estado Activo -->
-                <div class="form-check form-switch mb-4">
+                <div class="form-check form-switch mb-3">
                     {{ form.is_active }}
                     <label class="form-check-label text-white small" for="{{ form.is_active.id_for_label }}">
                         Plan activo (disponible para nuevas emisiones de suscripciones)
                     </label>
                     {% if form.is_active.errors %}
                         <div class="text-danger small mt-1">{{ form.is_active.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Incluye Clases Grupales -->
+                <div class="form-check form-switch mb-4">
+                    {{ form.includes_classes }}
+                    <label class="form-check-label text-white small" for="{{ form.includes_classes.id_for_label }}">
+                        Incluye clases grupales (permite a los socios reservar e inscribirse a clases)
+                    </label>
+                    {% if form.includes_classes.errors %}
+                        <div class="text-danger small mt-1">{{ form.includes_classes.errors.0 }}</div>
                     {% endif %}
                 </div>
 
