@@ -138,41 +138,55 @@ class PaymentRegistrationForm(forms.ModelForm):
             }),
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, locked_subscription=None, **kwargs):
+        self.locked_subscription = locked_subscription
         super().__init__(*args, **kwargs)
 
-        # Excluir suscripciones canceladas
-        sub_qs = Subscription.objects.exclude(
-            status=Subscription.Status.CANCELADA
-        ).select_related('member', 'plan')
+        if self.locked_subscription:
+            # Modo contextual: la suscripción queda fija y restringida a este único objeto
+            self.fields['subscription'].queryset = Subscription.objects.filter(
+                pk=self.locked_subscription.pk
+            ).select_related('member', 'plan')
+            self.fields['subscription'].widget = forms.HiddenInput()
+            self.initial['subscription'] = self.locked_subscription.pk
+            if not self.is_bound:
+                self.initial['amount'] = self.locked_subscription.plan.price
+        else:
+            # Excluir suscripciones canceladas en modo general
+            sub_qs = Subscription.objects.exclude(
+                status=Subscription.Status.CANCELADA
+            ).select_related('member', 'plan')
 
-        # Si se edita un pago previo, permitir su suscripción original aunque haya sido cancelada luego
-        if self.instance and self.instance.pk and self.instance.subscription_id:
-            sub_qs = sub_qs | Subscription.objects.filter(pk=self.instance.subscription_id).select_related('member', 'plan')
+            # Si se edita un pago previo, permitir su suscripción original aunque haya sido cancelada luego
+            if self.instance and self.instance.pk and self.instance.subscription_id:
+                sub_qs = sub_qs | Subscription.objects.filter(pk=self.instance.subscription_id).select_related('member', 'plan')
 
-        self.fields['subscription'].queryset = sub_qs.order_by('-end_date')
+            self.fields['subscription'].queryset = sub_qs.order_by('-end_date')
 
-        # Formatear el texto de cada opción en el selector para identificar claramente al socio, su DNI, plan y estado
-        self.fields['subscription'].label_from_instance = lambda obj: (
-            f"{obj.member.get_full_name() or obj.member.username} (DNI: {obj.member.dni or 'S/D'}) — "
-            f"{obj.plan.name} (${obj.plan.price}) [{'PENDIENTE DE PAGO' if obj.status == Subscription.Status.PENDIENTE else f'Vence: {obj.end_date}'}]"
-        )
+            # Formatear el texto de cada opción en el selector para identificar claramente al socio, su DNI, plan y estado
+            self.fields['subscription'].label_from_instance = lambda obj: (
+                f"{obj.member.get_full_name() or obj.member.username} (DNI: {obj.member.dni or 'S/D'}) — "
+                f"{obj.plan.name} (${obj.plan.price}) [{'PENDIENTE DE PAGO' if obj.status == Subscription.Status.PENDIENTE else f'Vence: {obj.end_date}'}]"
+            )
 
-        # Sugerir monto del plan cuando el formulario recibe una suscripción inicial (vía initial)
-        if not self.is_bound:
-            sub_initial = self.initial.get('subscription')
-            if sub_initial and not self.initial.get('amount'):
-                if isinstance(sub_initial, Subscription):
-                    self.initial['amount'] = sub_initial.plan.price
-                elif isinstance(sub_initial, (int, str)):
-                    try:
-                        sub_obj = Subscription.objects.select_related('plan').get(pk=sub_initial)
-                        self.initial['amount'] = sub_obj.plan.price
-                    except Subscription.DoesNotExist:
-                        pass
+            # Sugerir monto del plan cuando el formulario recibe una suscripción inicial (vía initial)
+            if not self.is_bound:
+                sub_initial = self.initial.get('subscription')
+                if sub_initial and not self.initial.get('amount'):
+                    if isinstance(sub_initial, Subscription):
+                        self.initial['amount'] = sub_initial.plan.price
+                    elif isinstance(sub_initial, (int, str)):
+                        try:
+                            sub_obj = Subscription.objects.select_related('plan').get(pk=sub_initial)
+                            self.initial['amount'] = sub_obj.plan.price
+                        except Subscription.DoesNotExist:
+                            pass
 
     def clean_subscription(self):
         subscription = self.cleaned_data.get('subscription')
+        if self.locked_subscription:
+            if not subscription or subscription.pk != self.locked_subscription.pk:
+                raise ValidationError('No está permitido modificar la suscripción en un cobro contextual.')
         if subscription and subscription.status == Subscription.Status.CANCELADA:
             raise ValidationError('No se pueden registrar pagos sobre una suscripción cancelada.')
         return subscription

@@ -30,8 +30,27 @@
         </div>
     </div>
 
-    <!-- Aviso si el socio no tiene membresía activa -->
-    {% if not has_active_membership %}
+    <!-- Avisos según estado de membresía del socio -->
+    {% if not has_active_membership and pending_subscription %}
+    <!-- Aviso si el socio tiene una suscripción pendiente de activación por pago -->
+    <div class="col-12">
+        <div class="gym-dash-card p-3 p-md-4 border-warning-subtle d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3" data-bs-theme="dark">
+            <div class="d-flex align-items-center">
+                <div class="gym-dash-icon-box me-3 text-warning border-warning-subtle flex-shrink-0" style="background-color: rgba(234, 179, 8, 0.1);">
+                    <i class="bi bi-hourglass-split fs-4"></i>
+                </div>
+                <div>
+                    <strong class="text-white d-block">Membresía pendiente de activación ({{ pending_subscription.plan.name }})</strong>
+                    <span class="text-secondary small">Tu membresía está pendiente de activación. Esperá a que el pago sea confirmado por el gimnasio para poder inscribirte a clases.</span>
+                </div>
+            </div>
+            <a href="{% url 'memberships:my_membership' %}" class="btn btn-sm gym-btn-primary text-nowrap">
+                Ver Mi Membresía
+            </a>
+        </div>
+    </div>
+    {% elif not has_active_membership %}
+    <!-- Aviso si el socio no tiene membresía activa ni pendiente -->
     <div class="col-12">
         <div class="gym-dash-card p-3 p-md-4 border-warning-subtle d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3" data-bs-theme="dark">
             <div class="d-flex align-items-center">
@@ -43,8 +62,8 @@
                     <span class="text-secondary small">Para poder inscribirte a clases necesitás contar con una membresía activa y vigente.</span>
                 </div>
             </div>
-            <a href="{% url 'memberships:my_membership' %}" class="btn btn-sm gym-btn-primary text-nowrap">
-                Ver Mi Membresía
+            <a href="{% url 'memberships:plan_list' %}" class="btn btn-sm gym-btn-primary text-nowrap">
+                Elegir Plan
             </a>
         </div>
     </div>
@@ -146,6 +165,10 @@
                                     <span class="badge bg-danger-subtle text-danger border border-danger-subtle py-2 px-3 small">
                                         <i class="bi bi-x-circle me-1"></i> Cupo lleno
                                     </span>
+                                {% elif not has_active_membership and pending_subscription %}
+                                    <button class="btn btn-sm gym-btn-disabled text-nowrap" disabled title="Membresía pendiente de activación por pago">
+                                        <i class="bi bi-hourglass-split me-1"></i> Pendiente de activación
+                                    </button>
                                 {% elif not has_active_membership %}
                                     <button class="btn btn-sm gym-btn-disabled text-nowrap" disabled title="Requiere membresía activa">
                                         <i class="bi bi-lock me-1"></i> Requiere membresía

@@ -31,7 +31,7 @@
             </div>
 
             <!-- Formulario -->
-            <form method="post" novalidate>
+            <form method="post" action="{{ request.get_full_path }}" novalidate>
                 {% csrf_token %}
 
                 {% if form.non_field_errors %}
@@ -45,38 +45,81 @@
                     </div>
                 {% endif %}
 
-                <!-- Selección de Suscripción -->
-                <div class="mb-3">
-                    <label for="{{ form.subscription.id_for_label }}" class="form-label small text-secondary text-uppercase tracking-wider fw-semibold">
-                        Suscripción / Socio Asociado
-                    </label>
+                {% if locked_subscription %}
                     {{ form.subscription }}
-                    {% if form.subscription.errors %}
-                        <div class="text-danger small mt-1">{{ form.subscription.errors.0 }}</div>
-                    {% endif %}
-                </div>
+                    <!-- Panel de cobro contextual fijo -->
+                    <div class="mb-3">
+                        <label class="form-label small text-secondary text-uppercase tracking-wider fw-semibold">
+                            Suscripción / Socio Asociado
+                        </label>
+                        <div class="p-3 bg-dark rounded border border-accent border-opacity-50">
+                            <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom border-dark-subtle">
+                                <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">
+                                    <i class="bi bi-lock-fill me-1 text-accent"></i> Cobro fijado al socio
+                                </span>
+                                {% if locked_subscription.status == 'PENDIENTE' %}
+                                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle">
+                                        <i class="bi bi-hourglass-split me-1"></i> PENDIENTE DE PAGO
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-info-subtle text-info border border-info-subtle">
+                                        {{ locked_subscription.get_status_display }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                            <div class="row g-2 small">
+                                <div class="col-12 col-sm-6">
+                                    <span class="text-secondary d-block">Socio:</span>
+                                    <strong class="text-white d-block fs-6">
+                                        {{ locked_subscription.member.get_full_name|default:locked_subscription.member.username }}
+                                    </strong>
+                                    <span class="text-secondary">DNI: <span class="text-light">{{ locked_subscription.member.dni|default:'No informado' }}</span></span>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <span class="text-secondary d-block">Plan:</span>
+                                    <strong class="text-white d-block fs-6">{{ locked_subscription.plan.name }}</strong>
+                                    <span class="text-secondary">Precio Oficial: <strong class="text-success">${{ locked_subscription.plan.price }}</strong></span>
+                                </div>
+                            </div>
+                        </div>
+                        {% if form.subscription.errors %}
+                            <div class="text-danger small mt-1">{{ form.subscription.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <!-- Selección de Suscripción (Modo General) -->
+                    <div class="mb-3">
+                        <label for="{{ form.subscription.id_for_label }}" class="form-label small text-secondary text-uppercase tracking-wider fw-semibold">
+                            Suscripción / Socio Asociado
+                        </label>
+                        {{ form.subscription }}
+                        {% if form.subscription.errors %}
+                            <div class="text-danger small mt-1">{{ form.subscription.errors.0 }}</div>
+                        {% endif %}
+                    </div>
 
-                <!-- Panel dinámico de detalle de la suscripción seleccionada -->
-                <div id="subscription-info-card" class="p-3 bg-dark rounded border border-dark-subtle mb-3 d-none">
-                    <div class="d-flex align-items-center justify-content-between mb-2 pb-2 border-bottom border-secondary border-opacity-25">
-                        <span class="text-secondary small text-uppercase tracking-wider fw-semibold">
-                            <i class="bi bi-info-circle me-1 text-accent"></i> Detalle de la Suscripción
-                        </span>
-                        <span id="info-sub-status" class="badge"></span>
-                    </div>
-                    <div class="row g-2 small">
-                        <div class="col-12 col-sm-6">
-                            <span class="text-secondary d-block">Socio:</span>
-                            <strong id="info-member-name" class="text-white d-block"></strong>
-                            <span class="text-secondary">DNI: <span id="info-member-dni" class="text-light"></span></span>
+                    <!-- Panel dinámico de detalle de la suscripción seleccionada -->
+                    <div id="subscription-info-card" class="p-3 bg-dark rounded border border-dark-subtle mb-3 d-none">
+                        <div class="d-flex align-items-center justify-content-between mb-2 pb-2 border-bottom border-secondary border-opacity-25">
+                            <span class="text-secondary small text-uppercase tracking-wider fw-semibold">
+                                <i class="bi bi-info-circle me-1 text-accent"></i> Detalle de la Suscripción
+                            </span>
+                            <span id="info-sub-status" class="badge"></span>
                         </div>
-                        <div class="col-12 col-sm-6">
-                            <span class="text-secondary d-block">Plan:</span>
-                            <strong id="info-plan-name" class="text-white d-block"></strong>
-                            <span class="text-secondary">Precio Oficial: <strong id="info-plan-price" class="text-success"></strong></span>
+                        <div class="row g-2 small">
+                            <div class="col-12 col-sm-6">
+                                <span class="text-secondary d-block">Socio:</span>
+                                <strong id="info-member-name" class="text-white d-block"></strong>
+                                <span class="text-secondary">DNI: <span id="info-member-dni" class="text-light"></span></span>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <span class="text-secondary d-block">Plan:</span>
+                                <strong id="info-plan-name" class="text-white d-block"></strong>
+                                <span class="text-secondary">Precio Oficial: <strong id="info-plan-price" class="text-success"></strong></span>
+                            </div>
                         </div>
                     </div>
-                </div>
+                {% endif %}
 
                 <!-- Monto y Fecha -->
                 <div class="row g-3 mb-3">
@@ -212,7 +255,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    if (subSelect) {
+    if (subSelect && subSelect.tagName === 'SELECT') {
         subSelect.addEventListener('change', updateSubscriptionDetails);
         if (subSelect.value) {
             updateSubscriptionDetails();

@@ -241,6 +241,12 @@ class AvailableScheduleListView(MemberRequiredMixin, ListView):
         )
         context['active_subscription'] = active_subscription
 
+        # Verificación de membresía pendiente de pago
+        context['pending_subscription'] = Subscription.objects.filter(
+            member=self.request.user,
+            status=Subscription.Status.PENDIENTE,
+        ).select_related('plan').first()
+
         # Conjunto de IDs de horarios en los que el socio ya se encuentra inscripto
         context['enrolled_schedule_ids'] = set(
             ClassEnrollment.objects.filter(
@@ -291,10 +297,20 @@ class EnrollClassView(MemberRequiredMixin, View):
         ).select_related('plan').first()
 
         if not active_subscription:
-            messages.error(
-                request,
-                "Necesitás contar con una membresía activa y vigente para poder inscribirte a clases."
-            )
+            pending_sub = Subscription.objects.filter(
+                member=request.user,
+                status=Subscription.Status.PENDIENTE,
+            ).first()
+            if pending_sub:
+                messages.warning(
+                    request,
+                    "Tu membresía está pendiente de activación. Esperá a que el pago sea confirmado por el gimnasio para poder inscribirte a clases."
+                )
+            else:
+                messages.error(
+                    request,
+                    "Necesitás contar con una membresía activa y vigente para poder inscribirte a clases."
+                )
             return redirect('classes:available_schedules')
 
         # 3. Control de inclusión de clases grupales en el plan contratado
