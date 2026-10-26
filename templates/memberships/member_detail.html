@@ -322,7 +322,7 @@
                         <i class="bi bi-receipt fs-5"></i>
                     </div>
                     <h5 class="fw-bold text-white mb-0 fs-6 text-uppercase">
-                        Historial de Pagos Realizados
+                        Historial de Pagos
                     </h5>
                 </div>
             </div>
@@ -333,11 +333,12 @@
                     <thead>
                         <tr class="border-bottom border-dark-subtle">
                             <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3 ps-4">Fecha</th>
-                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3">Plan / Suscripción</th>
-                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3">Monto Abonado</th>
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3">Plan</th>
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3">Monto</th>
                             <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3">Método</th>
                             <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3">Comprobante</th>
-                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3 pe-4">Cobrado por</th>
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3">Registrado por</th>
+                            <th scope="col" class="text-secondary small text-uppercase tracking-wider py-3 pe-4">Estado</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -348,7 +349,11 @@
                             </td>
                             <td class="py-3">
                                 <span class="text-white small fw-semibold">{{ pay.subscription.plan.name }}</span>
-                                <small class="text-secondary d-block">Vence sub: {{ pay.subscription.end_date|date:"d/m/Y" }}</small>
+                                {% if pay.subscription.start_date and pay.subscription.end_date %}
+                                    <small class="text-secondary d-block">
+                                        {{ pay.subscription.start_date|date:"d/m/Y" }} - {{ pay.subscription.end_date|date:"d/m/Y" }}
+                                    </small>
+                                {% endif %}
                             </td>
                             <td class="py-3">
                                 <strong class="text-accent-subtle">${{ pay.amount|floatformat:"0g" }}</strong>
@@ -359,8 +364,27 @@
                             <td class="py-3 text-secondary small">
                                 {{ pay.receipt_number|default:"-" }}
                             </td>
-                            <td class="pe-4 py-3 text-secondary small">
+                            <td class="py-3 text-secondary small">
                                 {{ pay.registered_by.get_full_name|default:pay.registered_by.username|default:"-" }}
+                            </td>
+                            <td class="pe-4 py-3">
+                                {% if pay.subscription.effective_status == 'ACTIVA' %}
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                        <i class="bi bi-check-circle me-1"></i> Activa
+                                    </span>
+                                {% elif pay.subscription.effective_status == 'FUTURA' %}
+                                    <span class="badge bg-info-subtle text-info border border-info-subtle">
+                                        <i class="bi bi-calendar-event me-1"></i> Futura
+                                    </span>
+                                {% elif pay.subscription.effective_status == 'VENCIDA' %}
+                                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle">
+                                        <i class="bi bi-clock-history me-1"></i> Vencida
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">
+                                        <i class="bi bi-x-circle me-1"></i> Cancelada
+                                    </span>
+                                {% endif %}
                             </td>
                         </tr>
                         {% endfor %}
@@ -369,7 +393,7 @@
             </div>
             {% else %}
             <div class="p-4 text-center">
-                <p class="text-secondary small mb-0">No se registran pagos efectuados para este socio.</p>
+                <p class="text-secondary small mb-0">Este socio todavía no registra pagos.</p>
             </div>
             {% endif %}
         </div>
