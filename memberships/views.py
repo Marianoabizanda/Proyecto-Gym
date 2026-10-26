@@ -228,7 +228,7 @@ class MemberDetailView(StaffOrProfessorRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         member = self.object
 
-        subscriptions = member.subscriptions.select_related('plan').order_by('-end_date')
+        subscriptions = member.subscriptions.select_related('plan').prefetch_related('payments').order_by('-end_date')
         context['subscriptions'] = subscriptions
         context['current_subscription'] = next((s for s in subscriptions if s.is_current), None)
 
@@ -342,8 +342,10 @@ class PaymentCreateView(AdminRequiredMixin, CreateView):
         self.locked_subscription = None
         if subscription_id:
             sub = Subscription.objects.filter(pk=subscription_id).select_related('member', 'plan').first()
-            if not sub or sub.status == Subscription.Status.CANCELADA:
-                messages.error(request, "La suscripción indicada no existe o se encuentra cancelada.")
+            if not sub or sub.status != Subscription.Status.PENDIENTE or sub.payments.exists():
+                messages.warning(request, "Esta suscripción ya fue cobrada o no se encuentra pendiente de pago.")
+                if sub and sub.member_id:
+                    return redirect('memberships:member_detail', pk=sub.member_id)
                 return redirect('memberships:payment_list')
             self.locked_subscription = sub
         return super().dispatch(request, *args, **kwargs)
@@ -372,7 +374,10 @@ class PaymentCreateView(AdminRequiredMixin, CreateView):
             if sub_field:
                 subs_qs = sub_field.queryset.select_related('member', 'plan')
             else:
-                subs_qs = Subscription.objects.exclude(status=Subscription.Status.CANCELADA).select_related('member', 'plan')
+                subs_qs = Subscription.objects.filter(
+                    status=Subscription.Status.PENDIENTE,
+                    payments__isnull=True
+                ).select_related('member', 'plan')
 
         subscriptions_data = {}
         for sub in subs_qs:
@@ -398,13 +403,13 @@ class PaymentCreateView(AdminRequiredMixin, CreateView):
             form.add_error('subscription', 'La suscripción enviada no coincide con el cobro contextual fijado.')
             return self.form_invalid(form)
 
-        # 2. Bloqueo de suscripciones canceladas
-        if subscription and subscription.status == Subscription.Status.CANCELADA:
-            form.add_error('subscription', 'No es posible registrar un pago sobre una suscripción cancelada.')
+        # 2. Bloqueo estricto: la suscripción debe estar PENDIENTE y no registrar pagos previos
+        if not subscription or subscription.status != Subscription.Status.PENDIENTE or subscription.payments.exists():
+            form.add_error('subscription', 'Esta suscripción ya fue cobrada o no se encuentra pendiente de pago.')
             return self.form_invalid(form)
 
         # 3. Validación backend obligatoria: el importe debe coincidir exactamente con el precio oficial del plan
-        if subscription and amount != subscription.plan.price:
+        if amount != subscription.plan.price:
             plan = subscription.plan
             price_display = f"{int(plan.price):,}".replace(",", ".") if plan.price == int(plan.price) else f"{plan.price:,.2f}".replace(".", ",")
             form.add_error(
@@ -413,51 +418,41 @@ class PaymentCreateView(AdminRequiredMixin, CreateView):
             )
             return self.form_invalid(form)
 
-        # 4. Si la suscripción está PENDIENTE, aplicamos la validación de superposición previa a la activación
-        if subscription and subscription.status == Subscription.Status.PENDIENTE:
-            plan = subscription.plan
+        # 4. Validación de superposición con el nuevo período recalculado antes de activar
+        plan = subscription.plan
+        new_start = payment_date
+        days_to_add = max(plan.duration_days - 1, 0)
+        new_end = new_start + datetime.timedelta(days=days_to_add)
 
-            # 4.1 Validación: Superposición con el nuevo período recalculado
-            new_start = payment_date
-            days_to_add = max(plan.duration_days - 1, 0)
-            new_end = new_start + datetime.timedelta(days=days_to_add)
+        overlapping_sub = Subscription.objects.filter(
+            member=subscription.member,
+            status=Subscription.Status.ACTIVA,
+            start_date__lte=new_end,
+            end_date__gte=new_start,
+        ).exclude(pk=subscription.pk).select_related('plan').first()
 
-            overlapping_sub = Subscription.objects.filter(
-                member=subscription.member,
-                status=Subscription.Status.ACTIVA,
-                start_date__lte=new_end,
-                end_date__gte=new_start,
-            ).exclude(pk=subscription.pk).select_related('plan').first()
-
-            if overlapping_sub:
-                form.add_error(
-                    None,
-                    f"No se puede registrar el pago ni activar la membresía: el período recalculado "
-                    f"({new_start.strftime('%d/%m/%Y')} al {new_end.strftime('%d/%m/%Y')}) "
-                    f"se superpone con otra suscripción activa de este socio "
-                    f"({overlapping_sub.plan.name}: {overlapping_sub.start_date.strftime('%d/%m/%Y')} al {overlapping_sub.end_date.strftime('%d/%m/%Y')})."
-                )
-                return self.form_invalid(form)
+        if overlapping_sub:
+            form.add_error(
+                None,
+                f"No se puede registrar el pago ni activar la membresía: el período recalculado "
+                f"({new_start.strftime('%d/%m/%Y')} al {new_end.strftime('%d/%m/%Y')}) "
+                f"se superpone con otra suscripción activa de este socio "
+                f"({overlapping_sub.plan.name}: {overlapping_sub.start_date.strftime('%d/%m/%Y')} al {overlapping_sub.end_date.strftime('%d/%m/%Y')})."
+            )
+            return self.form_invalid(form)
 
         # 5. Guardado del pago y activación de la suscripción dentro de una transacción atómica
         with transaction.atomic():
             form.instance.registered_by = self.request.user
             self.object = form.save()
 
-            if subscription.status == Subscription.Status.PENDIENTE:
-                subscription.activate_from_payment(payment_date)
-                messages.success(
-                    self.request,
-                    f"Cobro registrado correctamente. La membresía '{subscription.plan.name}' de "
-                    f"{subscription.member.get_full_name() or subscription.member.username} fue activada "
-                    f"desde el {subscription.start_date.strftime('%d/%m/%Y')} hasta el {subscription.end_date.strftime('%d/%m/%Y')}."
-                )
-            else:
-                messages.success(
-                    self.request,
-                    f"Cobro de ${self.object.amount} registrado correctamente para "
-                    f"{subscription.member.get_full_name() or subscription.member.username}."
-                )
+            subscription.activate_from_payment(payment_date)
+            messages.success(
+                self.request,
+                f"Cobro registrado correctamente. La membresía '{subscription.plan.name}' de "
+                f"{subscription.member.get_full_name() or subscription.member.username} fue activada "
+                f"desde el {subscription.start_date.strftime('%d/%m/%Y')} hasta el {subscription.end_date.strftime('%d/%m/%Y')}."
+            )
 
         return redirect(self.get_success_url())
 

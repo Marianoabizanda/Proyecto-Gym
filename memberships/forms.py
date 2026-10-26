@@ -152,21 +152,22 @@ class PaymentRegistrationForm(forms.ModelForm):
             if not self.is_bound:
                 self.initial['amount'] = self.locked_subscription.plan.price
         else:
-            # Excluir suscripciones canceladas en modo general
-            sub_qs = Subscription.objects.exclude(
-                status=Subscription.Status.CANCELADA
+            # Modo general: únicamente suscripciones en estado PENDIENTE y sin pagos registrados
+            sub_qs = Subscription.objects.filter(
+                status=Subscription.Status.PENDIENTE,
+                payments__isnull=True
             ).select_related('member', 'plan')
 
-            # Si se edita un pago previo, permitir su suscripción original aunque haya sido cancelada luego
+            # Si se edita un pago previo, permitir su suscripción original aunque ya tenga pago
             if self.instance and self.instance.pk and self.instance.subscription_id:
                 sub_qs = sub_qs | Subscription.objects.filter(pk=self.instance.subscription_id).select_related('member', 'plan')
 
             self.fields['subscription'].queryset = sub_qs.order_by('-end_date')
 
-            # Formatear el texto de cada opción en el selector para identificar claramente al socio, su DNI, plan y estado
+            # Formatear el texto de cada opción en el selector para identificar claramente al socio, su DNI y plan
             self.fields['subscription'].label_from_instance = lambda obj: (
                 f"{obj.member.get_full_name() or obj.member.username} (DNI: {obj.member.dni or 'S/D'}) — "
-                f"{obj.plan.name} (${obj.plan.price}) [{'PENDIENTE DE PAGO' if obj.status == Subscription.Status.PENDIENTE else f'Vence: {obj.end_date}'}]"
+                f"{obj.plan.name} (${obj.plan.price}) [PENDIENTE DE PAGO]"
             )
 
             # Sugerir monto del plan cuando el formulario recibe una suscripción inicial (vía initial)
@@ -187,8 +188,17 @@ class PaymentRegistrationForm(forms.ModelForm):
         if self.locked_subscription:
             if not subscription or subscription.pk != self.locked_subscription.pk:
                 raise ValidationError('No está permitido modificar la suscripción en un cobro contextual.')
-        if subscription and subscription.status == Subscription.Status.CANCELADA:
-            raise ValidationError('No se pueden registrar pagos sobre una suscripción cancelada.')
+
+        if subscription:
+            if subscription.status != Subscription.Status.PENDIENTE:
+                raise ValidationError('Esta suscripción ya fue cobrada o no se encuentra pendiente de pago.')
+
+            existing_payments = subscription.payments.all()
+            if self.instance and self.instance.pk:
+                existing_payments = existing_payments.exclude(pk=self.instance.pk)
+            if existing_payments.exists():
+                raise ValidationError('Esta suscripción ya fue cobrada y no puede registrar un nuevo pago.')
+
         return subscription
 
     def clean_amount(self):

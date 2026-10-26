@@ -279,11 +279,17 @@
                                 {% endif %}
                             </td>
                             <td class="pe-4 py-3 text-end">
-                                {% if request.user.is_admin_role and sub.status != 'CANCELADA' %}
+                                {% if request.user.is_admin_role %}
                                 <div class="d-inline-flex align-items-center gap-1">
+                                    {% if sub.status == 'PENDIENTE' and not sub.payments.exists %}
                                     <a href="{% url 'memberships:payment_create' %}?subscription={{ sub.pk }}" class="btn gym-btn-card btn-sm py-1 px-2" title="Registrar Cobro">
                                         <i class="bi bi-cash-stack me-1"></i> Cobrar
                                     </a>
+                                    {% elif sub.payments.exists %}
+                                    <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle py-1 px-2 small">
+                                        <i class="bi bi-check2-circle me-1"></i> Pago registrado
+                                    </span>
+                                    {% endif %}
                                     {% if sub.effective_status == 'FUTURA' %}
                                     <button type="button" class="btn gym-btn-outline btn-sm py-1 px-2 text-danger border-danger-subtle" title="Cancelar Suscripción Futura" data-bs-toggle="modal" data-bs-target="#cancelFutureModal{{ sub.pk }}">
                                         <i class="bi bi-x-circle me-1"></i> Cancelar
