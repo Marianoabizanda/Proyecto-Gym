@@ -43,7 +43,67 @@
 
     <!-- Contenido contextual según Rol -->
     {% if is_admin %}
-    <!-- PANEL PARA ADMINISTRADOR -->
+    <!-- Bloque de Métricas de Resumen General (ADMIN) -->
+    <div class="col-12">
+        <div class="row row-cols-2 row-cols-sm-3 row-cols-lg-5 g-3">
+            <!-- 1. Socios -->
+            <div class="col">
+                <div class="gym-dash-card p-3 p-xl-4 h-100 d-flex flex-column justify-content-between">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-secondary small text-uppercase tracking-wider fw-semibold">Socios</span>
+                        <i class="bi bi-people text-accent fs-4"></i>
+                    </div>
+                    <div class="fs-2 fw-extrabold text-white mb-0">{{ metrics.total_members }}</div>
+                </div>
+            </div>
+
+            <!-- 2. Activas -->
+            <div class="col">
+                <div class="gym-dash-card p-3 p-xl-4 h-100 d-flex flex-column justify-content-between">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-secondary small text-uppercase tracking-wider fw-semibold">Activas</span>
+                        <i class="bi bi-check-circle text-success fs-4"></i>
+                    </div>
+                    <div class="fs-2 fw-extrabold text-success mb-0">{{ metrics.active_subscriptions }}</div>
+                </div>
+            </div>
+
+            <!-- 3. Pendientes -->
+            <div class="col">
+                <div class="gym-dash-card p-3 p-xl-4 h-100 d-flex flex-column justify-content-between">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-secondary small text-uppercase tracking-wider fw-semibold">Pendientes</span>
+                        <i class="bi bi-hourglass-split text-warning fs-4"></i>
+                    </div>
+                    <div class="fs-2 fw-extrabold text-warning mb-0">{{ metrics.pending_subscriptions }}</div>
+                </div>
+            </div>
+
+            <!-- 4. Vencidas -->
+            <div class="col">
+                <div class="gym-dash-card p-3 p-xl-4 h-100 d-flex flex-column justify-content-between">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-secondary small text-uppercase tracking-wider fw-semibold">Vencidas</span>
+                        <i class="bi bi-clock-history text-secondary fs-4"></i>
+                    </div>
+                    <div class="fs-2 fw-extrabold text-white-50 mb-0">{{ metrics.expired_subscriptions }}</div>
+                </div>
+            </div>
+
+            <!-- 5. Horarios Activos -->
+            <div class="col">
+                <div class="gym-dash-card p-3 p-xl-4 h-100 d-flex flex-column justify-content-between">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-secondary small text-uppercase tracking-wider fw-semibold">Horarios</span>
+                        <i class="bi bi-calendar-check text-info fs-4"></i>
+                    </div>
+                    <div class="fs-2 fw-extrabold text-info mb-0">{{ metrics.active_schedules }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANEL PARA ADMINISTRADOR (Accesos Operativos) -->
     <div class="col-12 col-md-6 col-lg-4">
         <div class="gym-dash-card h-100 p-4 d-flex flex-column justify-content-between">
             <div>

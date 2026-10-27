@@ -4,10 +4,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.views import View
 from django.views.generic import CreateView, TemplateView, UpdateView
 
-from memberships.models import Plan
+from classes.models import ClassSchedule
+from memberships.models import Plan, Subscription
 from .forms import CustomAuthenticationForm, MemberRegistrationForm, UserProfileForm
 from .models import CustomUser
 
@@ -94,7 +96,27 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         context['is_professor'] = user.is_professor_role()
         context['is_member'] = user.is_member_role()
 
-        if user.is_member_role():
+        if user.is_admin_role():
+            today = timezone.localdate()
+            context['metrics'] = {
+                'total_members': CustomUser.objects.filter(role=CustomUser.Role.SOCIO).count(),
+                'active_subscriptions': Subscription.objects.filter(
+                    status=Subscription.Status.ACTIVA,
+                    start_date__lte=today,
+                    end_date__gte=today,
+                ).count(),
+                'pending_subscriptions': Subscription.objects.filter(
+                    status=Subscription.Status.PENDIENTE,
+                ).count(),
+                'expired_subscriptions': Subscription.objects.filter(
+                    status=Subscription.Status.ACTIVA,
+                    end_date__lt=today,
+                ).count(),
+                'active_schedules': ClassSchedule.objects.filter(
+                    is_active=True,
+                ).count(),
+            }
+        elif user.is_member_role():
             member_subs = list(user.subscriptions.select_related('plan').all())
             context['current_subscription'] = next((s for s in member_subs if s.is_current), None)
             context['pending_subscription'] = next((s for s in member_subs if s.status == 'PENDIENTE'), None)
