@@ -654,4 +654,76 @@ body {
         padding-top: 2rem !important;
         padding-bottom: 2rem !important;
     }
+
+    /* Carrusel horizontal nativo para planes en mobile */
+    .home-plans-slider {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        gap: 1rem !important;
+        padding: 0.5rem 1rem 1.25rem 1rem !important;
+        margin-left: -1rem !important;
+        margin-right: -1rem !important;
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE/Edge */
+    }
+
+    .home-plans-slider::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera */
+    }
+
+    .home-plan-slide {
+        flex: 0 0 85% !important;
+        max-width: 85% !important;
+        width: 85% !important;
+        scroll-snap-align: center;
+        scroll-snap-stop: always;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    .home-plan-slide:first-child {
+        margin-left: 0.25rem;
+    }
+
+    .home-plan-slide:last-child {
+        margin-right: 0.25rem;
+    }
+
+    .home-plan-slide .gym-plan-card {
+        padding: 1.75rem 1.5rem !important;
+        border-radius: var(--gym-radius-md);
+    }
+
+    .home-plan-slide .plan-amount {
+        font-size: 2.5rem;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   Ajuste de Navbar en Pantallas Medianas (992px a 1199.98px)
+   Evita quiebre de links del rol ADMIN conservando alineación horizontal
+   -------------------------------------------------------------------------- */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    .gym-nav-link {
+        font-size: 0.74rem !important;
+        letter-spacing: 0.8px !important;
+        padding: 0.35rem 0.45rem !important;
+    }
+
+    .gym-brand-logo {
+        font-size: 1.05rem !important;
+        letter-spacing: 1.2px !important;
+    }
+
+    .gym-navbar-icon {
+        height: 32px !important;
+    }
+
+    .gym-badge-role-nav {
+        padding: 0.15rem 0.45rem !important;
+        font-size: 0.65rem !important;
+    }
 }

@@ -72,7 +72,7 @@
             <ul class="navbar-nav ms-auto align-items-lg-center gap-2">
                 {% if user.is_authenticated %}
                     <li class="nav-item small d-flex align-items-center text-nowrap my-1 my-lg-0 me-lg-1">
-                        <span class="text-white text-nowrap me-2">
+                        <span class="text-white text-truncate d-inline-block align-middle me-2" style="max-width: 160px;" title="{{ user.get_full_name|default:user.username }}">
                             <i class="bi bi-person-circle me-1 text-secondary"></i>
                             {{ user.get_full_name|default:user.username }}
                         </span>

@@ -60,19 +60,19 @@
                 </h5>
             </div>
             <div class="row g-3 small">
-                <div class="col-6">
+                <div class="col-12 col-sm-6">
                     <span class="text-secondary d-block">Nombre completo:</span>
                     <strong class="text-white">{{ member.first_name }} {{ member.last_name|default:"-" }}</strong>
                 </div>
-                <div class="col-6">
+                <div class="col-12 col-sm-6">
                     <span class="text-secondary d-block">DNI:</span>
                     <strong class="text-white">{{ member.dni|default:"No informado" }}</strong>
                 </div>
-                <div class="col-6">
+                <div class="col-12 col-sm-6">
                     <span class="text-secondary d-block">Teléfono:</span>
                     <span class="text-white">{{ member.phone|default:"No informado" }}</span>
                 </div>
-                <div class="col-6">
+                <div class="col-12 col-sm-6">
                     <span class="text-secondary d-block">Correo electrónico:</span>
                     <span class="text-white">{{ member.email|default:"No informado" }}</span>
                 </div>
@@ -96,7 +96,7 @@
             </div>
             {% with profile=member.member_profile %}
             <div class="row g-3 small">
-                <div class="col-6">
+                <div class="col-12 col-sm-6">
                     <span class="text-secondary d-block">Apto físico:</span>
                     {% if profile and profile.medical_certificate %}
                         <span class="badge bg-success-subtle text-success border border-success-subtle">
@@ -111,7 +111,7 @@
                         </span>
                     {% endif %}
                 </div>
-                <div class="col-6">
+                <div class="col-12 col-sm-6">
                     <span class="text-secondary d-block">Fecha de nacimiento:</span>
                     <span class="text-white">{{ profile.birth_date|date:"d/m/Y"|default:"No informada" }}</span>
                 </div>

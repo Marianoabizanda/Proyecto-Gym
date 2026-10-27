@@ -132,12 +132,12 @@
                 </div>
 
                 <!-- Botones de Acción -->
-                <div class="d-flex gap-2 pt-2 border-top border-dark-subtle">
-                    <button type="submit" class="btn gym-btn-primary fw-semibold px-4 py-2">
+                <div class="d-flex flex-column flex-sm-row gap-2 pt-2 border-top border-dark-subtle">
+                    <button type="submit" class="btn gym-btn-primary fw-semibold px-4 py-2 w-100 w-sm-auto">
                         <i class="bi bi-check-lg me-1"></i>
                         {% if object.pk %}Guardar Cambios{% else %}Crear Horario{% endif %}
                     </button>
-                    <a href="{% url 'classes:schedule_list' %}" class="btn gym-btn-outline px-4 py-2">
+                    <a href="{% url 'classes:schedule_list' %}" class="btn gym-btn-outline px-4 py-2 w-100 w-sm-auto text-center">
                         Cancelar
                     </a>
                 </div>

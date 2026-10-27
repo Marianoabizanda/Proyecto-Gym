@@ -36,11 +36,11 @@
                 <p class="hero-subtitle text-secondary mb-4 pb-2">
                     Tu espacio para entrenar, progresar y alcanzar tus objetivos con equipamiento de nivel y seguimiento constante.
                 </p>
-                <div class="d-flex flex-wrap gap-3">
-                    <a href="#planes" class="btn gym-btn-primary px-4 py-3 text-uppercase fw-bold">
+                <div class="d-flex flex-column flex-sm-row gap-3">
+                    <a href="#planes" class="btn gym-btn-primary w-100 w-sm-auto px-4 py-3 text-uppercase fw-bold text-center">
                         VER PLANES
                     </a>
-                    <a href="{% url 'accounts:login' %}" class="btn gym-btn-outline px-4 py-3 text-uppercase fw-bold">
+                    <a href="{% url 'accounts:login' %}" class="btn gym-btn-outline w-100 w-sm-auto px-4 py-3 text-uppercase fw-bold text-center">
                         INGRESAR
                     </a>
                 </div>
@@ -64,9 +64,9 @@
         </div>
 
         {% if plans %}
-            <div class="row g-4 justify-content-center">
+            <div class="row g-4 justify-content-center home-plans-slider">
                 {% for plan in plans %}
-                    <div class="col-12 col-md-6 col-lg-4">
+                    <div class="col-12 col-md-6 col-lg-4 home-plan-slide">
                         <div class="gym-plan-card h-100 d-flex flex-column justify-content-between p-4 p-lg-5">
                             <div>
                                 <div class="d-flex justify-content-between align-items-center mb-3">
