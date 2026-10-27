@@ -131,8 +131,15 @@ class DashboardView(LoginRequiredMixin, TemplateView):
             }
         elif user.is_member_role():
             member_subs = list(user.subscriptions.select_related('plan').all())
-            context['current_subscription'] = next((s for s in member_subs if s.is_current), None)
-            context['pending_subscription'] = next((s for s in member_subs if s.status == 'PENDIENTE'), None)
+            current_sub = next((s for s in member_subs if s.is_current), None)
+            pending_sub = next((s for s in member_subs if s.status == Subscription.Status.PENDIENTE), None)
+            expired_sub = None
+            if not current_sub and not pending_sub:
+                expired_sub = next((s for s in member_subs if s.effective_status == 'VENCIDA'), None)
+
+            context['current_subscription'] = current_sub
+            context['pending_subscription'] = pending_sub
+            context['expired_subscription'] = expired_sub
 
         return context
 

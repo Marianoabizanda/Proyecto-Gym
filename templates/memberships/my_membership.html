@@ -81,6 +81,17 @@
                                 {{ current_subscription.days_left }} días
                             </strong>
                         </div>
+                        <div class="col-12 pt-2 border-top border-dark-subtle mt-2">
+                            {% if current_subscription.plan.includes_classes %}
+                                <span class="text-success small fw-semibold">
+                                    <i class="bi bi-check2-circle me-1"></i> Incluye clases grupales
+                                </span>
+                            {% else %}
+                                <span class="text-secondary small">
+                                    <i class="bi bi-dash-circle me-1"></i> Este plan no incluye clases grupales
+                                </span>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -130,15 +141,77 @@
                 </div>
             </div>
         </div>
+        {% elif subscriptions_history.0.effective_status == 'VENCIDA' %}
+        <div class="gym-dash-card p-4 p-md-5">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+                <div class="d-flex align-items-center">
+                    <div class="gym-dash-icon-box me-3 text-warning border-warning-subtle" style="background-color: rgba(234, 179, 8, 0.1);">
+                        <i class="bi bi-clock-history fs-4"></i>
+                    </div>
+                    <div>
+                        <span class="text-uppercase tracking-widest text-secondary small fw-semibold d-block">
+                            Estado Actual de Cobertura
+                        </span>
+                        <h4 class="text-uppercase fw-extrabold text-white mb-0 fs-5">
+                            Membresía Vencida
+                        </h4>
+                    </div>
+                </div>
+
+                <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-3 py-2 fs-6">
+                    <i class="bi bi-clock-history me-1"></i> VENCIDA
+                </span>
+            </div>
+
+            <div class="row g-4 align-items-center">
+                <div class="col-12 col-md-6 col-lg-5">
+                    <span class="text-secondary small d-block mb-1">Último Plan Contratado</span>
+                    <h3 class="text-white fw-extrabold mb-2 fs-3">
+                        {{ subscriptions_history.0.plan.name }}
+                    </h3>
+                    <p class="text-secondary small mb-3">
+                        Tu período de cobertura finalizó. Elegí un nuevo plan para volver a disfrutar de todas las instalaciones y clases del gimnasio.
+                    </p>
+                    <a href="{% url 'memberships:plan_list' %}" class="btn gym-btn-primary fw-semibold px-4 py-2">
+                        <i class="bi bi-arrow-repeat me-1"></i> Elegir nuevo plan
+                    </a>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-7">
+                    <div class="row g-3 p-3 bg-dark rounded border border-warning-subtle">
+                        <div class="col-6">
+                            <span class="text-secondary small d-block">Fecha de inicio:</span>
+                            <strong class="text-white small">{{ subscriptions_history.0.start_date|date:"d/m/Y" }}</strong>
+                        </div>
+                        <div class="col-6">
+                            <span class="text-secondary small d-block">Vencimiento:</span>
+                            <strong class="text-white small">{{ subscriptions_history.0.end_date|date:"d/m/Y" }}</strong>
+                        </div>
+                        <div class="col-12 pt-2 border-top border-dark-subtle mt-2">
+                            <span class="text-secondary small d-block">
+                                {% if subscriptions_history.0.plan.includes_classes %}
+                                    <i class="bi bi-check2-circle text-success me-1"></i> Incluía clases grupales
+                                {% else %}
+                                    <i class="bi bi-dash-circle text-secondary me-1"></i> No incluía clases grupales
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         {% else %}
         <div class="gym-dash-card p-4 p-md-5 text-center">
             <div class="gym-dash-icon-box mx-auto mb-3">
                 <i class="bi bi-info-circle fs-4 text-warning"></i>
             </div>
             <h4 class="text-white fw-bold mb-2">No posees una membresía activa</h4>
-            <p class="text-secondary small max-w-600 mx-auto mb-0">
-                Actualmente no registras una suscripción con cobertura vigente. Para contratar o renovar tu plan, podés acercarte a la recepción del gimnasio o contactar al equipo de administración.
+            <p class="text-secondary small max-w-600 mx-auto mb-3">
+                Actualmente no registrás una suscripción con cobertura vigente. Elegí un plan para acceder a las instalaciones, actividades y reservar tus clases semanales.
             </p>
+            <a href="{% url 'memberships:plan_list' %}" class="btn gym-btn-primary fw-semibold px-4 py-2">
+                <i class="bi bi-card-checklist me-1"></i> Elegir un Plan
+            </a>
         </div>
         {% endif %}
     </div>

@@ -30,6 +30,28 @@
         </div>
     </div>
 
+    <!-- Aviso si el socio tiene inscripciones pero su membresía no se encuentra activa -->
+    {% if enrollments and not user.subscriptions.first.is_current and not user.subscriptions.all.1.is_current %}
+    <div class="col-12">
+        <div class="gym-dash-card p-3 p-md-4 border-warning-subtle d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3" data-bs-theme="dark">
+            <div class="d-flex align-items-center">
+                <div class="gym-dash-icon-box me-3 text-warning border-warning-subtle flex-shrink-0" style="background-color: rgba(234, 179, 8, 0.1);">
+                    <i class="bi bi-exclamation-triangle fs-4"></i>
+                </div>
+                <div>
+                    <strong class="text-white d-block">Membresía no activa</strong>
+                    <span class="text-secondary small">
+                        Tu membresía no se encuentra activa. Tus inscripciones existentes siguen visibles, pero no podrás realizar nuevas inscripciones hasta contar con una membresía activa.
+                    </span>
+                </div>
+            </div>
+            <a href="{% url 'memberships:plan_list' %}" class="btn btn-sm gym-btn-primary text-nowrap">
+                <i class="bi bi-arrow-repeat me-1"></i> Elegir Plan
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
     <!-- Tabla de Inscripciones del Socio -->
     <div class="col-12">
         <div class="gym-dash-card overflow-hidden" data-bs-theme="dark">

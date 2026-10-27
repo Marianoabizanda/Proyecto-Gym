@@ -322,6 +322,10 @@
                     <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1 small">
                         <i class="bi bi-hourglass-split me-1"></i>PENDIENTE DE PAGO
                     </span>
+                    {% elif expired_subscription %}
+                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1 small">
+                        <i class="bi bi-clock-history me-1"></i>VENCIDA
+                    </span>
                     {% endif %}
                 </div>
 
@@ -342,6 +346,17 @@
                             <span class="text-secondary">Días restantes:</span>
                             <span class="text-accent-subtle fw-bold">{{ current_subscription.days_left }} días</span>
                         </div>
+                        <div class="col-12 pt-2 border-top border-dark-subtle mt-2">
+                            {% if current_subscription.plan.includes_classes %}
+                                <span class="text-success small fw-semibold">
+                                    <i class="bi bi-check2-circle me-1"></i> Incluye clases grupales
+                                </span>
+                            {% else %}
+                                <span class="text-secondary small">
+                                    <i class="bi bi-dash-circle me-1"></i> Este plan no incluye clases grupales
+                                </span>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
                 {% elif pending_subscription %}
@@ -356,6 +371,20 @@
                         </div>
                         <p class="text-secondary mb-0">
                             Tu plan fue seleccionado correctamente. La membresía se activará cuando el administrador registre y confirme el pago. Una vez activada, podrás utilizar los beneficios del plan y, si incluye clases, inscribirte a ellas.
+                        </p>
+                    </div>
+                </div>
+                {% elif expired_subscription %}
+                <div class="mb-3">
+                    <span class="text-secondary small d-block mb-1">Último plan contratado</span>
+                    <h5 class="text-white fw-bold mb-3">{{ expired_subscription.plan.name }}</h5>
+                    <div class="p-3 bg-dark rounded border border-warning-subtle small">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-secondary">Venció el:</span>
+                            <span class="text-white fw-semibold">{{ expired_subscription.end_date|date:"d/m/Y" }}</span>
+                        </div>
+                        <p class="text-secondary mb-0">
+                            Tu período de cobertura finalizó. Elegí un nuevo plan para volver a acceder a las instalaciones y clases del gimnasio.
                         </p>
                     </div>
                 </div>
@@ -375,6 +404,14 @@
                 {% if current_subscription or pending_subscription %}
                 <a href="{% url 'memberships:my_membership' %}" class="btn gym-btn-primary w-100 text-uppercase fw-semibold py-2">
                     <i class="bi bi-award me-1"></i> Ver Mi Membresía
+                </a>
+                {% elif expired_subscription %}
+                <a href="{% url 'memberships:plan_list' %}" class="btn gym-btn-primary w-100 text-uppercase fw-semibold py-2">
+                    <i class="bi bi-arrow-repeat me-1"></i> Elegir nuevo plan
+                </a>
+                <a href="{% url 'memberships:my_membership' %}" class="btn gym-btn-card w-100 text-uppercase fw-semibold py-2 text-start px-3 d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-clock-history me-2"></i> Historial de Membresía</span>
+                    <i class="bi bi-chevron-right text-secondary small"></i>
                 </a>
                 {% else %}
                 <a href="{% url 'memberships:plan_list' %}" class="btn gym-btn-primary w-100 text-uppercase fw-semibold py-2">
@@ -401,11 +438,44 @@
                         <small class="text-secondary">Actividades del gimnasio</small>
                     </div>
                 </div>
+
+                {% if current_subscription and current_subscription.plan.includes_classes %}
                 <p class="text-secondary small mb-0">
                     Explorá el catálogo de actividades disponibles, consultá los cupos y reservá tu lugar semanal.
                 </p>
+                {% elif current_subscription and not current_subscription.plan.includes_classes %}
+                <p class="text-warning small mb-1">
+                    <i class="bi bi-dash-circle me-1"></i> Tu plan actual no incluye clases grupales.
+                </p>
+                <p class="text-secondary small mb-0">
+                    Podés consultar los horarios de las actividades, pero para reservar tu lugar necesitás un plan que incluya clases.
+                </p>
+                {% elif pending_subscription %}
+                <p class="text-warning small mb-1">
+                    <i class="bi bi-hourglass-split me-1"></i> Membresía pendiente de activación.
+                </p>
+                <p class="text-secondary small mb-0">
+                    Tu membresía está pendiente de activación. Podrás inscribirte cuando el gimnasio confirme el pago.
+                </p>
+                {% elif expired_subscription %}
+                <p class="text-warning small mb-1">
+                    <i class="bi bi-clock-history me-1"></i> Tu membresía venció.
+                </p>
+                <p class="text-secondary small mb-0">
+                    Elegí un nuevo plan para volver a inscribirte a clases.
+                </p>
+                {% else %}
+                <p class="text-warning small mb-1">
+                    <i class="bi bi-lock me-1"></i> Membresía inactiva.
+                </p>
+                <p class="text-secondary small mb-0">
+                    Necesitás una membresía activa para inscribirte a clases. Podés consultar los horarios, pero la reserva permanecerá bloqueada.
+                </p>
+                {% endif %}
             </div>
+
             <div class="mt-4 pt-3 border-top border-dark-subtle d-flex flex-column gap-2">
+                {% if current_subscription and current_subscription.plan.includes_classes %}
                 <a href="{% url 'classes:available_schedules' %}" class="btn gym-btn-primary w-100 text-uppercase fw-semibold py-2">
                     <i class="bi bi-calendar2-plus me-1"></i> Clases Disponibles
                 </a>
@@ -413,6 +483,43 @@
                     <span><i class="bi bi-calendar-check me-2"></i> Mis Inscripciones</span>
                     <i class="bi bi-chevron-right text-secondary small"></i>
                 </a>
+                {% elif current_subscription and not current_subscription.plan.includes_classes %}
+                <a href="{% url 'classes:available_schedules' %}" class="btn gym-btn-outline w-100 text-uppercase fw-semibold py-2">
+                    <i class="bi bi-calendar2-plus me-1"></i> Ver Clases Disponibles
+                </a>
+                <a href="{% url 'classes:my_enrollments' %}" class="btn gym-btn-card w-100 text-uppercase fw-semibold py-2 text-start px-3 d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-calendar-check me-2"></i> Mis Inscripciones</span>
+                    <i class="bi bi-chevron-right text-secondary small"></i>
+                </a>
+                {% elif pending_subscription %}
+                <a href="{% url 'classes:available_schedules' %}" class="btn gym-btn-outline w-100 text-uppercase fw-semibold py-2">
+                    <i class="bi bi-calendar2-plus me-1"></i> Ver Clases Disponibles
+                </a>
+                <a href="{% url 'classes:my_enrollments' %}" class="btn gym-btn-card w-100 text-uppercase fw-semibold py-2 text-start px-3 d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-calendar-check me-2"></i> Mis Inscripciones</span>
+                    <i class="bi bi-chevron-right text-secondary small"></i>
+                </a>
+                {% elif expired_subscription %}
+                <a href="{% url 'memberships:plan_list' %}" class="btn gym-btn-primary w-100 text-uppercase fw-semibold py-2">
+                    <i class="bi bi-arrow-repeat me-1"></i> Elegir nuevo plan
+                </a>
+                <a href="{% url 'classes:available_schedules' %}" class="btn gym-btn-card w-100 text-uppercase fw-semibold py-2 text-start px-3 d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-calendar2-plus me-2"></i> Ver Clases Disponibles</span>
+                    <i class="bi bi-chevron-right text-secondary small"></i>
+                </a>
+                <a href="{% url 'classes:my_enrollments' %}" class="btn gym-btn-card w-100 text-uppercase fw-semibold py-2 text-start px-3 d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-calendar-check me-2"></i> Mis Inscripciones</span>
+                    <i class="bi bi-chevron-right text-secondary small"></i>
+                </a>
+                {% else %}
+                <a href="{% url 'memberships:plan_list' %}" class="btn gym-btn-primary w-100 text-uppercase fw-semibold py-2">
+                    <i class="bi bi-card-checklist me-1"></i> Elegir Plan
+                </a>
+                <a href="{% url 'classes:available_schedules' %}" class="btn gym-btn-card w-100 text-uppercase fw-semibold py-2 text-start px-3 d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-calendar2-plus me-2"></i> Ver Clases Disponibles</span>
+                    <i class="bi bi-chevron-right text-secondary small"></i>
+                </a>
+                {% endif %}
             </div>
         </div>
     </div>
