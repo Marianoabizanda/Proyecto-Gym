@@ -141,6 +141,14 @@ class DashboardView(LoginRequiredMixin, TemplateView):
             context['pending_subscription'] = pending_sub
             context['expired_subscription'] = expired_sub
 
+            if current_sub:
+                from routines.models import DailyRoutine
+                today_weekday = timezone.localdate().isoweekday()
+                context['today_routine'] = DailyRoutine.objects.filter(
+                    day_of_week=today_weekday,
+                    is_active=True,
+                ).prefetch_related('exercises').first()
+
         return context
 
 

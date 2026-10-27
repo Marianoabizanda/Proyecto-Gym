@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block title %}Rutina de Hoy — GYM MANAGER{% endblock %}
+
+{% block body_class %}bg-gym-dark text-white{% endblock %}
+
+{% block content %}
+<div class="row g-4 my-2 justify-content-center">
+    <!-- Navegación de retorno -->
+    <div class="col-12 col-lg-10">
+        <a href="{% url 'accounts:dashboard' %}" class="gym-link-accent small text-decoration-none">
+            <i class="bi bi-arrow-left me-1"></i> Volver al Dashboard
+        </a>
+    </div>
+
+    {% if routine %}
+        <!-- Encabezado de la Rutina de Hoy -->
+        <div class="col-12 col-lg-10">
+            <div class="gym-dash-header p-4 p-lg-5">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                    <div>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle small text-uppercase">
+                                <i class="bi bi-fire me-1"></i> Rutina del Día
+                            </span>
+                            <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle small text-uppercase">
+                                {{ routine.get_day_of_week_display }} · {{ today|date:"d/m/Y" }}
+                            </span>
+                        </div>
+                        <h2 class="text-uppercase fw-extrabold text-white mb-1 fs-3">
+                            {{ routine.name }}
+                        </h2>
+                        {% if routine.description %}
+                            <p class="text-secondary small mb-0">
+                                {{ routine.description }}
+                            </p>
+                        {% else %}
+                            <p class="text-secondary small mb-0">
+                                Plan de entrenamiento general programado para la sala de musculación.
+                            </p>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <span class="gym-badge-role">
+                            {{ routine.exercises.count }} {{ routine.exercises.count|pluralize:"ejercicio,ejercicios" }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista de Ejercicios -->
+        <div class="col-12 col-lg-10">
+            <div class="gym-dash-card overflow-hidden" data-bs-theme="dark">
+                <div class="p-4 border-bottom border-dark-subtle d-flex align-items-center">
+                    <div class="gym-dash-icon-box me-3" style="width: 40px; height: 40px;">
+                        <i class="bi bi-check2-circle fs-5"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold text-white mb-0 fs-6 text-uppercase">
+                            Secuencia de Ejercicios
+                        </h5>
+                        <small class="text-secondary">Completá cada serie respetando los tiempos de descanso</small>
+                    </div>
+                </div>
+
+                {% if routine.exercises.all %}
+                <div class="p-3 p-md-4">
+                    <div class="row g-3">
+                        {% for exercise in routine.exercises.all %}
+                        <div class="col-12">
+                            <div class="p-3 rounded-2 border border-dark-subtle bg-dark d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">
+                                <div class="d-flex align-items-center">
+                                    <span class="badge bg-dark border border-dark-subtle text-secondary me-3 px-2 py-1 fs-6">
+                                        {{ exercise.order }}
+                                    </span>
+                                    <div>
+                                        <h6 class="text-white fw-bold mb-1 fs-6">{{ exercise.name }}</h6>
+                                        {% if exercise.notes %}
+                                            <small class="text-secondary">
+                                                <i class="bi bi-info-circle me-1"></i>{{ exercise.notes }}
+                                            </small>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="text-sm-end ps-4 ps-sm-0 flex-shrink-0">
+                                    <span class="badge bg-dark border border-dark-subtle text-accent-subtle fs-6 px-3 py-2">
+                                        {{ exercise.sets }} series &times; {{ exercise.repetitions }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-clipboard-x display-6 text-secondary d-block mb-3"></i>
+                    <h5 class="text-white fw-bold mb-2">No hay ejercicios cargados para hoy</h5>
+                    <p class="text-secondary small mb-0">
+                        Consultá con el profesor en sala para diagramar tu rutina del día.
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    {% else %}
+        <!-- Estado sin rutina activa programada -->
+        <div class="col-12 col-lg-8 text-center py-5">
+            <div class="p-5 gym-dash-card">
+                <i class="bi bi-calendar2-x display-5 text-secondary d-block mb-3"></i>
+                <h4 class="text-white fw-bold mb-2">Hoy no hay una rutina general programada</h4>
+                <p class="text-secondary small mb-4">
+                    Podés realizar tu entrenamiento libre en la sala de musculación o consultar al profesor en sala por una rutina personalizada.
+                </p>
+                <a href="{% url 'accounts:dashboard' %}" class="btn gym-btn-primary fw-semibold py-2 px-4">
+                    Volver al Dashboard
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+

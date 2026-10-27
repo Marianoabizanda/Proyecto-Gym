@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block title %}Rutinas Diarias — GYM MANAGER{% endblock %}
+
+{% block body_class %}bg-gym-dark text-white{% endblock %}
+
+{% block content %}
+<div class="row g-4 my-2">
+    <!-- Encabezado de la Sección -->
+    <div class="col-12">
+        <div class="gym-dash-header p-4 p-lg-5">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                <div>
+                    <span class="text-uppercase tracking-widest text-secondary small fw-semibold d-block mb-1">
+                        Módulo de Entrenamiento
+                    </span>
+                    <h2 class="text-uppercase fw-extrabold text-white mb-1 fs-3">
+                        Rutinas Diarias
+                    </h2>
+                    <p class="text-secondary small mb-0">
+                        Planificación general semanal de rutinas y ejercicios para la sala de entrenamiento.
+                    </p>
+                </div>
+                <div>
+                    <a href="{% url 'routines:routine_create' %}" class="btn gym-btn-primary fw-semibold py-2 px-3">
+                        <i class="bi bi-plus-lg me-1"></i> Nueva Rutina
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Catálogo Semanal de Rutinas -->
+    {% if routines %}
+        {% for routine in routines %}
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="gym-dash-card p-4 h-100 d-flex flex-column justify-content-between">
+                <div>
+                    <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
+                        <div class="d-flex align-items-center">
+                            <div class="gym-dash-icon-box me-3 flex-shrink-0" style="width: 44px; height: 44px;">
+                                <i class="bi bi-lightning-charge fs-5"></i>
+                            </div>
+                            <div>
+                                <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle small text-uppercase">
+                                    {{ routine.get_day_of_week_display }}
+                                </span>
+                                <h4 class="text-white fw-bold mb-0 fs-5 mt-1">
+                                    {{ routine.name }}
+                                </h4>
+                            </div>
+                        </div>
+                        <div class="flex-shrink-0">
+                            {% if routine.is_active %}
+                                <span class="badge bg-success-subtle text-success border border-success-subtle small">
+                                    Activa
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle small">
+                                    Inactiva
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% if routine.description %}
+                        <p class="text-secondary small mb-3">
+                            {{ routine.description }}
+                        </p>
+                    {% else %}
+                        <p class="text-secondary small mb-3 fst-italic">
+                            Sin descripción especificada.
+                        </p>
+                    {% endif %}
+
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <span class="badge bg-dark border border-dark-subtle text-accent-subtle">
+                            <i class="bi bi-card-checklist me-1"></i> {{ routine.exercise_count }} {{ routine.exercise_count|pluralize:"ejercicio,ejercicios" }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="pt-3 border-top border-dark-subtle d-flex flex-column gap-2">
+                    <a href="{% url 'routines:routine_detail' routine.pk %}" class="btn gym-btn-primary w-100 text-uppercase fw-semibold py-2">
+                        <i class="bi bi-gear me-1"></i> Gestionar Ejercicios
+                    </a>
+                    <a href="{% url 'routines:routine_update' routine.pk %}" class="btn gym-btn-card w-100 text-uppercase fw-semibold py-2 text-start px-3 d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-pencil me-2"></i> Editar Rutina</span>
+                        <i class="bi bi-chevron-right text-secondary small"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-12 text-center py-5">
+            <div class="p-5 gym-dash-card max-w-600 mx-auto">
+                <i class="bi bi-calendar-x display-5 text-secondary d-block mb-3"></i>
+                <h4 class="text-white fw-bold mb-2">No hay rutinas configuradas</h4>
+                <p class="text-secondary small mb-4">
+                    Comenzá creando las rutinas de la semana para que los socios con membresía activa puedan consultarlas diariamente.
+                </p>
+                <a href="{% url 'routines:routine_create' %}" class="btn gym-btn-primary fw-semibold py-2 px-4">
+                    <i class="bi bi-plus-lg me-1"></i> Crear Primera Rutina
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
