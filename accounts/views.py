@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.views import View
 from django.views.generic import CreateView, TemplateView, UpdateView
 
-from classes.models import ClassSchedule
+from classes.models import ClassEnrollment, ClassSchedule
 from memberships.models import Plan, Subscription
 from .forms import CustomAuthenticationForm, MemberRegistrationForm, UserProfileForm
 from .models import CustomUser
@@ -114,6 +114,19 @@ class DashboardView(LoginRequiredMixin, TemplateView):
                 ).count(),
                 'active_schedules': ClassSchedule.objects.filter(
                     is_active=True,
+                ).count(),
+            }
+        elif user.is_professor_role():
+            schedules = ClassSchedule.objects.filter(
+                professor=user,
+                is_active=True,
+            ).select_related('activity').prefetch_related('enrollments').order_by('day_of_week', 'start_time')
+            context['professor_schedules'] = schedules
+            context['professor_metrics'] = {
+                'assigned_schedules': schedules.count(),
+                'total_enrollments': ClassEnrollment.objects.filter(
+                    schedule__professor=user,
+                    schedule__is_active=True,
                 ).count(),
             }
         elif user.is_member_role():
