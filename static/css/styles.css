@@ -655,17 +655,46 @@ body {
         padding-bottom: 2rem !important;
     }
 
+    /* Botones del Hero en mobile */
+    .hero-btn-plan {
+        background-color: rgba(139, 92, 246, 0.1) !important;
+        border: 1px solid rgba(139, 92, 246, 0.45) !important;
+        color: #ffffff !important;
+        padding: 0.6rem 1.25rem !important;
+        font-size: 0.8rem !important;
+        letter-spacing: 1.2px;
+        box-shadow: none !important;
+    }
+
+    .hero-btn-plan:hover,
+    .hero-btn-plan:active {
+        background-color: rgba(139, 92, 246, 0.2) !important;
+        border-color: rgba(139, 92, 246, 0.7) !important;
+        color: #ffffff !important;
+        transform: none !important;
+    }
+
+    .hero-btn-auth {
+        padding: 0.6rem 1.25rem !important;
+        font-size: 0.8rem !important;
+        letter-spacing: 1.2px;
+    }
+
     /* Carrusel horizontal nativo para planes en mobile */
     .home-plans-slider {
         display: flex !important;
         flex-wrap: nowrap !important;
         overflow-x: auto !important;
+        overflow-y: hidden !important;
+        justify-content: flex-start !important;
         scroll-snap-type: x mandatory;
         -webkit-overflow-scrolling: touch;
         gap: 1rem !important;
         padding: 0.5rem 1rem 1.25rem 1rem !important;
         margin-left: -1rem !important;
         margin-right: -1rem !important;
+        scroll-padding-left: 1rem;
+        scroll-padding-right: 1rem;
         scrollbar-width: none; /* Firefox */
         -ms-overflow-style: none; /* IE/Edge */
     }
@@ -674,22 +703,20 @@ body {
         display: none; /* Chrome, Safari, Opera */
     }
 
+    /* Espaciador final para asegurar visualización completa de la última tarjeta */
+    .home-plans-slider::after {
+        content: '';
+        flex: 0 0 0.5rem;
+    }
+
     .home-plan-slide {
-        flex: 0 0 85% !important;
-        max-width: 85% !important;
-        width: 85% !important;
-        scroll-snap-align: center;
-        scroll-snap-stop: always;
+        flex: 0 0 84% !important;
+        max-width: 84% !important;
+        width: 84% !important;
+        scroll-snap-align: start !important;
+        scroll-snap-stop: normal !important;
         padding-left: 0 !important;
         padding-right: 0 !important;
-    }
-
-    .home-plan-slide:first-child {
-        margin-left: 0.25rem;
-    }
-
-    .home-plan-slide:last-child {
-        margin-right: 0.25rem;
     }
 
     .home-plan-slide .gym-plan-card {
