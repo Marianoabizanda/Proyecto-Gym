@@ -91,7 +91,7 @@
     <div class="col-12">
         <div class="gym-dash-card overflow-hidden" data-bs-theme="dark">
             {% if schedules %}
-            <div class="table-responsive">
+            <div class="table-responsive d-none d-md-block">
                 <table class="table table-dark table-hover align-middle gym-table mb-0">
                     <thead>
                         <tr class="border-bottom border-dark-subtle">
@@ -190,6 +190,99 @@
                         {% endfor %}
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Versión Mobile: Tarjetas Verticales Jerárquicas (< 768px) -->
+            <div class="d-md-none p-3 d-flex flex-column gap-3">
+                {% for schedule in schedules %}
+                <div class="p-3 rounded-2 border border-dark-subtle bg-dark">
+                    <!-- 1. Encabezado de la Clase: Actividad y Estado de Cupo -->
+                    <div class="d-flex align-items-start justify-content-between gap-2 mb-2">
+                        <div class="d-flex align-items-center">
+                            <div class="gym-dash-icon-box me-2 flex-shrink-0" style="width: 36px; height: 36px;">
+                                <i class="bi bi-activity fs-5"></i>
+                            </div>
+                            <div>
+                                <span class="text-uppercase tracking-wider text-secondary fw-semibold d-block" style="font-size: 0.68rem;">Actividad</span>
+                                <h5 class="text-white fw-bold mb-0 fs-6 text-break">{{ schedule.activity.name }}</h5>
+                            </div>
+                        </div>
+                        <div class="flex-shrink-0">
+                            {% if schedule.is_full %}
+                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle small">
+                                    Completo
+                                </span>
+                            {% else %}
+                                <span class="badge bg-success-subtle text-success border border-success-subtle small">
+                                    {{ schedule.available_capacity }} disp.
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- 2. Descripción breve y secundaria (si existe) -->
+                    {% if schedule.activity.description %}
+                        <p class="text-secondary small mb-3 lh-sm text-break">
+                            {{ schedule.activity.description }}
+                        </p>
+                    {% endif %}
+
+                    <!-- 3. Cuadrícula Interna Compacta (2 Columnas x 2 Filas) -->
+                    <div class="row g-2 p-2 rounded-2 border border-dark-subtle small mb-3" style="background-color: #09080d;">
+                        <!-- Columna Izquierda: Día y Horario -->
+                        <div class="col-6 border-end border-dark-subtle pe-2">
+                            <span class="text-secondary d-block" style="font-size: 0.7rem;">Día y Horario:</span>
+                            <span class="text-white fw-bold d-block text-break">{{ schedule.get_day_of_week_display }}</span>
+                            <span class="text-secondary d-block text-break" style="font-size: 0.78rem;">
+                                <i class="bi bi-clock me-1"></i>{{ schedule.start_time|time:"H:i" }} - {{ schedule.end_time|time:"H:i" }}
+                            </span>
+                        </div>
+
+                        <!-- Columna Derecha: Profesor y Cupo Actual -->
+                        <div class="col-6 ps-2">
+                            <span class="text-secondary d-block" style="font-size: 0.7rem;">Profesor:</span>
+                            <span class="text-white fw-semibold d-block text-break">
+                                <i class="bi bi-person-workspace text-secondary me-1"></i>{{ schedule.professor.get_full_name|default:schedule.professor.username }}
+                            </span>
+                            <span class="text-secondary d-block mt-1" style="font-size: 0.78rem;">
+                                Cupo: <strong class="text-white">{{ schedule.enrolled_count }} / {{ schedule.capacity }}</strong>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- 4. Zona de Acción / Estado al Pie (Ancho cómodo para el pulgar) -->
+                    <div class="pt-2 border-top border-dark-subtle">
+                        {% if schedule.id in enrolled_schedule_ids %}
+                            <div class="badge bg-info-subtle text-info border border-info-subtle w-100 py-2 d-flex justify-content-center align-items-center text-wrap">
+                                <i class="bi bi-check2-circle me-1"></i> Ya inscripto
+                            </div>
+                        {% elif schedule.is_full %}
+                            <div class="badge bg-danger-subtle text-danger border border-danger-subtle w-100 py-2 d-flex justify-content-center align-items-center text-wrap">
+                                <i class="bi bi-x-circle me-1"></i> Cupo lleno
+                            </div>
+                        {% elif not has_active_membership and pending_subscription %}
+                            <button class="btn gym-btn-disabled w-100 py-2 small text-wrap" disabled title="Membresía pendiente de activación por pago">
+                                <i class="bi bi-hourglass-split me-1"></i> Pendiente de activación
+                            </button>
+                        {% elif not has_active_membership %}
+                            <button class="btn gym-btn-disabled w-100 py-2 small text-wrap" disabled title="Requiere membresía activa">
+                                <i class="bi bi-lock me-1"></i> Requiere membresía
+                            </button>
+                        {% elif not plan_includes_classes %}
+                            <div class="badge bg-secondary-subtle text-secondary border border-secondary-subtle w-100 py-2 d-flex justify-content-center align-items-center small text-wrap" title="Tu plan actual no incluye clases">
+                                <i class="bi bi-lock me-1"></i> Tu plan no incluye clases
+                            </div>
+                        {% else %}
+                            <form method="post" action="{% url 'classes:enroll' schedule.pk %}" class="w-100 m-0">
+                                {% csrf_token %}
+                                <button type="submit" class="btn gym-btn-primary w-100 fw-semibold py-2 text-uppercase small">
+                                    <i class="bi bi-plus-circle me-1"></i> Inscribirme
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
             </div>
             {% else %}
             <div class="p-5 text-center">
