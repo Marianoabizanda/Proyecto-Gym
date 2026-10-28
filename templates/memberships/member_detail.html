@@ -196,9 +196,6 @@
                     {% if request.user.is_admin_role %}
                     <div class="col-12 col-lg-4">
                         <div class="d-flex flex-column gap-2">
-                            <a href="{% url 'memberships:payment_create' %}?subscription={{ current_subscription.pk }}" class="btn gym-btn-primary fw-semibold py-2">
-                                <i class="bi bi-cash-stack me-1"></i> Registrar Cobro
-                            </a>
                             <button type="button" class="btn gym-btn-outline py-2 text-danger border-danger-subtle" data-bs-toggle="modal" data-bs-target="#cancelSubscriptionModal">
                                 <i class="bi bi-x-circle me-1"></i> Cancelar Suscripción
                             </button>
@@ -264,6 +261,10 @@
                                     <span class="badge bg-success-subtle text-success border border-success-subtle">
                                         <i class="bi bi-check-circle me-1"></i> Activa
                                     </span>
+                                {% elif sub.effective_status == 'PENDIENTE' %}
+                                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle">
+                                        <i class="bi bi-hourglass-split me-1"></i> Pendiente
+                                    </span>
                                 {% elif sub.effective_status == 'FUTURA' %}
                                     <span class="badge bg-info-subtle text-info border border-info-subtle">
                                         <i class="bi bi-clock me-1"></i> Futura
@@ -272,9 +273,13 @@
                                     <span class="badge bg-warning-subtle text-warning border border-warning-subtle">
                                         <i class="bi bi-clock-history me-1"></i> Vencida
                                     </span>
-                                {% else %}
+                                {% elif sub.effective_status == 'CANCELADA' %}
                                     <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">
                                         <i class="bi bi-x-circle me-1"></i> Cancelada
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">
+                                        {{ sub.get_status_display|default:sub.status }}
                                     </span>
                                 {% endif %}
                             </td>
