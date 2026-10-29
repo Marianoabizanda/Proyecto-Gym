@@ -111,7 +111,7 @@ body {
 }
 
 .gym-navbar-icon {
-    height: 38px;
+    height: 30px;
     width: auto;
     object-fit: contain;
     display: inline-block;
@@ -459,7 +459,7 @@ body {
 }
 
 .gym-auth-logo {
-    max-height: 108px;
+    max-height: 80px;
     width: auto;
     max-width: 100%;
     object-fit: contain;
@@ -746,7 +746,7 @@ body {
     }
 
     .gym-navbar-icon {
-        height: 32px !important;
+        height: 26px !important;
     }
 
     .gym-badge-role-nav {
