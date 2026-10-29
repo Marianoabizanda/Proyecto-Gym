@@ -135,3 +135,18 @@ class RoutineSecurityAndAccessTests(TestCase):
         view.setup(req)
         context = view.get_context_data()
         self.assertEqual(context['routine'], self.routine)
+
+    def test_today_routine_professor_allowed(self):
+        req = self.factory.get(reverse('routines:today_routine'))
+        req.user = self.professor
+        view = TodayRoutineView()
+        view.setup(req)
+        context = view.get_context_data()
+        self.assertEqual(context['routine'], self.routine)
+
+    def test_professor_cannot_create_routine(self):
+        req = self.factory.get(reverse('routines:routine_create'))
+        req.user = self.professor
+        view = RoutineCreateView.as_view()
+        with self.assertRaises(PermissionDenied):
+            view(req)

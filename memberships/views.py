@@ -5,6 +5,7 @@ from django.contrib.auth.views import redirect_to_login
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Q
+from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.utils import timezone
@@ -317,6 +318,41 @@ class SubscriptionCancelView(AdminRequiredMixin, View):
         return redirect('memberships:member_detail', pk=subscription.member.pk)
 
 
+class MemberCancelPendingSubscriptionView(MemberRequiredMixin, View):
+    """Permite al socio cancelar su solicitud de membresía en estado PENDIENTE de forma atómica y segura."""
+
+    http_method_names = ['post']
+
+    def post(self, request, pk, *args, **kwargs):
+        with transaction.atomic():
+            subscription = Subscription.objects.select_for_update().filter(
+                pk=pk,
+                member=request.user,
+            ).select_related('plan').first()
+
+            if not subscription:
+                raise Http404("Solicitud de membresía no encontrada.")
+
+            if subscription.status != Subscription.Status.PENDIENTE:
+                messages.warning(request, "Solo podés cancelar solicitudes que se encuentren pendientes de pago.")
+                return redirect('memberships:my_membership')
+
+            if subscription.payments.exists():
+                messages.warning(request, "No se puede cancelar una solicitud que ya cuenta con un pago registrado.")
+                return redirect('memberships:my_membership')
+
+            subscription.status = Subscription.Status.CANCELADA
+            subscription.save(update_fields=['status'])
+
+            messages.success(
+                request,
+                f"La solicitud para el plan '{subscription.plan.name}' fue cancelada correctamente. "
+                "Ya podés elegir otro plan desde el catálogo."
+            )
+
+        return redirect('memberships:my_membership')
+
+
 # ==============================================================================
 # VISTAS DE PAGOS
 # ==============================================================================
@@ -441,17 +477,22 @@ class PaymentCreateView(AdminRequiredMixin, CreateView):
             )
             return self.form_invalid(form)
 
-        # 5. Guardado del pago y activación de la suscripción dentro de una transacción atómica
+        # 5. Guardado del pago y activación de la suscripción dentro de una transacción atómica protegida contra condiciones de carrera
         with transaction.atomic():
+            sub_locked = Subscription.objects.select_for_update().filter(pk=subscription.pk).first()
+            if not sub_locked or sub_locked.status != Subscription.Status.PENDIENTE or sub_locked.payments.exists():
+                form.add_error('subscription', 'Esta suscripción ya fue cobrada o fue cancelada.')
+                return self.form_invalid(form)
+
             form.instance.registered_by = self.request.user
             self.object = form.save()
 
-            subscription.activate_from_payment(payment_date)
+            sub_locked.activate_from_payment(payment_date)
             messages.success(
                 self.request,
-                f"Cobro registrado correctamente. La membresía '{subscription.plan.name}' de "
-                f"{subscription.member.get_full_name() or subscription.member.username} fue activada "
-                f"desde el {subscription.start_date.strftime('%d/%m/%Y')} hasta el {subscription.end_date.strftime('%d/%m/%Y')}."
+                f"Cobro registrado correctamente. La membresía '{sub_locked.plan.name}' de "
+                f"{sub_locked.member.get_full_name() or sub_locked.member.username} fue activada "
+                f"desde el {sub_locked.start_date.strftime('%d/%m/%Y')} hasta el {sub_locked.end_date.strftime('%d/%m/%Y')}."
             )
 
         return redirect(self.get_success_url())

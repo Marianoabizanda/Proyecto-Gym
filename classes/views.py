@@ -124,7 +124,7 @@ class ClassScheduleListView(AdminRequiredMixin, ListView):
     def get_queryset(self):
         return ClassSchedule.objects.select_related(
             'activity', 'professor'
-        ).order_by('day_of_week', 'start_time')
+        ).prefetch_related('enrollments').order_by('day_of_week', 'start_time')
 
 
 class ClassScheduleCreateView(AdminRequiredMixin, CreateView):
@@ -183,9 +183,22 @@ class ClassScheduleDetailView(StaffOrProfessorRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['enrollments'] = self.object.enrollments.select_related(
-            'member'
-        ).order_by('enrolled_at')
+        enrollments = list(
+            self.object.enrollments.select_related(
+                'member'
+            ).prefetch_related(
+                'member__subscriptions'
+            ).order_by('enrolled_at')
+        )
+        for enrollment in enrollments:
+            current_sub = next(
+                (s for s in enrollment.member.subscriptions.all() if s.is_current),
+                None
+            )
+            enrollment.current_subscription = current_sub
+            enrollment.has_active_membership = current_sub is not None
+
+        context['enrollments'] = enrollments
         return context
 
 

@@ -113,9 +113,14 @@
                     </div>
                 </div>
 
-                <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-3 py-2 fs-6">
-                    <i class="bi bi-hourglass-split me-1"></i> PENDIENTE DE PAGO
-                </span>
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-3 py-2 fs-6">
+                        <i class="bi bi-hourglass-split me-1"></i> PENDIENTE DE PAGO
+                    </span>
+                    <button type="button" class="btn gym-btn-outline btn-sm py-2 px-3 text-danger border-danger-subtle" data-bs-toggle="modal" data-bs-target="#cancelPendingModal">
+                        <i class="bi bi-x-circle me-1"></i> Cancelar Solicitud
+                    </button>
+                </div>
             </div>
 
             <div class="row g-4 align-items-center">
@@ -137,6 +142,39 @@
                         <p class="text-secondary small mb-0">
                             Tu solicitud fue registrada. Tu cobertura se activará de forma automática cuando la administración confirme tu pago en recepción o transferencia.
                         </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de Confirmación para Cancelar Solicitud Pendiente -->
+        <div class="modal fade" id="cancelPendingModal" tabindex="-1" aria-labelledby="cancelPendingModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content gym-dash-card border border-dark-subtle text-white">
+                    <div class="modal-header border-bottom border-dark-subtle">
+                        <h5 class="modal-title fs-5" id="cancelPendingModalLabel">
+                            <i class="bi bi-exclamation-triangle text-warning me-2"></i> Cancelar Solicitud de Membresía
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body py-4">
+                        <p class="mb-2">
+                            ¿Estás seguro de que deseás cancelar tu solicitud para el plan <strong class="text-white">{{ pending_subscription.plan.name }}</strong>?
+                        </p>
+                        <p class="text-secondary small mb-0">
+                            Al cancelar la solicitud podrás volver al catálogo de planes y elegir otra opción inmediatamente.
+                        </p>
+                    </div>
+                    <div class="modal-footer border-top border-dark-subtle d-flex justify-content-between">
+                        <button type="button" class="btn gym-btn-card py-2 px-3" data-bs-dismiss="modal">
+                            Volver
+                        </button>
+                        <form method="post" action="{% url 'memberships:cancel_pending_subscription' pending_subscription.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn gym-btn-outline py-2 px-3 text-danger border-danger-subtle">
+                                <i class="bi bi-x-circle me-1"></i> Sí, cancelar solicitud
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>

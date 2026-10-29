@@ -30,19 +30,19 @@ class AdminRequiredMixin(AccessMixin):
 
 
 class ActiveMemberOrAdminRequiredMixin(AccessMixin):
-    """Permite el acceso a administradores o socios con membresía activa y vigente."""
+    """Permite el acceso a administradores, profesores o socios con membresía activa y vigente."""
 
-    permission_denied_message = "Se requiere contar con una membresía activa para acceder a esta sección."
+    permission_denied_message = "Se requiere contar con los permisos correspondientes o una membresía activa."
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return self.handle_no_permission()
 
-        if request.user.is_admin_role():
+        if request.user.is_admin_role() or request.user.is_professor_role():
             return super().dispatch(request, *args, **kwargs)
 
         if not request.user.is_member_role():
-            raise PermissionDenied("Se requiere rol de Socio para acceder a esta sección.")
+            raise PermissionDenied("Se requiere rol de Socio, Profesor o Administrador para acceder a esta sección.")
 
         today = timezone.localdate()
         has_active_sub = Subscription.objects.filter(

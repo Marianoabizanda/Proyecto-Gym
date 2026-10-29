@@ -15,6 +15,7 @@ urlpatterns = [
     path('socios/<int:pk>/', views.MemberDetailView.as_view(), name='member_detail'),
     path('suscripciones/nueva/', views.SubscriptionCreateView.as_view(), name='subscription_create'),
     path('suscripciones/<int:pk>/cancelar/', views.SubscriptionCancelView.as_view(), name='subscription_cancel'),
+    path('suscripciones/<int:pk>/cancelar-solicitud/', views.MemberCancelPendingSubscriptionView.as_view(), name='cancel_pending_subscription'),
 
     # Pagos
     path('pagos/', views.PaymentListView.as_view(), name='payment_list'),
