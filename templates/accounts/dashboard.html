@@ -48,80 +48,80 @@
         <div class="row row-cols-2 row-cols-sm-3 row-cols-lg-5 g-2 g-xl-3">
             <!-- 1. Socios -->
             <div class="col">
-                <div class="gym-dash-card py-2 px-3 py-xl-3 px-xl-3 h-100 d-flex flex-column justify-content-between">
+                <div class="gym-dash-card py-2 px-2 px-xl-3 h-100 d-flex flex-column justify-content-between">
                     <div>
                         <div class="d-flex justify-content-between align-items-center mb-1">
-                            <span class="text-secondary text-uppercase tracking-wider fw-semibold" style="font-size: 0.68rem;">Socios</span>
-                            <i class="bi bi-people text-accent" style="font-size: 0.95rem;"></i>
+                            <span class="text-secondary text-uppercase tracking-wider fw-semibold" style="font-size: 0.64rem;">Socios</span>
+                            <i class="bi bi-people text-accent" style="font-size: 0.85rem;"></i>
                         </div>
-                        <div class="fs-3 fw-black text-white mb-0 lh-1">{{ metrics.total_members }}</div>
+                        <div class="fw-black text-white mb-0 lh-1" style="font-size: 1.45rem;">{{ metrics.total_members }}</div>
                     </div>
-                    <div class="mt-2 pt-1 border-top border-dark-subtle">
-                        <small class="text-secondary text-truncate d-block" style="font-size: 0.7rem; line-height: 1.2;">Registrados en padrón</small>
+                    <div class="mt-1 pt-1 border-top border-dark-subtle">
+                        <small class="text-secondary text-truncate d-block" style="font-size: 0.66rem; line-height: 1.15;">Registrados en padrón</small>
                     </div>
                 </div>
             </div>
 
             <!-- 2. Activas -->
             <div class="col">
-                <div class="gym-dash-card py-2 px-3 py-xl-3 px-xl-3 h-100 d-flex flex-column justify-content-between">
+                <div class="gym-dash-card py-2 px-2 px-xl-3 h-100 d-flex flex-column justify-content-between">
                     <div>
                         <div class="d-flex justify-content-between align-items-center mb-1">
-                            <span class="text-secondary text-uppercase tracking-wider fw-semibold" style="font-size: 0.68rem;">Activas</span>
-                            <i class="bi bi-check-circle text-success" style="font-size: 0.95rem;"></i>
+                            <span class="text-secondary text-uppercase tracking-wider fw-semibold" style="font-size: 0.64rem;">Activas</span>
+                            <i class="bi bi-check-circle text-success" style="font-size: 0.85rem;"></i>
                         </div>
-                        <div class="fs-3 fw-black text-success mb-0 lh-1">{{ metrics.active_subscriptions }}</div>
+                        <div class="fw-black text-success mb-0 lh-1" style="font-size: 1.45rem;">{{ metrics.active_subscriptions }}</div>
                     </div>
-                    <div class="mt-2 pt-1 border-top border-dark-subtle">
-                        <small class="text-secondary text-truncate d-block" style="font-size: 0.7rem; line-height: 1.2;">Con cobertura al día</small>
+                    <div class="mt-1 pt-1 border-top border-dark-subtle">
+                        <small class="text-secondary text-truncate d-block" style="font-size: 0.66rem; line-height: 1.15;">Con cobertura al día</small>
                     </div>
                 </div>
             </div>
 
             <!-- 3. Pendientes -->
             <div class="col">
-                <div class="gym-dash-card py-2 px-3 py-xl-3 px-xl-3 h-100 d-flex flex-column justify-content-between">
+                <div class="gym-dash-card py-2 px-2 px-xl-3 h-100 d-flex flex-column justify-content-between">
                     <div>
                         <div class="d-flex justify-content-between align-items-center mb-1">
-                            <span class="text-secondary text-uppercase tracking-wider fw-semibold" style="font-size: 0.68rem;">Pendientes</span>
-                            <i class="bi bi-hourglass-split text-warning" style="font-size: 0.95rem;"></i>
+                            <span class="text-secondary text-uppercase tracking-wider fw-semibold" style="font-size: 0.64rem;">Pendientes</span>
+                            <i class="bi bi-hourglass-split text-warning" style="font-size: 0.85rem;"></i>
                         </div>
-                        <div class="fs-3 fw-black text-warning mb-0 lh-1">{{ metrics.pending_subscriptions }}</div>
+                        <div class="fw-black text-warning mb-0 lh-1" style="font-size: 1.45rem;">{{ metrics.pending_subscriptions }}</div>
                     </div>
-                    <div class="mt-2 pt-1 border-top border-dark-subtle">
-                        <small class="text-secondary text-truncate d-block" style="font-size: 0.7rem; line-height: 1.2;">En espera de pago</small>
+                    <div class="mt-1 pt-1 border-top border-dark-subtle">
+                        <small class="text-secondary text-truncate d-block" style="font-size: 0.66rem; line-height: 1.15;">En espera de pago</small>
                     </div>
                 </div>
             </div>
 
             <!-- 4. Vencidas -->
             <div class="col">
-                <div class="gym-dash-card py-2 px-3 py-xl-3 px-xl-3 h-100 d-flex flex-column justify-content-between">
+                <div class="gym-dash-card py-2 px-2 px-xl-3 h-100 d-flex flex-column justify-content-between">
                     <div>
                         <div class="d-flex justify-content-between align-items-center mb-1">
-                            <span class="text-secondary text-uppercase tracking-wider fw-semibold" style="font-size: 0.68rem;">Vencidas</span>
-                            <i class="bi bi-clock-history text-secondary" style="font-size: 0.95rem;"></i>
+                            <span class="text-secondary text-uppercase tracking-wider fw-semibold" style="font-size: 0.64rem;">Vencidas</span>
+                            <i class="bi bi-clock-history text-secondary" style="font-size: 0.85rem;"></i>
                         </div>
-                        <div class="fs-3 fw-black text-white-50 mb-0 lh-1">{{ metrics.expired_subscriptions }}</div>
+                        <div class="fw-black text-white-50 mb-0 lh-1" style="font-size: 1.45rem;">{{ metrics.expired_subscriptions }}</div>
                     </div>
-                    <div class="mt-2 pt-1 border-top border-dark-subtle">
-                        <small class="text-secondary text-truncate d-block" style="font-size: 0.7rem; line-height: 1.2;">Requieren renovación</small>
+                    <div class="mt-1 pt-1 border-top border-dark-subtle">
+                        <small class="text-secondary text-truncate d-block" style="font-size: 0.66rem; line-height: 1.15;">Requieren renovación</small>
                     </div>
                 </div>
             </div>
 
             <!-- 5. Horarios Activos -->
             <div class="col">
-                <div class="gym-dash-card py-2 px-3 py-xl-3 px-xl-3 h-100 d-flex flex-column justify-content-between">
+                <div class="gym-dash-card py-2 px-2 px-xl-3 h-100 d-flex flex-column justify-content-between">
                     <div>
                         <div class="d-flex justify-content-between align-items-center mb-1">
-                            <span class="text-secondary text-uppercase tracking-wider fw-semibold" style="font-size: 0.68rem;">Horarios</span>
-                            <i class="bi bi-calendar-check text-info" style="font-size: 0.95rem;"></i>
+                            <span class="text-secondary text-uppercase tracking-wider fw-semibold" style="font-size: 0.64rem;">Horarios</span>
+                            <i class="bi bi-calendar-check text-info" style="font-size: 0.85rem;"></i>
                         </div>
-                        <div class="fs-3 fw-black text-info mb-0 lh-1">{{ metrics.active_schedules }}</div>
+                        <div class="fw-black text-info mb-0 lh-1" style="font-size: 1.45rem;">{{ metrics.active_schedules }}</div>
                     </div>
-                    <div class="mt-2 pt-1 border-top border-dark-subtle">
-                        <small class="text-secondary text-truncate d-block" style="font-size: 0.7rem; line-height: 1.2;">Clases activas semanales</small>
+                    <div class="mt-1 pt-1 border-top border-dark-subtle">
+                        <small class="text-secondary text-truncate d-block" style="font-size: 0.66rem; line-height: 1.15;">Clases activas semanales</small>
                     </div>
                 </div>
             </div>
@@ -222,32 +222,32 @@
         <div class="row row-cols-1 row-cols-sm-2 g-2 g-xl-3">
             <!-- 1. Horarios Asignados -->
             <div class="col">
-                <div class="gym-dash-card py-2 px-3 py-xl-3 px-xl-3 h-100 d-flex flex-column justify-content-between">
+                <div class="gym-dash-card py-2 px-2 px-xl-3 h-100 d-flex flex-column justify-content-between">
                     <div>
                         <div class="d-flex justify-content-between align-items-center mb-1">
-                            <span class="text-secondary text-uppercase tracking-wider fw-semibold" style="font-size: 0.68rem;">Horarios Asignados</span>
-                            <i class="bi bi-calendar-check text-info" style="font-size: 0.95rem;"></i>
+                            <span class="text-secondary text-uppercase tracking-wider fw-semibold" style="font-size: 0.64rem;">Horarios Asignados</span>
+                            <i class="bi bi-calendar-check text-info" style="font-size: 0.85rem;"></i>
                         </div>
-                        <div class="fs-3 fw-black text-info mb-0 lh-1">{{ professor_metrics.assigned_schedules|default:0 }}</div>
+                        <div class="fw-black text-info mb-0 lh-1" style="font-size: 1.45rem;">{{ professor_metrics.assigned_schedules|default:0 }}</div>
                     </div>
-                    <div class="mt-2 pt-1 border-top border-dark-subtle">
-                        <small class="text-secondary text-truncate d-block" style="font-size: 0.7rem; line-height: 1.2;">Clases a tu cargo</small>
+                    <div class="mt-1 pt-1 border-top border-dark-subtle">
+                        <small class="text-secondary text-truncate d-block" style="font-size: 0.66rem; line-height: 1.2;">Clases a tu cargo</small>
                     </div>
                 </div>
             </div>
 
             <!-- 2. Inscripciones Actuales -->
             <div class="col">
-                <div class="gym-dash-card py-2 px-3 py-xl-3 px-xl-3 h-100 d-flex flex-column justify-content-between">
+                <div class="gym-dash-card py-2 px-2 px-xl-3 h-100 d-flex flex-column justify-content-between">
                     <div>
                         <div class="d-flex justify-content-between align-items-center mb-1">
-                            <span class="text-secondary text-uppercase tracking-wider fw-semibold" style="font-size: 0.68rem;">Inscripciones Actuales</span>
-                            <i class="bi bi-people text-accent" style="font-size: 0.95rem;"></i>
+                            <span class="text-secondary text-uppercase tracking-wider fw-semibold" style="font-size: 0.64rem;">Inscripciones Actuales</span>
+                            <i class="bi bi-people text-accent" style="font-size: 0.85rem;"></i>
                         </div>
-                        <div class="fs-3 fw-black text-white mb-0 lh-1">{{ professor_metrics.total_enrollments|default:0 }}</div>
+                        <div class="fw-black text-white mb-0 lh-1" style="font-size: 1.45rem;">{{ professor_metrics.total_enrollments|default:0 }}</div>
                     </div>
-                    <div class="mt-2 pt-1 border-top border-dark-subtle">
-                        <small class="text-secondary text-truncate d-block" style="font-size: 0.7rem; line-height: 1.2;">Alumnos registrados</small>
+                    <div class="mt-1 pt-1 border-top border-dark-subtle">
+                        <small class="text-secondary text-truncate d-block" style="font-size: 0.66rem; line-height: 1.2;">Alumnos registrados</small>
                     </div>
                 </div>
             </div>

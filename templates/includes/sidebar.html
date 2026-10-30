@@ -1,85 +1,85 @@
 {% load static %}
-<div class="d-flex flex-column h-100 justify-content-between p-3">
+<div class="d-flex flex-column h-100 justify-content-between py-2 px-3">
     <!-- Navegación según Rol -->
     <div class="gym-sidebar-nav d-flex flex-column gap-1">
-        <span class="text-uppercase tracking-widest text-secondary small fw-semibold px-3 py-2" style="font-size: 0.7rem;">
+        <span class="text-uppercase tracking-widest text-secondary small fw-semibold px-2 py-1 mb-1" style="font-size: 0.65rem; letter-spacing: 1.5px;">
             Navegación
         </span>
 
         <!-- Enlace universal: Dashboard -->
         <a href="{% url 'accounts:dashboard' %}" class="gym-sidebar-link {% if request.resolver_match.view_name == 'accounts:dashboard' %}active{% endif %}">
-            <i class="bi bi-speedometer2 me-3 fs-5"></i>
+            <i class="bi bi-speedometer2 me-2 fs-6"></i>
             <span>Dashboard</span>
         </a>
 
         {% if user.is_admin_role %}
             <!-- ADMIN: Planes, Socios, Pagos, Horarios, Actividades, Rutinas -->
             <a href="{% url 'memberships:plan_list' %}" class="gym-sidebar-link {% if 'plan' in request.resolver_match.view_name %}active{% endif %}">
-                <i class="bi bi-card-checklist me-3 fs-5"></i>
+                <i class="bi bi-card-checklist me-2 fs-6"></i>
                 <span>Planes</span>
             </a>
             <a href="{% url 'memberships:member_list' %}" class="gym-sidebar-link {% if 'member' in request.resolver_match.view_name %}active{% endif %}">
-                <i class="bi bi-people me-3 fs-5"></i>
+                <i class="bi bi-people me-2 fs-6"></i>
                 <span>Socios</span>
             </a>
             <a href="{% url 'memberships:payment_list' %}" class="gym-sidebar-link {% if 'payment' in request.resolver_match.view_name %}active{% endif %}">
-                <i class="bi bi-cash-stack me-3 fs-5"></i>
+                <i class="bi bi-cash-stack me-2 fs-6"></i>
                 <span>Pagos</span>
             </a>
             <a href="{% url 'classes:schedule_list' %}" class="gym-sidebar-link {% if 'schedule' in request.resolver_match.view_name and 'professor' not in request.resolver_match.view_name and 'available' not in request.resolver_match.view_name %}active{% endif %}">
-                <i class="bi bi-clock me-3 fs-5"></i>
+                <i class="bi bi-clock me-2 fs-6"></i>
                 <span>Horarios</span>
             </a>
             <a href="{% url 'classes:activity_list' %}" class="gym-sidebar-link {% if 'activity' in request.resolver_match.view_name %}active{% endif %}">
-                <i class="bi bi-grid me-3 fs-5"></i>
+                <i class="bi bi-grid me-2 fs-6"></i>
                 <span>Actividades</span>
             </a>
             <a href="{% url 'routines:routine_list' %}" class="gym-sidebar-link {% if 'routine' in request.resolver_match.view_name and request.resolver_match.view_name != 'routines:today_routine' %}active{% endif %}">
-                <i class="bi bi-calendar-check me-3 fs-5"></i>
+                <i class="bi bi-calendar-check me-2 fs-6"></i>
                 <span>Rutinas</span>
             </a>
 
         {% elif user.is_professor_role %}
             <!-- PROFESOR: Mis Clases, Planes, Socios, Rutina del Día -->
             <a href="{% url 'classes:professor_schedules' %}" class="gym-sidebar-link {% if request.resolver_match.view_name == 'classes:professor_schedules' or 'schedule_detail' in request.resolver_match.view_name %}active{% endif %}">
-                <i class="bi bi-calendar-event me-3 fs-5"></i>
+                <i class="bi bi-calendar-event me-2 fs-6"></i>
                 <span>Mis Clases</span>
             </a>
             <a href="{% url 'memberships:plan_list' %}" class="gym-sidebar-link {% if 'plan' in request.resolver_match.view_name %}active{% endif %}">
-                <i class="bi bi-card-checklist me-3 fs-5"></i>
+                <i class="bi bi-card-checklist me-2 fs-6"></i>
                 <span>Planes</span>
             </a>
             <a href="{% url 'memberships:member_list' %}" class="gym-sidebar-link {% if 'member' in request.resolver_match.view_name %}active{% endif %}">
-                <i class="bi bi-people me-3 fs-5"></i>
+                <i class="bi bi-people me-2 fs-6"></i>
                 <span>Socios</span>
             </a>
             <a href="{% url 'routines:today_routine' %}" class="gym-sidebar-link {% if request.resolver_match.view_name == 'routines:today_routine' %}active{% endif %}">
-                <i class="bi bi-fire me-3 fs-5"></i>
+                <i class="bi bi-fire me-2 fs-6"></i>
                 <span>Rutina del Día</span>
             </a>
 
         {% else %}
             <!-- SOCIO: Mi Membresía, Clases Disponibles, Mis Clases -->
             <a href="{% url 'memberships:my_membership' %}" class="gym-sidebar-link {% if request.resolver_match.view_name == 'memberships:my_membership' %}active{% endif %}">
-                <i class="bi bi-award me-3 fs-5"></i>
+                <i class="bi bi-award me-2 fs-6"></i>
                 <span>Mi Membresía</span>
             </a>
             <a href="{% url 'classes:available_schedules' %}" class="gym-sidebar-link {% if request.resolver_match.view_name == 'classes:available_schedules' %}active{% endif %}">
-                <i class="bi bi-calendar2-plus me-3 fs-5"></i>
+                <i class="bi bi-calendar2-plus me-2 fs-6"></i>
                 <span>Clases</span>
             </a>
             <a href="{% url 'classes:my_enrollments' %}" class="gym-sidebar-link {% if request.resolver_match.view_name == 'classes:my_enrollments' %}active{% endif %}">
-                <i class="bi bi-calendar-check me-3 fs-5"></i>
+                <i class="bi bi-calendar-check me-2 fs-6"></i>
                 <span>Mis Clases</span>
             </a>
         {% endif %}
     </div>
 
     <!-- Bloque Inferior: Usuario, Perfil y Salida -->
-    <div class="gym-sidebar-footer pt-3 mt-auto border-top border-dark-subtle">
-        <div class="d-flex align-items-center mb-3 px-2">
+    <div class="gym-sidebar-footer pt-2 mt-auto border-top border-dark-subtle">
+        <div class="d-flex align-items-center mb-2 px-1">
             <!-- Avatar con Iniciales -->
-            <div class="gym-sidebar-avatar me-3 flex-shrink-0">
+            <div class="gym-sidebar-avatar me-2 flex-shrink-0">
                 <span>{{ user.first_name|first|default:user.username|first|upper }}</span>
             </div>
             <div class="overflow-hidden flex-grow-1">
@@ -87,24 +87,24 @@
                     {{ user.get_full_name|default:user.username }}
                 </strong>
                 {% if user.is_admin_role %}
-                    <span class="gym-badge-role-nav" style="font-size: 0.65rem;">ADMINISTRADOR</span>
+                    <span class="gym-badge-role-nav" style="font-size: 0.62rem;">ADMINISTRADOR</span>
                 {% elif user.is_professor_role %}
-                    <span class="gym-badge-role-nav" style="font-size: 0.65rem;">PROFESOR</span>
+                    <span class="gym-badge-role-nav" style="font-size: 0.62rem;">PROFESOR</span>
                 {% else %}
-                    <span class="gym-badge-role-nav" style="font-size: 0.65rem;">SOCIO</span>
+                    <span class="gym-badge-role-nav" style="font-size: 0.62rem;">SOCIO</span>
                 {% endif %}
             </div>
         </div>
 
         <div class="d-flex flex-column gap-1">
             <a href="{% url 'accounts:profile' %}" class="gym-sidebar-user-action text-decoration-none d-flex align-items-center">
-                <i class="bi bi-gear me-2 fs-6"></i>
+                <i class="bi bi-gear me-2"></i>
                 <span>Perfil</span>
             </a>
             <form method="post" action="{% url 'accounts:logout' %}" class="m-0">
                 {% csrf_token %}
                 <button type="submit" class="gym-sidebar-user-action text-decoration-none d-flex align-items-center w-100 border-0 bg-transparent text-start">
-                    <i class="bi bi-box-arrow-right me-2 fs-6 text-danger-emphasis"></i>
+                    <i class="bi bi-box-arrow-right me-2 text-danger-emphasis"></i>
                     <span>Cerrar sesión</span>
                 </button>
             </form>
