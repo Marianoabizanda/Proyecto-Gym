@@ -36,14 +36,14 @@
 
         <!-- Offcanvas Mobile (< 992px) con Sidebar -->
         <div class="offcanvas offcanvas-start bg-gym-sidebar text-white d-lg-none" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel">
-            <div class="offcanvas-header border-bottom border-dark-subtle p-3">
+            <div class="offcanvas-header border-bottom border-dark-subtle px-3 py-2">
                 <a class="gym-brand-logo fw-extrabold d-flex align-items-center text-decoration-none text-white" href="{% url 'accounts:home' %}" id="sidebarOffcanvasLabel">
                     <img src="{% static 'images/gym_manager_icon.png' %}" alt="Icono GYM MANAGER" class="gym-navbar-icon me-2">
                     <span>GYM MANAGER</span>
                 </a>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
             </div>
-            <div class="offcanvas-body p-0">
+            <div class="offcanvas-body p-0 d-flex flex-column flex-grow-1">
                 {% include 'includes/sidebar.html' %}
             </div>
         </div>

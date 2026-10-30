@@ -6,10 +6,10 @@
             Navegación
         </span>
 
-        <!-- Enlace universal: Dashboard -->
+        <!-- Enlace universal: Inicio -->
         <a href="{% url 'accounts:dashboard' %}" class="gym-sidebar-link {% if request.resolver_match.view_name == 'accounts:dashboard' %}active{% endif %}">
-            <i class="bi bi-speedometer2 me-2 fs-6"></i>
-            <span>Dashboard</span>
+            <i class="bi bi-house me-2 fs-6"></i>
+            <span>Inicio</span>
         </a>
 
         {% if user.is_admin_role %}

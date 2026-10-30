@@ -921,6 +921,32 @@ body {
 /* Offcanvas Móvil (< 992px) */
 #sidebarOffcanvas {
     background-color: var(--gym-sidebar-bg) !important;
+    width: 82vw !important;
+    max-width: 310px !important;
+    --bs-offcanvas-width: min(82vw, 310px);
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    display: flex;
+    flex-direction: column;
+}
+
+#sidebarOffcanvas .offcanvas-header {
+    height: 48px;
+    flex-shrink: 0;
+}
+
+#sidebarOffcanvas .offcanvas-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+#sidebarOffcanvas .offcanvas-body > div {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 /* Envoltorio Principal para scroll natural */
