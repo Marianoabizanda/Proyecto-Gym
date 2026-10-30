@@ -5,34 +5,34 @@
 {% block body_class %}bg-gym-dark text-white{% endblock %}
 
 {% block content %}
-<div class="row g-4 my-2">
+<div class="row g-3 g-md-4 mb-3">
     <!-- Encabezado de Bienvenida -->
     <div class="col-12">
-        <div class="gym-dash-header p-4 p-lg-5">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+        <div class="gym-dash-header px-3 px-md-4 py-2 py-md-3">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
                 <div>
-                    <span class="text-uppercase tracking-widest text-secondary small fw-semibold d-block mb-1">
+                    <span class="text-uppercase tracking-widest text-secondary fw-semibold d-block" style="font-size: 0.68rem; letter-spacing: 0.08em;">
                         Panel de Control
                     </span>
-                    <h2 class="text-uppercase fw-extrabold text-white mb-1 fs-3">
+                    <h2 class="text-uppercase fw-extrabold text-white mb-0 fs-4 lh-sm">
                         ¡Hola, {{ request.user.get_full_name|default:request.user.username }}!
                     </h2>
-                    <p class="text-secondary small mb-0">
+                    <p class="text-secondary small mb-0" style="font-size: 0.82rem;">
                         Bienvenido al panel central de GYM MANAGER.
                     </p>
                 </div>
-                <div>
-                    <span class="text-secondary small d-block mb-1 d-md-inline me-md-2">Rol actual:</span>
+                <div class="d-flex flex-column align-items-md-end">
+                    <span class="text-secondary text-uppercase tracking-wider mb-1" style="font-size: 0.65rem;">Rol actual</span>
                     {% if is_admin %}
-                        <span class="gym-badge-role">
+                        <span class="gym-badge-role py-1 px-3" style="font-size: 0.75rem;">
                             <i class="bi bi-shield-check me-1"></i> Administrador
                         </span>
                     {% elif is_professor %}
-                        <span class="gym-badge-role">
+                        <span class="gym-badge-role py-1 px-3" style="font-size: 0.75rem;">
                             <i class="bi bi-person-workspace me-1"></i> Profesor
                         </span>
                     {% else %}
-                        <span class="gym-badge-role">
+                        <span class="gym-badge-role py-1 px-3" style="font-size: 0.75rem;">
                             <i class="bi bi-person-check me-1"></i> Socio
                         </span>
                     {% endif %}
@@ -45,66 +45,91 @@
     {% if is_admin %}
     <!-- Bloque de Métricas de Resumen General (ADMIN) -->
     <div class="col-12">
-        <div class="row row-cols-2 row-cols-sm-3 row-cols-lg-5 g-3">
+        <div class="row row-cols-2 row-cols-sm-3 row-cols-lg-5 g-2 g-xl-3">
             <!-- 1. Socios -->
             <div class="col">
-                <div class="gym-dash-card p-3 p-xl-4 h-100 d-flex flex-column justify-content-between">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="text-secondary small text-uppercase tracking-wider fw-semibold">Socios</span>
-                        <i class="bi bi-people text-accent fs-4"></i>
+                <div class="gym-dash-card py-2 px-3 py-xl-3 px-xl-3 h-100 d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="text-secondary text-uppercase tracking-wider fw-semibold" style="font-size: 0.68rem;">Socios</span>
+                            <i class="bi bi-people text-accent" style="font-size: 0.95rem;"></i>
+                        </div>
+                        <div class="fs-3 fw-black text-white mb-0 lh-1">{{ metrics.total_members }}</div>
                     </div>
-                    <div class="fs-2 fw-extrabold text-white mb-0">{{ metrics.total_members }}</div>
+                    <div class="mt-2 pt-1 border-top border-dark-subtle">
+                        <small class="text-secondary text-truncate d-block" style="font-size: 0.7rem; line-height: 1.2;">Registrados en padrón</small>
+                    </div>
                 </div>
             </div>
 
             <!-- 2. Activas -->
             <div class="col">
-                <div class="gym-dash-card p-3 p-xl-4 h-100 d-flex flex-column justify-content-between">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="text-secondary small text-uppercase tracking-wider fw-semibold">Activas</span>
-                        <i class="bi bi-check-circle text-success fs-4"></i>
+                <div class="gym-dash-card py-2 px-3 py-xl-3 px-xl-3 h-100 d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="text-secondary text-uppercase tracking-wider fw-semibold" style="font-size: 0.68rem;">Activas</span>
+                            <i class="bi bi-check-circle text-success" style="font-size: 0.95rem;"></i>
+                        </div>
+                        <div class="fs-3 fw-black text-success mb-0 lh-1">{{ metrics.active_subscriptions }}</div>
                     </div>
-                    <div class="fs-2 fw-extrabold text-success mb-0">{{ metrics.active_subscriptions }}</div>
+                    <div class="mt-2 pt-1 border-top border-dark-subtle">
+                        <small class="text-secondary text-truncate d-block" style="font-size: 0.7rem; line-height: 1.2;">Con cobertura al día</small>
+                    </div>
                 </div>
             </div>
 
             <!-- 3. Pendientes -->
             <div class="col">
-                <div class="gym-dash-card p-3 p-xl-4 h-100 d-flex flex-column justify-content-between">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="text-secondary small text-uppercase tracking-wider fw-semibold">Pendientes</span>
-                        <i class="bi bi-hourglass-split text-warning fs-4"></i>
+                <div class="gym-dash-card py-2 px-3 py-xl-3 px-xl-3 h-100 d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="text-secondary text-uppercase tracking-wider fw-semibold" style="font-size: 0.68rem;">Pendientes</span>
+                            <i class="bi bi-hourglass-split text-warning" style="font-size: 0.95rem;"></i>
+                        </div>
+                        <div class="fs-3 fw-black text-warning mb-0 lh-1">{{ metrics.pending_subscriptions }}</div>
                     </div>
-                    <div class="fs-2 fw-extrabold text-warning mb-0">{{ metrics.pending_subscriptions }}</div>
+                    <div class="mt-2 pt-1 border-top border-dark-subtle">
+                        <small class="text-secondary text-truncate d-block" style="font-size: 0.7rem; line-height: 1.2;">En espera de pago</small>
+                    </div>
                 </div>
             </div>
 
             <!-- 4. Vencidas -->
             <div class="col">
-                <div class="gym-dash-card p-3 p-xl-4 h-100 d-flex flex-column justify-content-between">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="text-secondary small text-uppercase tracking-wider fw-semibold">Vencidas</span>
-                        <i class="bi bi-clock-history text-secondary fs-4"></i>
+                <div class="gym-dash-card py-2 px-3 py-xl-3 px-xl-3 h-100 d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="text-secondary text-uppercase tracking-wider fw-semibold" style="font-size: 0.68rem;">Vencidas</span>
+                            <i class="bi bi-clock-history text-secondary" style="font-size: 0.95rem;"></i>
+                        </div>
+                        <div class="fs-3 fw-black text-white-50 mb-0 lh-1">{{ metrics.expired_subscriptions }}</div>
                     </div>
-                    <div class="fs-2 fw-extrabold text-white-50 mb-0">{{ metrics.expired_subscriptions }}</div>
+                    <div class="mt-2 pt-1 border-top border-dark-subtle">
+                        <small class="text-secondary text-truncate d-block" style="font-size: 0.7rem; line-height: 1.2;">Requieren renovación</small>
+                    </div>
                 </div>
             </div>
 
             <!-- 5. Horarios Activos -->
             <div class="col">
-                <div class="gym-dash-card p-3 p-xl-4 h-100 d-flex flex-column justify-content-between">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="text-secondary small text-uppercase tracking-wider fw-semibold">Horarios</span>
-                        <i class="bi bi-calendar-check text-info fs-4"></i>
+                <div class="gym-dash-card py-2 px-3 py-xl-3 px-xl-3 h-100 d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="text-secondary text-uppercase tracking-wider fw-semibold" style="font-size: 0.68rem;">Horarios</span>
+                            <i class="bi bi-calendar-check text-info" style="font-size: 0.95rem;"></i>
+                        </div>
+                        <div class="fs-3 fw-black text-info mb-0 lh-1">{{ metrics.active_schedules }}</div>
                     </div>
-                    <div class="fs-2 fw-extrabold text-info mb-0">{{ metrics.active_schedules }}</div>
+                    <div class="mt-2 pt-1 border-top border-dark-subtle">
+                        <small class="text-secondary text-truncate d-block" style="font-size: 0.7rem; line-height: 1.2;">Clases activas semanales</small>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- PANEL PARA ADMINISTRADOR (Accesos Operativos) -->
-    <div class="col-12 col-md-6 col-lg-4">
+    <div class="col-12 col-lg-4">
         <div class="gym-dash-card h-100 p-4 d-flex flex-column justify-content-between">
             <div>
                 <div class="d-flex align-items-center mb-3">
@@ -121,14 +146,14 @@
                 </p>
             </div>
             <div class="mt-4 pt-3 border-top border-dark-subtle">
-                <a href="{% url 'admin:index' %}" target="_blank" class="btn gym-btn-outline w-100 text-uppercase fw-semibold py-2">
-                    <i class="bi bi-box-arrow-up-right me-1"></i> Abrir Django Admin
+                <a href="{% url 'admin:index' %}" target="_blank" class="btn gym-btn-primary w-100 text-uppercase fw-bold py-2">
+                    <i class="bi bi-box-arrow-up-right me-2"></i> Abrir Django Admin
                 </a>
             </div>
         </div>
     </div>
 
-    <div class="col-12 col-md-6 col-lg-4">
+    <div class="col-12 col-lg-4">
         <div class="gym-dash-card h-100 p-4 d-flex flex-column justify-content-between">
             <div>
                 <div class="d-flex align-items-center mb-3">
@@ -145,23 +170,23 @@
                 </p>
             </div>
             <div class="mt-4 pt-3 border-top border-dark-subtle d-flex flex-column gap-2">
-                <a href="{% url 'memberships:plan_list' %}" class="btn gym-btn-card w-100 text-uppercase fw-semibold py-2 text-start px-3 d-flex justify-content-between align-items-center">
-                    <span><i class="bi bi-card-checklist me-2"></i> Planes de Entrenamiento</span>
+                <a href="{% url 'memberships:plan_list' %}" class="gym-nav-row d-flex justify-content-between align-items-center py-2 px-3 rounded text-decoration-none">
+                    <span class="small fw-semibold text-light"><i class="bi bi-card-checklist me-2 text-accent"></i> Planes de entrenamiento</span>
                     <i class="bi bi-chevron-right text-secondary small"></i>
                 </a>
-                <a href="{% url 'memberships:member_list' %}" class="btn gym-btn-card w-100 text-uppercase fw-semibold py-2 text-start px-3 d-flex justify-content-between align-items-center">
-                    <span><i class="bi bi-people me-2"></i> Padrón de Socios</span>
+                <a href="{% url 'memberships:member_list' %}" class="gym-nav-row d-flex justify-content-between align-items-center py-2 px-3 rounded text-decoration-none">
+                    <span class="small fw-semibold text-light"><i class="bi bi-people me-2 text-accent"></i> Padrón de socios</span>
                     <i class="bi bi-chevron-right text-secondary small"></i>
                 </a>
-                <a href="{% url 'memberships:payment_list' %}" class="btn gym-btn-card w-100 text-uppercase fw-semibold py-2 text-start px-3 d-flex justify-content-between align-items-center">
-                    <span><i class="bi bi-cash-stack me-2"></i> Auditoría de Pagos</span>
+                <a href="{% url 'memberships:payment_list' %}" class="gym-nav-row d-flex justify-content-between align-items-center py-2 px-3 rounded text-decoration-none">
+                    <span class="small fw-semibold text-light"><i class="bi bi-cash-stack me-2 text-accent"></i> Auditoría de pagos</span>
                     <i class="bi bi-chevron-right text-secondary small"></i>
                 </a>
             </div>
         </div>
     </div>
 
-    <div class="col-12 col-md-6 col-lg-4">
+    <div class="col-12 col-lg-4">
         <div class="gym-dash-card h-100 p-4 d-flex flex-column justify-content-between">
             <div>
                 <div class="d-flex align-items-center mb-3">
@@ -178,12 +203,12 @@
                 </p>
             </div>
             <div class="mt-4 pt-3 border-top border-dark-subtle d-flex flex-column gap-2">
-                <a href="{% url 'classes:schedule_list' %}" class="btn gym-btn-card w-100 text-uppercase fw-semibold py-2 text-start px-3 d-flex justify-content-between align-items-center">
-                    <span><i class="bi bi-calendar-event me-2"></i> Horarios de Clases</span>
+                <a href="{% url 'classes:schedule_list' %}" class="gym-nav-row d-flex justify-content-between align-items-center py-2 px-3 rounded text-decoration-none">
+                    <span class="small fw-semibold text-light"><i class="bi bi-calendar-event me-2 text-accent"></i> Horarios de clases</span>
                     <i class="bi bi-chevron-right text-secondary small"></i>
                 </a>
-                <a href="{% url 'classes:activity_list' %}" class="btn gym-btn-card w-100 text-uppercase fw-semibold py-2 text-start px-3 d-flex justify-content-between align-items-center">
-                    <span><i class="bi bi-activity me-2"></i> Actividades Deportivas</span>
+                <a href="{% url 'classes:activity_list' %}" class="gym-nav-row d-flex justify-content-between align-items-center py-2 px-3 rounded text-decoration-none">
+                    <span class="small fw-semibold text-light"><i class="bi bi-activity me-2 text-accent"></i> Actividades deportivas</span>
                     <i class="bi bi-chevron-right text-secondary small"></i>
                 </a>
             </div>
@@ -194,26 +219,36 @@
     <!-- PANEL PARA PROFESOR -->
     <!-- Bloque de Métricas de Resumen (PROFESOR) -->
     <div class="col-12">
-        <div class="row row-cols-1 row-cols-sm-2 g-3">
+        <div class="row row-cols-1 row-cols-sm-2 g-2 g-xl-3">
             <!-- 1. Horarios Asignados -->
             <div class="col">
-                <div class="gym-dash-card p-3 p-xl-4 h-100 d-flex flex-column justify-content-between">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="text-secondary small text-uppercase tracking-wider fw-semibold">Horarios Asignados</span>
-                        <i class="bi bi-calendar-check text-info fs-4"></i>
+                <div class="gym-dash-card py-2 px-3 py-xl-3 px-xl-3 h-100 d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="text-secondary text-uppercase tracking-wider fw-semibold" style="font-size: 0.68rem;">Horarios Asignados</span>
+                            <i class="bi bi-calendar-check text-info" style="font-size: 0.95rem;"></i>
+                        </div>
+                        <div class="fs-3 fw-black text-info mb-0 lh-1">{{ professor_metrics.assigned_schedules|default:0 }}</div>
                     </div>
-                    <div class="fs-2 fw-extrabold text-info mb-0">{{ professor_metrics.assigned_schedules|default:0 }}</div>
+                    <div class="mt-2 pt-1 border-top border-dark-subtle">
+                        <small class="text-secondary text-truncate d-block" style="font-size: 0.7rem; line-height: 1.2;">Clases a tu cargo</small>
+                    </div>
                 </div>
             </div>
 
             <!-- 2. Inscripciones Actuales -->
             <div class="col">
-                <div class="gym-dash-card p-3 p-xl-4 h-100 d-flex flex-column justify-content-between">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="text-secondary small text-uppercase tracking-wider fw-semibold">Inscripciones Actuales</span>
-                        <i class="bi bi-people text-accent fs-4"></i>
+                <div class="gym-dash-card py-2 px-3 py-xl-3 px-xl-3 h-100 d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="text-secondary text-uppercase tracking-wider fw-semibold" style="font-size: 0.68rem;">Inscripciones Actuales</span>
+                            <i class="bi bi-people text-accent" style="font-size: 0.95rem;"></i>
+                        </div>
+                        <div class="fs-3 fw-black text-white mb-0 lh-1">{{ professor_metrics.total_enrollments|default:0 }}</div>
                     </div>
-                    <div class="fs-2 fw-extrabold text-white mb-0">{{ professor_metrics.total_enrollments|default:0 }}</div>
+                    <div class="mt-2 pt-1 border-top border-dark-subtle">
+                        <small class="text-secondary text-truncate d-block" style="font-size: 0.7rem; line-height: 1.2;">Alumnos registrados</small>
+                    </div>
                 </div>
             </div>
         </div>
@@ -333,7 +368,7 @@
                 <div class="mb-3">
                     <span class="text-secondary small d-block mb-1">Plan contratado</span>
                     <h5 class="text-white fw-bold mb-3">{{ current_subscription.plan.name }}</h5>
-                    <div class="row g-2 p-3 bg-dark rounded border border-dark-subtle small">
+                    <div class="row g-2 p-3 gym-dash-inner-card small">
                         <div class="col-6">
                             <span class="text-secondary d-block">Inicio:</span>
                             <span class="text-white fw-semibold">{{ current_subscription.start_date|date:"d/m/Y" }}</span>
@@ -363,7 +398,7 @@
                 <div class="mb-3">
                     <span class="text-secondary small d-block mb-1">Plan seleccionado</span>
                     <h5 class="text-white fw-bold mb-2">{{ pending_subscription.plan.name }}</h5>
-                    <div class="p-3 bg-dark rounded border border-warning-subtle small">
+                    <div class="p-3 gym-dash-inner-card border-warning-subtle small">
                         <div class="d-flex align-items-center mb-2">
                             <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1">
                                 <i class="bi bi-hourglass-split me-1"></i> PENDIENTE DE PAGO
@@ -378,7 +413,7 @@
                 <div class="mb-3">
                     <span class="text-secondary small d-block mb-1">Último plan contratado</span>
                     <h5 class="text-white fw-bold mb-3">{{ expired_subscription.plan.name }}</h5>
-                    <div class="p-3 bg-dark rounded border border-warning-subtle small">
+                    <div class="p-3 gym-dash-inner-card border-warning-subtle small">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <span class="text-secondary">Venció el:</span>
                             <span class="text-white fw-semibold">{{ expired_subscription.end_date|date:"d/m/Y" }}</span>
@@ -566,14 +601,14 @@
                     <div class="row g-2 mt-2">
                         {% for exercise in today_routine.exercises.all|slice:":3" %}
                         <div class="col-12 col-md-4">
-                            <div class="p-3 rounded-2 bg-dark border border-dark-subtle h-100 d-flex flex-column justify-content-between">
+                            <div class="p-3 gym-dash-inner-card h-100 d-flex flex-column justify-content-between">
                                 <div>
                                     <span class="text-secondary small fw-bold d-block mb-1">#{{ exercise.order }}</span>
                                     <span class="text-white fw-bold d-block mb-2">{{ exercise.name }}</span>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top border-dark-subtle">
                                     <span class="text-secondary small">Series &times; Reps:</span>
-                                    <span class="badge bg-dark border border-dark-subtle text-accent-subtle fw-semibold">
+                                    <span class="badge gym-badge-dark-subtle fw-semibold">
                                         {{ exercise.sets }} &times; {{ exercise.repetitions }}
                                     </span>
                                 </div>
@@ -594,7 +629,7 @@
                     </p>
                 {% endif %}
             {% else %}
-                <div class="p-3 rounded-2 bg-dark border border-dark-subtle">
+                <div class="p-3 gym-dash-inner-card">
                     <p class="text-secondary small mb-0">
                         <i class="bi bi-info-circle me-1 text-secondary"></i> Hoy no hay una rutina general programada.
                     </p>
@@ -642,13 +677,13 @@
                 {% if today_routine.exercises.all %}
                     <div class="d-flex flex-column gap-2 mb-3">
                         {% for exercise in today_routine.exercises.all|slice:":3" %}
-                        <div class="p-2 p-sm-3 rounded-2 bg-dark border border-dark-subtle d-flex align-items-start gap-3">
-                            <span class="badge bg-dark border border-dark-subtle text-secondary px-2 py-1 fs-6 flex-shrink-0">
+                        <div class="p-2 p-sm-3 gym-dash-inner-card d-flex align-items-start gap-3">
+                            <span class="badge gym-badge-dark-subtle text-secondary px-2 py-1 fs-6 flex-shrink-0">
                                 {{ exercise.order }}
                             </span>
                             <div class="flex-grow-1">
                                 <span class="text-white fw-bold d-block text-break mb-1">{{ exercise.name }}</span>
-                                <span class="badge bg-dark border border-dark-subtle text-accent-subtle fw-semibold">
+                                <span class="badge gym-badge-dark-subtle text-accent-subtle fw-semibold">
                                     {{ exercise.sets }} &times; {{ exercise.repetitions }}
                                 </span>
                             </div>
@@ -674,7 +709,7 @@
                     </p>
                 {% endif %}
             {% else %}
-                <div class="p-3 rounded-2 bg-dark border border-dark-subtle">
+                <div class="p-3 gym-dash-inner-card">
                     <p class="text-secondary small mb-0">
                         <i class="bi bi-info-circle me-1 text-secondary"></i> Hoy no hay una rutina general programada.
                     </p>

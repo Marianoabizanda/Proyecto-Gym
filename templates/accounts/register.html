@@ -5,18 +5,18 @@
 {% block content %}
 <div class="row justify-content-center my-4">
     <div class="col-12 col-md-10 col-lg-8 col-xl-7">
-        <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
-            <div class="card-header bg-dark text-white text-center py-4 border-0">
-                <i class="bi bi-person-plus-fill display-4 text-warning"></i>
-                <h4 class="mt-2 mb-0 fw-bold">Registro de Socio</h4>
-                <p class="text-white-50 small mb-0">Crea tu cuenta para comenzar a entrenar con nosotros</p>
+        <div class="gym-dash-card overflow-hidden">
+            <div class="p-4 text-center border-bottom border-dark-subtle">
+                <i class="bi bi-person-plus-fill display-4 text-accent"></i>
+                <h4 class="mt-2 mb-1 fw-bold text-white">Registro de Socio</h4>
+                <p class="text-secondary small mb-0">Creá tu cuenta para comenzar a entrenar con nosotros</p>
             </div>
-            <div class="card-body p-4 p-md-5 bg-white">
+            <div class="p-4 p-md-5">
                 <form method="post" novalidate>
                     {% csrf_token %}
 
                     {% if form.non_field_errors %}
-                        <div class="alert alert-danger py-2 small">
+                        <div class="alert alert-danger py-2 small mb-4">
                             {% for error in form.non_field_errors %}
                                 <div><i class="bi bi-exclamation-circle me-1"></i> {{ error }}</div>
                             {% endfor %}
@@ -25,14 +25,14 @@
 
                     <div class="row g-3">
                         <div class="col-12 col-md-6">
-                            <label for="{{ form.first_name.id_for_label }}" class="form-label fw-semibold">Nombre *</label>
+                            <label for="{{ form.first_name.id_for_label }}" class="form-label text-secondary small fw-semibold">Nombre *</label>
                             {{ form.first_name }}
                             {% if form.first_name.errors %}
                                 <div class="text-danger small mt-1">{{ form.first_name.errors.0 }}</div>
                             {% endif %}
                         </div>
                         <div class="col-12 col-md-6">
-                            <label for="{{ form.last_name.id_for_label }}" class="form-label fw-semibold">Apellido *</label>
+                            <label for="{{ form.last_name.id_for_label }}" class="form-label text-secondary small fw-semibold">Apellido *</label>
                             {{ form.last_name }}
                             {% if form.last_name.errors %}
                                 <div class="text-danger small mt-1">{{ form.last_name.errors.0 }}</div>
@@ -40,14 +40,14 @@
                         </div>
 
                         <div class="col-12 col-md-6">
-                            <label for="{{ form.dni.id_for_label }}" class="form-label fw-semibold">DNI / Documento *</label>
+                            <label for="{{ form.dni.id_for_label }}" class="form-label text-secondary small fw-semibold">DNI / Documento *</label>
                             {{ form.dni }}
                             {% if form.dni.errors %}
                                 <div class="text-danger small mt-1">{{ form.dni.errors.0 }}</div>
                             {% endif %}
                         </div>
                         <div class="col-12 col-md-6">
-                            <label for="{{ form.phone.id_for_label }}" class="form-label fw-semibold">Teléfono</label>
+                            <label for="{{ form.phone.id_for_label }}" class="form-label text-secondary small fw-semibold">Teléfono</label>
                             {{ form.phone }}
                             {% if form.phone.errors %}
                                 <div class="text-danger small mt-1">{{ form.phone.errors.0 }}</div>
@@ -55,7 +55,7 @@
                         </div>
 
                         <div class="col-12">
-                            <label for="{{ form.email.id_for_label }}" class="form-label fw-semibold">Correo Electrónico *</label>
+                            <label for="{{ form.email.id_for_label }}" class="form-label text-secondary small fw-semibold">Correo Electrónico *</label>
                             {{ form.email }}
                             {% if form.email.errors %}
                                 <div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>
@@ -63,23 +63,23 @@
                         </div>
 
                         <div class="col-12">
-                            <label for="{{ form.username.id_for_label }}" class="form-label fw-semibold">Nombre de Usuario *</label>
+                            <label for="{{ form.username.id_for_label }}" class="form-label text-secondary small fw-semibold">Nombre de Usuario *</label>
                             {{ form.username }}
-                            <div class="form-text small">Será tu identificador único para iniciar sesión.</div>
+                            <div class="text-secondary small mt-1">Será tu identificador único para iniciar sesión.</div>
                             {% if form.username.errors %}
                                 <div class="text-danger small mt-1">{{ form.username.errors.0 }}</div>
                             {% endif %}
                         </div>
 
                         <div class="col-12 col-md-6">
-                            <label for="{{ form.password1.id_for_label }}" class="form-label fw-semibold">Contraseña *</label>
+                            <label for="{{ form.password1.id_for_label }}" class="form-label text-secondary small fw-semibold">Contraseña *</label>
                             {{ form.password1 }}
                             {% if form.password1.errors %}
                                 <div class="text-danger small mt-1">{{ form.password1.errors.0 }}</div>
                             {% endif %}
                         </div>
                         <div class="col-12 col-md-6">
-                            <label for="{{ form.password2.id_for_label }}" class="form-label fw-semibold">Confirmar Contraseña *</label>
+                            <label for="{{ form.password2.id_for_label }}" class="form-label text-secondary small fw-semibold">Confirmar Contraseña *</label>
                             {{ form.password2 }}
                             {% if form.password2.errors %}
                                 <div class="text-danger small mt-1">{{ form.password2.errors.0 }}</div>
@@ -87,23 +87,23 @@
                         </div>
                     </div>
 
-                    <div class="alert alert-info d-flex align-items-center mt-4 py-2" role="alert">
-                        <i class="bi bi-info-circle-fill me-2 fs-5"></i>
-                        <div class="small">
-                            Tu cuenta será asignada automáticamente con el rol de <strong>Socio</strong>.
+                    <div class="p-3 gym-dash-inner-card d-flex align-items-center mt-4">
+                        <i class="bi bi-info-circle text-accent me-2 fs-5"></i>
+                        <div class="small text-white">
+                            Tu cuenta será asignada automáticamente con el rol de <strong class="text-accent-subtle">Socio</strong>.
                         </div>
                     </div>
 
                     <div class="d-grid mt-4">
-                        <button type="submit" class="btn btn-warning btn-lg fw-bold shadow-sm">
+                        <button type="submit" class="btn gym-btn-primary py-3 fw-bold text-uppercase">
                             <i class="bi bi-check-circle me-1"></i> Confirmar Registro
                         </button>
                     </div>
                 </form>
             </div>
-            <div class="card-footer bg-light text-center py-3 border-top">
-                <span class="text-muted small">¿Ya tenés una cuenta activa?</span>
-                <a href="{% url 'accounts:login' %}" class="fw-semibold text-decoration-none text-warning-emphasis ms-1">
+            <div class="p-3 text-center border-top border-dark-subtle">
+                <span class="text-secondary small">¿Ya tenés una cuenta activa?</span>
+                <a href="{% url 'accounts:login' %}" class="gym-link-accent ms-1 small fw-semibold">
                     Iniciá sesión acá
                 </a>
             </div>

@@ -5,7 +5,8 @@
 
 {% block body_class %}bg-gym-black text-white login-page-body{% endblock %}
 
-{% block full_width_content %}
+{% block app_layout %}
+{% include 'includes/navbar.html' %}
 <div class="login-wrapper position-relative d-flex align-items-center justify-content-center py-5">
     <!-- Imagen de fondo con encuadre ambiental, oscurecimiento y viñeta sutil -->
     <div class="login-bg-media" style="background-image: url('{% static 'images/Mancuerna de acero en sombras.png' %}');"></div>
@@ -94,4 +95,24 @@
         </div>
     </div>
 </div>
+
+<footer class="gym-footer py-4 mt-auto border-top border-dark-subtle">
+    <div class="container">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center text-center text-md-start gap-3">
+            <div class="d-flex flex-column flex-md-row align-items-center gap-2 gap-md-3">
+                <img src="{% static 'images/gym_manager_icon.png' %}" 
+                     alt="Logo GYM MANAGER" 
+                     class="flex-shrink-0" 
+                     style="height: 28px; width: auto; object-fit: contain;">
+                <div>
+                    <span class="gym-brand-logo text-white fw-bold">GYM MANAGER</span>
+                    <p class="text-secondary small mb-0">Sistema de gestión de gimnasio.</p>
+                </div>
+            </div>
+            <div class="text-secondary small">
+                &copy; {% now "Y" %} Todos los derechos reservados.
+            </div>
+        </div>
+    </div>
+</footer>
 {% endblock %}
