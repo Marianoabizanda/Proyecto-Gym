@@ -81,7 +81,7 @@
                 {% for plan in plans %}
                     {% with is_featured=plan.name|stringformat:"s"|slice:":18" %}
                     <div class="col-12 col-md-6 col-lg-4 home-plan-slide d-flex">
-                        <div class="gym-plan-card h-100 w-100 d-flex flex-column justify-content-between p-4 p-xl-5 position-relative {% if plan.name == 'Pase Libre Mensual' %}gym-plan-card-featured{% endif %}">
+                        <div class="gym-plan-card h-100 w-100 d-flex flex-column justify-content-between p-3 p-xl-4 position-relative {% if plan.name == 'Pase Libre Mensual' %}gym-plan-card-featured{% endif %}">
                             
                             {% if plan.name == 'Pase Libre Mensual' %}
                                 <div class="gym-plan-featured-tag">
@@ -91,8 +91,8 @@
 
                             <div>
                                 <!-- Encabezado de Plan -->
-                                <div class="d-flex justify-content-between align-items-start mb-3 gap-2">
-                                    <h3 class="plan-card-name text-uppercase fw-bold text-white mb-0 fs-5">
+                                <div class="d-flex justify-content-between align-items-start mb-2 gap-2">
+                                    <h3 class="plan-card-name text-uppercase fw-bold text-white mb-0 fs-6">
                                         {{ plan.name }}
                                     </h3>
                                     <span class="badge gym-plan-badge flex-shrink-0">
@@ -101,10 +101,10 @@
                                 </div>
 
                                 <!-- Precio Destacado -->
-                                <div class="plan-card-price my-4">
+                                <div class="plan-card-price my-2 my-md-3">
                                     <div class="d-flex align-items-baseline">
-                                        <span class="plan-currency text-secondary fs-3 fw-bold me-1">$</span>
-                                        <span class="plan-amount text-white fw-black display-5">{{ plan.price|floatformat:"0g" }}</span>
+                                        <span class="plan-currency text-secondary fs-4 fw-bold me-1">$</span>
+                                        <span class="plan-amount text-white fw-black display-6">{{ plan.price|floatformat:"0g" }}</span>
                                     </div>
                                     <span class="plan-period text-secondary small d-block mt-1">
                                         por {{ plan.duration_days }} días de cobertura
@@ -112,32 +112,32 @@
                                 </div>
 
                                 <!-- Descripción -->
-                                <p class="plan-card-description text-secondary small mb-4">
+                                <p class="plan-card-description text-secondary small mb-2 mb-md-3">
                                     {{ plan.description|default:"Acceso completo a nuestras instalaciones y equipamiento en el período contratado." }}
                                 </p>
 
                                 <!-- Lista de Beneficios con Checks -->
-                                <div class="border-top border-dark-subtle pt-3 mb-4">
-                                    <ul class="gym-plan-features list-unstyled mb-0 d-flex flex-column gap-2 text-start">
+                                <div class="border-top border-dark-subtle pt-2 pt-md-3 mb-2 mb-md-3">
+                                    <ul class="gym-plan-features list-unstyled mb-0 d-flex flex-column gap-1 text-start">
                                         <li class="d-flex align-items-center small text-white">
-                                            <i class="bi bi-check2 text-accent me-2 fs-5 flex-shrink-0"></i>
+                                            <i class="bi bi-check2 text-accent me-2 fs-6 flex-shrink-0"></i>
                                             <span>Acceso total a sala de musculación</span>
                                         </li>
                                         <li class="d-flex align-items-center small text-white">
-                                            <i class="bi bi-check2 text-accent me-2 fs-5 flex-shrink-0"></i>
+                                            <i class="bi bi-check2 text-accent me-2 fs-6 flex-shrink-0"></i>
                                             <span>Cobertura completa por {{ plan.duration_days }} días</span>
                                         </li>
                                         <li class="d-flex align-items-center small text-white">
-                                            <i class="bi bi-check2 text-accent me-2 fs-5 flex-shrink-0"></i>
+                                            <i class="bi bi-check2 text-accent me-2 fs-6 flex-shrink-0"></i>
                                             <span>Seguimiento digital de membresía y pagos</span>
                                         </li>
                                         <li class="d-flex align-items-center small text-white">
-                                            <i class="bi bi-check2 text-accent me-2 fs-5 flex-shrink-0"></i>
+                                            <i class="bi bi-check2 text-accent me-2 fs-6 flex-shrink-0"></i>
                                             <span>Acceso a la Rutina del Día</span>
                                         </li>
                                         {% if plan.includes_classes %}
                                             <li class="d-flex align-items-center small text-accent-light fw-semibold">
-                                                <i class="bi bi-check2-circle text-accent me-2 fs-5 flex-shrink-0"></i>
+                                                <i class="bi bi-check2-circle text-accent me-2 fs-6 flex-shrink-0"></i>
                                                 <span>Clases grupales incluidas</span>
                                             </li>
                                         {% endif %}
@@ -146,7 +146,7 @@
                             </div>
 
                             <!-- Botón CTA al pie -->
-                            <div class="pt-3 border-top border-dark-subtle mt-auto">
+                            <div class="pt-2 pt-md-3 border-top border-dark-subtle mt-auto">
                                 {% if user.is_authenticated and user.is_member_role %}
                                     <a href="{% url 'memberships:plan_list' %}" class="btn {% if plan.name == 'Pase Libre Mensual' %}gym-btn-primary fw-bold shadow{% else %}gym-btn-card fw-semibold{% endif %} w-100 text-uppercase py-2">
                                         Elegir Plan

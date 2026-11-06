@@ -378,6 +378,50 @@ body {
     line-height: 1.4;
 }
 
+/* Tarjetas de Planes en Home (Compactas y Equilibradas) */
+.home-plan-slide .gym-plan-card {
+    padding: 1.5rem 1.4rem;
+}
+
+.home-plan-slide .plan-card-name {
+    font-size: 1.05rem;
+    letter-spacing: 0.5px;
+}
+
+.home-plan-slide .plan-amount {
+    font-size: 2.35rem;
+    line-height: 1;
+}
+
+.home-plan-slide .plan-currency {
+    font-size: 1.25rem;
+}
+
+.home-plan-slide .plan-period {
+    font-size: 0.74rem;
+}
+
+.home-plan-slide .plan-card-description {
+    font-size: 0.8rem;
+    line-height: 1.45;
+    min-height: auto;
+}
+
+.home-plan-slide .gym-plan-features li {
+    font-size: 0.8rem;
+    line-height: 1.35;
+    padding: 0.1rem 0;
+}
+
+.home-plan-slide .gym-plan-features i {
+    font-size: 0.95rem;
+}
+
+.home-plan-slide .gym-plan-badge {
+    padding: 0.22rem 0.55rem;
+    font-size: 0.65rem;
+}
+
 .plan-card-name {
     font-family: var(--gym-font-heading);
     font-size: 1.15rem;
@@ -785,12 +829,12 @@ body {
     }
 
     .home-plan-slide .gym-plan-card {
-        padding: 1.75rem 1.5rem !important;
+        padding: 1.25rem 1.15rem !important;
         border-radius: var(--gym-radius-md);
     }
 
     .home-plan-slide .plan-amount {
-        font-size: 2.5rem;
+        font-size: 2.15rem !important;
     }
 }
 
