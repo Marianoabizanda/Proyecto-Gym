@@ -404,7 +404,11 @@ body {
 .home-plan-slide .plan-card-description {
     font-size: 0.8rem;
     line-height: 1.45;
-    min-height: auto;
+    min-height: 38px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .home-plan-slide .gym-plan-features li {

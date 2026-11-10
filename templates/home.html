@@ -113,7 +113,7 @@
 
                                 <!-- Descripción -->
                                 <p class="plan-card-description text-secondary small mb-2 mb-md-3">
-                                    {{ plan.description|default:"Acceso completo a nuestras instalaciones y equipamiento en el período contratado." }}
+                                    {{ plan.description|truncatewords:10|default:"Acceso completo a nuestras instalaciones y equipamiento en el período contratado." }}
                                 </p>
 
                                 <!-- Lista de Beneficios con Checks -->
@@ -188,7 +188,7 @@
                 <span class="badge-dot me-2"></span>Beneficios
             </span>
             <h2 class="section-title text-uppercase fw-extrabold text-white mb-2">
-                BENEFICIOS DE ENTRENAR CON NOSOTROS
+                MÁS QUE UN GIMNASIO
             </h2>
             <div class="section-divider mx-auto my-3"></div>
             <p class="text-secondary small max-w-600 mx-auto mb-0">
