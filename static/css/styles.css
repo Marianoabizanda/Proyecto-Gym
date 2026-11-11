@@ -1060,3 +1060,47 @@ body {
     color: var(--gym-accent-subtle);
 }
 
+/* --------------------------------------------------------------------------
+   Dashboard Socio Redesign Trial (Scoped Styles)
+   -------------------------------------------------------------------------- */
+.gym-progress-bar-bg {
+    background-color: rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.gym-progress-bar-fill {
+    background: linear-gradient(90deg, #7c3aed, #a855f7);
+    border-radius: 999px;
+    transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gym-badge-reps {
+    background-color: rgba(139, 92, 246, 0.12);
+    border: 1px solid rgba(139, 92, 246, 0.28);
+    color: var(--gym-accent-light);
+    font-size: 0.74rem;
+    font-weight: 600;
+    border-radius: 6px;
+    letter-spacing: 0.02em;
+}
+
+.gym-dash-editorial-card {
+    background: linear-gradient(135deg, rgba(20, 19, 27, 0.95) 0%, rgba(34, 25, 54, 0.4) 100%);
+    border: 1px solid rgba(139, 92, 246, 0.22);
+    border-radius: var(--gym-radius-lg);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    transition: border-color 0.25s ease, transform 0.25s ease;
+}
+
+.gym-dash-editorial-card:hover {
+    border-color: rgba(139, 92, 246, 0.4);
+    transform: translateY(-2px);
+}
+
+.gym-editorial-quote {
+    border-left: 2px solid var(--gym-accent);
+}
+
+
+

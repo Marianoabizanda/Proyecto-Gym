@@ -6,34 +6,31 @@
 
 {% block content %}
 <div class="row g-3 g-md-4 mb-3">
-    <!-- Encabezado de Bienvenida -->
+    <!-- Encabezado del Dashboard -->
     <div class="col-12">
-        <div class="gym-dash-header px-3 px-md-4 py-2 py-md-3">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
+        <div class="gym-dash-header px-3 px-md-4 py-2.5 py-md-3">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
                 <div>
-                    <span class="text-uppercase tracking-widest text-secondary fw-semibold d-block" style="font-size: 0.68rem; letter-spacing: 0.08em;">
+                    <span class="text-uppercase tracking-widest text-secondary fw-semibold d-block" style="font-size: 0.65rem; letter-spacing: 0.1em;">
                         Panel de Control
                     </span>
                     <h2 class="text-uppercase fw-extrabold text-white mb-0 fs-4 lh-sm">
                         ¡Hola, {{ request.user.get_full_name|default:request.user.username }}!
                     </h2>
-                    <p class="text-secondary small mb-0" style="font-size: 0.82rem;">
-                        Bienvenido al panel central de GYM MANAGER.
-                    </p>
                 </div>
-                <div class="d-flex flex-column align-items-md-end">
-                    <span class="text-secondary text-uppercase tracking-wider mb-1" style="font-size: 0.65rem;">Rol actual</span>
+                <div class="d-flex align-items-center gap-2 align-self-start align-self-md-auto">
+                    <span class="text-secondary text-uppercase tracking-wider d-none d-sm-inline" style="font-size: 0.65rem;">Rol</span>
                     {% if is_admin %}
-                        <span class="gym-badge-role py-1 px-3" style="font-size: 0.75rem;">
+                        <span class="gym-badge-role py-1 px-2.5 px-md-3" style="font-size: 0.72rem;">
                             <i class="bi bi-shield-check me-1"></i> Administrador
                         </span>
                     {% elif is_professor %}
-                        <span class="gym-badge-role py-1 px-3" style="font-size: 0.75rem;">
+                        <span class="gym-badge-role py-1 px-2.5 px-md-3" style="font-size: 0.72rem;">
                             <i class="bi bi-person-workspace me-1"></i> Profesor
                         </span>
                     {% else %}
-                        <span class="gym-badge-role py-1 px-3" style="font-size: 0.75rem;">
-                            <i class="bi bi-person-check me-1"></i> Socio
+                        <span class="gym-badge-role py-1 px-2.5 px-md-3" style="font-size: 0.72rem;">
+                            <i class="bi bi-person-badge me-1"></i> Socio
                         </span>
                     {% endif %}
                 </div>
@@ -336,8 +333,9 @@
 
     {% else %}
     <!-- PANEL PARA SOCIO -->
+    <!-- 1. Tarjeta Mi Membresía -->
     <div class="col-12 col-md-6">
-        <div class="gym-dash-card h-100 p-4 d-flex flex-column justify-content-between">
+        <div class="gym-dash-card h-100 p-3 p-md-4 d-flex flex-column justify-content-between">
             <div>
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <div class="d-flex align-items-center">
@@ -350,15 +348,15 @@
                         </div>
                     </div>
                     {% if current_subscription %}
-                    <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 small">
+                    <span class="badge bg-success-subtle text-success border border-success-subtle px-2.5 py-1 small fw-semibold">
                         <i class="bi bi-check-circle me-1"></i>{{ current_subscription.effective_status }}
                     </span>
                     {% elif pending_subscription %}
-                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1 small">
+                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2.5 py-1 small fw-semibold">
                         <i class="bi bi-hourglass-split me-1"></i>PENDIENTE DE PAGO
                     </span>
                     {% elif expired_subscription %}
-                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1 small">
+                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2.5 py-1 small fw-semibold">
                         <i class="bi bi-clock-history me-1"></i>VENCIDA
                     </span>
                     {% endif %}
@@ -366,76 +364,83 @@
 
                 {% if current_subscription %}
                 <div class="mb-3">
-                    <span class="text-secondary small d-block mb-1">Plan contratado</span>
-                    <h5 class="text-white fw-bold mb-3">{{ current_subscription.plan.name }}</h5>
-                    <div class="row g-2 p-3 gym-dash-inner-card small">
-                        <div class="col-6">
-                            <span class="text-secondary d-block">Inicio:</span>
-                            <span class="text-white fw-semibold">{{ current_subscription.start_date|date:"d/m/Y" }}</span>
-                        </div>
-                        <div class="col-6">
-                            <span class="text-secondary d-block">Vencimiento:</span>
-                            <span class="text-white fw-semibold">{{ current_subscription.end_date|date:"d/m/Y" }}</span>
-                        </div>
-                        <div class="col-12 pt-2 border-top border-dark-subtle mt-2 d-flex justify-content-between align-items-center">
-                            <span class="text-secondary">Días restantes:</span>
-                            <span class="text-accent-subtle fw-bold">{{ current_subscription.days_left }} días</span>
-                        </div>
-                        <div class="col-12 pt-2 border-top border-dark-subtle mt-2">
-                            {% if current_subscription.plan.includes_classes %}
-                                <span class="text-success small fw-semibold">
-                                    <i class="bi bi-check2-circle me-1"></i> Incluye clases grupales
+                    <span class="text-secondary text-uppercase tracking-wider fw-semibold d-block mb-1" style="font-size: 0.68rem; letter-spacing: 0.08em;">
+                        Plan contratado
+                    </span>
+                    <h4 class="text-white fw-extrabold mb-3 fs-5">{{ current_subscription.plan.name }}</h4>
+
+                    <div class="p-3 gym-dash-inner-card">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div>
+                                <span class="text-white fw-bold fs-6">
+                                    <span class="text-accent fw-extrabold fs-5">{{ current_subscription.days_left }}</span> {% if current_subscription.days_left == 1 %}día restante{% else %}días restantes{% endif %}
                                 </span>
-                            {% else %}
-                                <span class="text-secondary small">
-                                    <i class="bi bi-dash-circle me-1"></i> Este plan no incluye clases grupales
-                                </span>
-                            {% endif %}
+                            </div>
+                            <div class="text-end">
+                                <span class="text-secondary small">Vence el <strong class="text-white fw-semibold">{{ current_subscription.end_date|date:"d/m/Y" }}</strong></span>
+                            </div>
+                        </div>
+
+                        <!-- Barra de progreso discreta de tiempo transcurrido -->
+                        <div id="sub-progress-container" class="mt-2.5 pt-1" style="display: none;">
+                            <div class="d-flex justify-content-between align-items-center mb-1" style="font-size: 0.68rem;">
+                                <span class="text-secondary">Inicio: {{ current_subscription.start_date|date:"d/m/Y" }}</span>
+                                <span id="sub-progress-label" class="text-secondary fw-semibold">0% transcurrido</span>
+                            </div>
+                            <div class="progress gym-progress-bar-bg" style="height: 5px;">
+                                <div id="sub-progress-bar" class="progress-bar gym-progress-bar-fill" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 {% elif pending_subscription %}
                 <div class="mb-3">
-                    <span class="text-secondary small d-block mb-1">Plan seleccionado</span>
-                    <h5 class="text-white fw-bold mb-2">{{ pending_subscription.plan.name }}</h5>
+                    <span class="text-secondary text-uppercase tracking-wider fw-semibold d-block mb-1" style="font-size: 0.68rem; letter-spacing: 0.08em;">
+                        Plan seleccionado
+                    </span>
+                    <h4 class="text-white fw-extrabold mb-2 fs-5">{{ pending_subscription.plan.name }}</h4>
                     <div class="p-3 gym-dash-inner-card border-warning-subtle small">
-                        <div class="d-flex align-items-center mb-2">
-                            <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-0.5">
                                 <i class="bi bi-hourglass-split me-1"></i> PENDIENTE DE PAGO
                             </span>
                         </div>
-                        <p class="text-secondary mb-0">
-                            Tu plan fue seleccionado correctamente. La membresía se activará cuando el administrador registre y confirme el pago. Una vez activada, podrás utilizar los beneficios del plan y, si incluye clases, inscribirte a ellas.
+                        <p class="text-secondary mb-0 lh-sm">
+                            Tu plan fue seleccionado correctamente. La membresía se activará cuando el administrador registre y confirme el pago.
                         </p>
                     </div>
                 </div>
                 {% elif expired_subscription %}
                 <div class="mb-3">
-                    <span class="text-secondary small d-block mb-1">Último plan contratado</span>
-                    <h5 class="text-white fw-bold mb-3">{{ expired_subscription.plan.name }}</h5>
+                    <span class="text-secondary text-uppercase tracking-wider fw-semibold d-block mb-1" style="font-size: 0.68rem; letter-spacing: 0.08em;">
+                        Último plan contratado
+                    </span>
+                    <h4 class="text-white fw-extrabold mb-3 fs-5">{{ expired_subscription.plan.name }}</h4>
                     <div class="p-3 gym-dash-inner-card border-warning-subtle small">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <span class="text-secondary">Venció el:</span>
                             <span class="text-white fw-semibold">{{ expired_subscription.end_date|date:"d/m/Y" }}</span>
                         </div>
-                        <p class="text-secondary mb-0">
+                        <p class="text-secondary mb-0 lh-sm">
                             Tu período de cobertura finalizó. Elegí un nuevo plan para volver a acceder a las instalaciones y clases del gimnasio.
                         </p>
                     </div>
                 </div>
                 {% else %}
                 <div class="mb-3">
-                    <p class="text-warning small mb-2">
-                        <i class="bi bi-exclamation-circle me-1"></i> No tenés un plan activo
-                    </p>
-                    <p class="text-secondary small mb-0">
-                        Elegí un plan para acceder a las instalaciones, actividades y reservar tus clases semanales.
-                    </p>
+                    <div class="p-3 gym-dash-inner-card">
+                        <p class="text-warning small mb-1 fw-semibold">
+                            <i class="bi bi-exclamation-circle me-1"></i> No tenés un plan activo
+                        </p>
+                        <p class="text-secondary small mb-0 lh-sm">
+                            Elegí un plan para acceder a las instalaciones, actividades y reservar tus clases semanales.
+                        </p>
+                    </div>
                 </div>
                 {% endif %}
             </div>
 
-            <div class="mt-4 pt-3 border-top border-dark-subtle d-flex flex-column gap-2">
+            <div class="mt-3 pt-3 border-top border-dark-subtle d-flex flex-column gap-2">
                 {% if current_subscription or pending_subscription %}
                 <a href="{% url 'memberships:my_membership' %}" class="btn gym-btn-primary w-100 text-uppercase fw-semibold py-2">
                     <i class="bi bi-award me-1"></i> Ver Mi Membresía
@@ -461,58 +466,88 @@
         </div>
     </div>
 
+    <!-- 2. Tarjeta Reserva de Clases -->
     <div class="col-12 col-md-6">
-        <div class="gym-dash-card h-100 p-4 d-flex flex-column justify-content-between">
+        <div class="gym-dash-card h-100 p-3 p-md-4 d-flex flex-column justify-content-between">
             <div>
-                <div class="d-flex align-items-center mb-3">
-                    <div class="gym-dash-icon-box me-3">
-                        <i class="bi bi-calendar2-plus fs-4"></i>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex align-items-center">
+                        <div class="gym-dash-icon-box me-3">
+                            <i class="bi bi-calendar2-plus fs-4"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold text-white mb-0 text-uppercase fs-6">Reserva de Clases</h5>
+                            <small class="text-secondary">Actividades del gimnasio</small>
+                        </div>
                     </div>
-                    <div>
-                        <h5 class="fw-bold text-white mb-0 text-uppercase fs-6">Reserva de Clases</h5>
-                        <small class="text-secondary">Actividades del gimnasio</small>
-                    </div>
+                    {% if current_subscription and current_subscription.plan.includes_classes %}
+                    <span class="badge bg-success-subtle text-success border border-success-subtle px-2.5 py-1 small fw-semibold">
+                        <i class="bi bi-check-circle me-1"></i>Habilitado
+                    </span>
+                    {% elif current_subscription and not current_subscription.plan.includes_classes %}
+                    <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-2.5 py-1 small">
+                        <i class="bi bi-dash-circle me-1"></i>Sin clases
+                    </span>
+                    {% endif %}
                 </div>
 
                 {% if current_subscription and current_subscription.plan.includes_classes %}
-                <p class="text-secondary small mb-0">
-                    Explorá el catálogo de actividades disponibles, consultá los cupos y reservá tu lugar semanal.
-                </p>
+                <div class="p-3 gym-dash-inner-card">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <i class="bi bi-check2-circle text-success fs-5"></i>
+                        <span class="text-white fw-bold small">Inscripción habilitada</span>
+                    </div>
+                    <p class="text-secondary small mb-0 lh-sm">
+                        Explorá el catálogo de actividades, consultá los cupos disponibles en tiempo real y asegurá tu lugar semanal.
+                    </p>
+                </div>
                 {% elif current_subscription and not current_subscription.plan.includes_classes %}
-                <p class="text-warning small mb-1">
-                    <i class="bi bi-dash-circle me-1"></i> Tu plan actual no incluye clases grupales.
-                </p>
-                <p class="text-secondary small mb-0">
-                    Podés consultar los horarios de las actividades, pero para reservar tu lugar necesitás un plan que incluya clases.
-                </p>
+                <div class="p-3 gym-dash-inner-card">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <i class="bi bi-info-circle text-warning fs-5"></i>
+                        <span class="text-white fw-bold small">Plan de sala de musculación</span>
+                    </div>
+                    <p class="text-secondary small mb-0 lh-sm">
+                        Tu plan actual no incluye clases grupales. Podés consultar los horarios disponibles o cambiar a un plan que las incluya.
+                    </p>
+                </div>
                 {% elif pending_subscription %}
-                <p class="text-warning small mb-1">
-                    <i class="bi bi-hourglass-split me-1"></i> Membresía pendiente de activación.
-                </p>
-                <p class="text-secondary small mb-0">
-                    Tu membresía está pendiente de activación. Podrás inscribirte cuando el gimnasio confirme el pago.
-                </p>
+                <div class="p-3 gym-dash-inner-card border-warning-subtle">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <i class="bi bi-hourglass-split text-warning fs-5"></i>
+                        <span class="text-white fw-bold small">Activación pendiente</span>
+                    </div>
+                    <p class="text-secondary small mb-0 lh-sm">
+                        Tu solicitud está registrada. Podrás inscribirte a las actividades disponibles una vez que el pago sea confirmado por la administración.
+                    </p>
+                </div>
                 {% elif expired_subscription %}
-                <p class="text-warning small mb-1">
-                    <i class="bi bi-clock-history me-1"></i> Tu membresía venció.
-                </p>
-                <p class="text-secondary small mb-0">
-                    Elegí un nuevo plan para volver a inscribirte a clases.
-                </p>
+                <div class="p-3 gym-dash-inner-card border-warning-subtle">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <i class="bi bi-clock-history text-warning fs-5"></i>
+                        <span class="text-white fw-bold small">Membresía vencida</span>
+                    </div>
+                    <p class="text-secondary small mb-0 lh-sm">
+                        Tu período de cobertura finalizó. Elegí un nuevo plan con clases para volver a inscribirte en tus horarios favoritos.
+                    </p>
+                </div>
                 {% else %}
-                <p class="text-warning small mb-1">
-                    <i class="bi bi-lock me-1"></i> Membresía inactiva.
-                </p>
-                <p class="text-secondary small mb-0">
-                    Necesitás una membresía activa para inscribirte a clases. Podés consultar los horarios, pero la reserva permanecerá bloqueada.
-                </p>
+                <div class="p-3 gym-dash-inner-card">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <i class="bi bi-lock text-secondary fs-5"></i>
+                        <span class="text-white fw-bold small">Membresía inactiva</span>
+                    </div>
+                    <p class="text-secondary small mb-0 lh-sm">
+                        Necesitás una membresía activa para inscribirte a clases. Podés consultar el cronograma general de actividades para conocer las opciones.
+                    </p>
+                </div>
                 {% endif %}
             </div>
 
-            <div class="mt-4 pt-3 border-top border-dark-subtle d-flex flex-column gap-2">
+            <div class="mt-3 pt-3 border-top border-dark-subtle d-flex flex-column gap-2">
                 {% if current_subscription and current_subscription.plan.includes_classes %}
                 <a href="{% url 'classes:available_schedules' %}" class="btn gym-btn-primary w-100 text-uppercase fw-semibold py-2">
-                    <i class="bi bi-calendar2-plus me-1"></i> Clases Disponibles
+                    <i class="bi bi-calendar2-plus me-1"></i> Ver Clases Disponibles
                 </a>
                 <a href="{% url 'classes:my_enrollments' %}" class="btn gym-btn-card w-100 text-uppercase fw-semibold py-2 text-start px-3 d-flex justify-content-between align-items-center">
                     <span><i class="bi bi-calendar-check me-2"></i> Mis Inscripciones</span>
@@ -559,11 +594,11 @@
         </div>
     </div>
 
-    <!-- Tarjeta de Rutina del Día -->
+    <!-- 3. Tarjeta Rutina del Día -->
     <div class="col-12">
         {% if current_subscription %}
         <!-- Versión Desktop: Rutina del Día (>= 768px) -->
-        <div class="gym-dash-card p-4 d-none d-md-block">
+        <div class="gym-dash-card p-3 p-md-4 d-none d-md-block">
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
                 <div class="d-flex align-items-center">
                     <div class="gym-dash-icon-box me-3 flex-shrink-0" style="width: 44px; height: 44px;">
@@ -603,14 +638,15 @@
                         <div class="col-12 col-md-4">
                             <div class="p-3 gym-dash-inner-card h-100 d-flex flex-column justify-content-between">
                                 <div>
-                                    <span class="text-secondary small fw-bold d-block mb-1">#{{ exercise.order }}</span>
-                                    <span class="text-white fw-bold d-block mb-2">{{ exercise.name }}</span>
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <span class="text-secondary small fw-bold" style="font-size: 0.72rem;">#{{ exercise.order }}</span>
+                                        <span class="badge gym-badge-reps px-2 py-0.5">{{ exercise.sets }} &times; {{ exercise.repetitions }}</span>
+                                    </div>
+                                    <span class="text-white fw-bold d-block text-break fs-6 lh-sm mb-2">{{ exercise.name }}</span>
                                 </div>
-                                <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top border-dark-subtle">
-                                    <span class="text-secondary small">Series &times; Reps:</span>
-                                    <span class="badge gym-badge-dark-subtle fw-semibold">
-                                        {{ exercise.sets }} &times; {{ exercise.repetitions }}
-                                    </span>
+                                <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top border-dark-subtle" style="font-size: 0.72rem;">
+                                    <span class="text-secondary">Series &times; Reps:</span>
+                                    <span class="text-accent-subtle fw-semibold">{{ exercise.sets }} &times; {{ exercise.repetitions }}</span>
                                 </div>
                             </div>
                         </div>
@@ -677,13 +713,13 @@
                 {% if today_routine.exercises.all %}
                     <div class="d-flex flex-column gap-2 mb-3">
                         {% for exercise in today_routine.exercises.all|slice:":3" %}
-                        <div class="p-2 p-sm-3 gym-dash-inner-card d-flex align-items-start gap-3">
+                        <div class="p-2.5 p-sm-3 gym-dash-inner-card d-flex align-items-start gap-3">
                             <span class="badge gym-badge-dark-subtle text-secondary px-2 py-1 fs-6 flex-shrink-0">
                                 {{ exercise.order }}
                             </span>
                             <div class="flex-grow-1">
                                 <span class="text-white fw-bold d-block text-break mb-1">{{ exercise.name }}</span>
-                                <span class="badge gym-badge-dark-subtle text-accent-subtle fw-semibold">
+                                <span class="badge gym-badge-reps px-2 py-0.5">
                                     {{ exercise.sets }} &times; {{ exercise.repetitions }}
                                 </span>
                             </div>
@@ -717,7 +753,7 @@
             {% endif %}
         </div>
         {% else %}
-        <div class="gym-dash-card p-4">
+        <div class="gym-dash-card p-3 p-md-4">
             <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3">
                 <div class="d-flex align-items-center">
                     <div class="gym-dash-icon-box me-3 flex-shrink-0" style="width: 44px; height: 44px;">
@@ -742,26 +778,28 @@
         {% endif %}
     </div>
 
-    <!-- Tarjeta de Efemérides Deportivas (Consumo API Externa) -->
+    <!-- 4. Tarjeta: Efemérides Deportivas (Consumo API Externa) -->
     <div class="col-12">
-        <div class="gym-dash-card p-4">
+        <div class="gym-dash-editorial-card p-3 p-md-4">
             <div class="d-flex align-items-center mb-3">
                 <div class="gym-dash-icon-box me-3 flex-shrink-0" style="width: 44px; height: 44px;">
-                    <i class="bi bi-trophy fs-4"></i>
+                    <i class="bi bi-trophy fs-4 text-accent"></i>
                 </div>
                 <div>
                     <h5 class="fw-bold text-white mb-0 text-uppercase fs-6">Un Día Como Hoy en el Deporte</h5>
-                    <small class="text-secondary">Efemérides históricas y momentos memorables</small>
                 </div>
             </div>
-            <div class="ps-md-2">
-                <p id="sport-event-text" class="text-white mb-2 fs-6">
+
+            <div class="gym-editorial-quote ps-3 ps-md-4 py-1 my-2">
+                <p id="sport-event-text" class="text-white mb-2 fs-6 lh-base fw-medium">
                     <span class="spinner-border spinner-border-sm text-secondary me-2" role="status" aria-hidden="true"></span>
                     Cargando efeméride deportiva...
                 </p>
-                <small id="sport-event-year" class="text-secondary fw-semibold d-block">
-                    &mdash;
-                </small>
+                <div class="d-flex align-items-center gap-2">
+                    <small id="sport-event-year" class="text-accent-subtle fw-semibold" style="font-size: 0.8rem;">
+                        &mdash;
+                    </small>
+                </div>
             </div>
         </div>
     </div>
@@ -773,6 +811,34 @@
 {% if is_member %}
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    // 1. Barra de progreso dinámica para la membresía activa
+    {% if current_subscription %}
+    (function () {
+        const startStr = "{{ current_subscription.start_date|date:'Y-m-d' }}";
+        const endStr = "{{ current_subscription.end_date|date:'Y-m-d' }}";
+        if (startStr && endStr) {
+            const startDate = new Date(startStr + 'T00:00:00');
+            const endDate = new Date(endStr + 'T23:59:59');
+            const now = new Date();
+            if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime()) && endDate > startDate) {
+                const total = endDate.getTime() - startDate.getTime();
+                const elapsed = now.getTime() - startDate.getTime();
+                const pct = Math.max(0, Math.min(100, Math.round((elapsed / total) * 100)));
+                const wrap = document.getElementById('sub-progress-container');
+                const bar = document.getElementById('sub-progress-bar');
+                const lbl = document.getElementById('sub-progress-label');
+                if (wrap && bar && lbl) {
+                    wrap.style.display = 'block';
+                    bar.style.width = pct + '%';
+                    bar.setAttribute('aria-valuenow', pct);
+                    lbl.textContent = pct + '% transcurrido';
+                }
+            }
+        }
+    })();
+    {% endif %}
+
+    // 2. Efemérides deportivas desde API externa (Wikipedia)
     const textEl = document.getElementById('sport-event-text');
     const yearEl = document.getElementById('sport-event-year');
 
